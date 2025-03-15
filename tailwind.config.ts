@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,15 +53,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+				// Custom colors for Savoria
+				gold: {
+					DEFAULT: '#D4AF37',
+					light: '#F7DF8C',
+					dark: '#996515'
+				},
+				savoria: {
+					black: '#0A0A0A',
+					dark: '#1A1A1A',
+					muted: '#2A2A2A',
+					thai: '#8B5742',
+					chinese: '#C12D00',
+					indian: '#E49B5D',
+					bengali: '#335C67',
+					continental: '#7F5C53'
 				}
 			},
 			borderRadius: {
@@ -70,25 +77,56 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'fade-out': {
+					'0%': { opacity: '1', transform: 'translateY(0)' },
+					'100%': { opacity: '0', transform: 'translateY(10px)' }
+				},
+				'slide-in-right': {
+					'0%': { transform: 'translateX(100%)' },
+					'100%': { transform: 'translateX(0)' }
+				},
+				'scale-up': {
+					'0%': { transform: 'scale(0.9)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				'gold-shimmer': {
+					'0%': { backgroundPosition: '0% 50%' },
+					'50%': { backgroundPosition: '100% 50%' },
+					'100%': { backgroundPosition: '0% 50%' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-out',
+				'fade-out': 'fade-out 0.5s ease-out',
+				'slide-in-right': 'slide-in-right 0.5s ease-out',
+				'scale-up': 'scale-up 0.5s ease-out',
+				'gold-shimmer': 'gold-shimmer 3s ease-in-out infinite'
+			},
+			fontFamily: {
+				'playfair': ['"Playfair Display"', 'serif'],
+				'cormorant': ['"Cormorant Garamond"', 'serif'],
+				'lato': ['"Lato"', 'sans-serif']
+			},
+			backgroundImage: {
+				'gold-gradient': 'linear-gradient(45deg, #D4AF37 0%, #F7DF8C 50%, #D4AF37 100%)',
+				'thai-gradient': 'linear-gradient(to right, #8B5742, #D4AF37)',
+				'chinese-gradient': 'linear-gradient(to right, #C12D00, #D4AF37)',
+				'indian-gradient': 'linear-gradient(to right, #E49B5D, #D4AF37)',
+				'bengali-gradient': 'linear-gradient(to right, #335C67, #D4AF37)',
+				'continental-gradient': 'linear-gradient(to right, #7F5C53, #D4AF37)'
 			}
 		}
 	},
