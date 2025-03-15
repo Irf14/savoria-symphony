@@ -47,28 +47,21 @@ const HeroSection = () => {
 
   return (
     <section className="hero-section relative flex items-center justify-center min-h-screen">
-      <Carousel className="w-full h-full absolute inset-0">
-        <CarouselContent className="h-full">
-          {slides.map((slide, index) => (
-            <CarouselItem key={index} className="h-full">
-              <div 
-                className={cn(
-                  "w-full h-full transition-opacity duration-1000",
-                  currentSlide === index ? "opacity-100" : "opacity-0"
-                )}
-                style={{
-                  backgroundImage: `url(${slide.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  position: 'absolute',
-                  inset: 0,
-                  filter: 'brightness(0.3)'
-                }}
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      {slides.map((slide, index) => (
+        <div 
+          key={`slide-bg-${index}`}
+          className={cn(
+            "absolute inset-0 transition-opacity duration-1000",
+            currentSlide === index ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            backgroundImage: `url(${slide.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.3)'
+          }}
+        />
+      ))}
       
       <div className="container mx-auto px-4 z-10 text-center py-32 relative">
         {slides.map((slide, index) => (

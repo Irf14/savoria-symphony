@@ -6,6 +6,7 @@ import HeroSection from '@/components/HeroSection';
 import CuisineShowcase from '@/components/CuisineShowcase';
 import GalleryPreview from '@/components/GalleryPreview';
 import TestimonialSection from '@/components/TestimonialSection';
+import SpecialServicesSection from '@/components/SpecialServicesSection';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -298,6 +299,7 @@ const Index = () => {
       <HeroSection />
       <PopularDishesSection />
       <CuisineShowcase />
+      <SpecialServicesSection />
       <TrendingOffersSection />
       <LatestMemoriesSection />
       <GalleryPreview />

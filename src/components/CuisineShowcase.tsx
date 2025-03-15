@@ -57,7 +57,7 @@ const CuisineShowcase = () => {
     {
       name: 'Chinese Cuisine',
       description: 'Savor the perfect harmony of flavors in our authentic Chinese dishes.',
-      image: 'https://images.unsplash.com/photo-1583032037190-36e0d0994482?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2680&q=80',
+      image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2680&q=80',
       color: 'bg-savoria-chinese',
       gradient: 'bg-chinese-gradient',
       path: '/menu/chinese',
@@ -65,7 +65,7 @@ const CuisineShowcase = () => {
     {
       name: 'Indian Cuisine',
       description: 'Discover the rich tapestry of spices that define Indian culinary tradition.',
-      image: 'https://images.unsplash.com/photo-1585937421612-70a008356c36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2676&q=80',
+      image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2676&q=80',
       color: 'bg-savoria-indian',
       gradient: 'bg-indian-gradient',
       path: '/menu/indian',
