@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { ChevronRight } from 'lucide-react';
 
 // Mock data for menu items
 const menuData = {
@@ -181,6 +182,7 @@ const MenuPage = () => {
   const [selectedCuisine, setSelectedCuisine] = useState<keyof typeof menuData>(
     cuisineTypes.includes(cuisine as keyof typeof menuData) ? cuisine as keyof typeof menuData : 'thai'
   );
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   
   useEffect(() => {
     if (cuisineTypes.includes(cuisine as keyof typeof menuData)) {
@@ -201,12 +203,37 @@ const MenuPage = () => {
     };
   }, [cuisine, navigate]);
   
+  useEffect(() => {
+    // Get all unique categories for the selected cuisine
+    const categories = [...new Set(menuData[selectedCuisine].map(item => item.category))];
+    if (categories.length > 0 && !activeCategory) {
+      setActiveCategory(categories[0]);
+    }
+  }, [selectedCuisine, activeCategory]);
+  
   const handleCuisineChange = (cuisine: keyof typeof menuData) => {
     navigate(`/menu/${cuisine}`);
   };
   
+  const scrollToCategory = (category: string) => {
+    const element = document.getElementById(`category-${category.replace(/\s+/g, '-').toLowerCase()}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setActiveCategory(category);
+    }
+  };
+  
   const currentCuisineInfo = cuisineInfo[selectedCuisine];
   const menuItems = menuData[selectedCuisine];
+  
+  // Get all unique categories
+  const categories = [...new Set(menuItems.map(item => item.category))];
+  
+  // Group menu items by category
+  const menuByCategory: Record<string, typeof menuItems> = {};
+  categories.forEach(category => {
+    menuByCategory[category] = menuItems.filter(item => item.category === category);
+  });
   
   return (
     <div className={`min-h-screen ${currentCuisineInfo.theme}`}>
@@ -248,6 +275,7 @@ const MenuPage = () => {
       
       <section className="py-12">
         <div className="container mx-auto px-4">
+          {/* Cuisine selector */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             {cuisineTypes.map((type) => (
               <button
@@ -265,32 +293,103 @@ const MenuPage = () => {
             ))}
           </div>
           
-          <div className="max-w-4xl mx-auto">
-            {menuItems.map((item, index) => (
-              <motion.div 
-                key={item.id}
-                className="menu-item grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-md"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+          {/* Category navigation - horizontal for desktop, vertical for mobile */}
+          <div className="hidden md:flex justify-center mb-8 overflow-x-auto sticky top-20 bg-savoria-black/80 backdrop-blur-md py-4 z-30">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => scrollToCategory(category)}
+                className={cn(
+                  'px-6 py-2 mx-2 font-cormorant text-lg transition-colors whitespace-nowrap',
+                  activeCategory === category
+                    ? 'text-gold border-b-2 border-gold'
+                    : 'text-gray-300 hover:text-gold'
+                )}
               >
-                <div className="md:col-span-1">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-full h-32 md:h-48 object-cover rounded-md"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-playfair text-xl font-semibold text-white">{item.name}</h3>
-                    <span className="text-gold font-cormorant text-xl">${item.price}</span>
-                  </div>
-                  <p className="text-gray-300 mb-2 font-cormorant">{item.description}</p>
-                  <span className="text-gold/80 text-sm">{item.category}</span>
-                </div>
-              </motion.div>
+                {category}
+              </button>
             ))}
+          </div>
+          
+          {/* Mobile category navigation - sidebar style */}
+          <div className="md:hidden fixed right-0 top-1/2 transform -translate-y-1/2 z-30">
+            <div className="bg-savoria-black/90 backdrop-blur-md rounded-l-md p-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => scrollToCategory(category)}
+                  className={cn(
+                    'block w-full text-left px-3 py-2 font-cormorant text-sm transition-colors rounded-sm my-1',
+                    activeCategory === category
+                      ? 'bg-gold text-savoria-black'
+                      : 'text-gold hover:bg-gold/10'
+                  )}
+                >
+                  <span className="flex items-center">
+                    <ChevronRight size={16} className="mr-1" />
+                    {category}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Menu items by category */}
+          <div className="max-w-4xl mx-auto">
+            {categories.map((category) => (
+              <div 
+                key={category} 
+                id={`category-${category.replace(/\s+/g, '-').toLowerCase()}`}
+                className="mb-16"
+              >
+                <h2 className="text-3xl font-playfair text-gold mb-8 text-center">{category}</h2>
+                
+                {menuByCategory[category].map((item, index) => (
+                  <motion.div 
+                    key={item.id}
+                    className="menu-item grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-md mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <div className="md:col-span-1">
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full h-32 md:h-48 object-cover rounded-md"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-playfair text-xl font-semibold text-white">{item.name}</h3>
+                        <span className="text-gold font-cormorant text-xl">${item.price}</span>
+                      </div>
+                      <p className="text-gray-300 mb-2 font-cormorant">{item.description}</p>
+                      <span className="text-gold/80 text-sm">{item.category}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ))}
+          </div>
+          
+          {/* Related dishes recommendations */}
+          <div className="fixed bottom-0 left-0 right-0 bg-savoria-black/80 backdrop-blur-md p-4 z-20 border-t border-gold/20">
+            <div className="max-w-4xl mx-auto">
+              <h4 className="text-gold font-cormorant text-sm mb-2">You might also like:</h4>
+              <div className="flex overflow-x-auto gap-4 pb-2">
+                {menuItems.slice(0, 3).map((item) => (
+                  <div key={item.id} className="flex-shrink-0 w-48">
+                    <div className="bg-savoria-muted p-2 rounded-md">
+                      <img src={item.image} alt={item.name} className="w-full h-20 object-cover rounded-sm mb-2" />
+                      <p className="text-white text-sm font-semibold truncate">{item.name}</p>
+                      <p className="text-gold text-xs">${item.price}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
