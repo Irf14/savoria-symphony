@@ -1,10 +1,11 @@
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Users, Music, Shield } from 'lucide-react';
 
 const SpecialServicesSection = () => {
   const navigate = useNavigate();
+  const [backgroundIndex, setBackgroundIndex] = useState(0);
 
   const services = [
     {
@@ -30,17 +31,32 @@ const SpecialServicesSection = () => {
     }
   ];
 
+  useEffect(() => {
+    // Auto-advance background slideshow
+    const interval = setInterval(() => {
+      setBackgroundIndex((prev) => (prev + 1) % services.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [services.length]);
+
   return (
     <section className="py-24 bg-savoria-muted relative overflow-hidden">
-      <div 
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: 'url(https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'brightness(0.3)'
-        }}
-      />
+      {/* Background slideshow */}
+      {services.map((service, index) => (
+        <div 
+          key={`bg-${index}`}
+          className={`absolute inset-0 transition-opacity duration-1500 ease-in-out ${
+            backgroundIndex === index ? 'opacity-30' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `url(${service.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.3)'
+          }}
+        />
+      ))}
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">

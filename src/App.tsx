@@ -10,28 +10,34 @@ import GalleryPage from "./pages/GalleryPage";
 import ContactPage from "./pages/ContactPage";
 import SpecialServicesPage from "./pages/SpecialServicesPage";
 import NotFound from "./pages/NotFound";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/menu/:cuisine" element={<MenuPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/special-services" element={<SpecialServicesPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Import the useState hook to fix the error in Index.tsx
+  const [state] = useState("");
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/menu/:cuisine" element={<MenuPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/special-services" element={<SpecialServicesPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
