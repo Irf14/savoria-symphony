@@ -12,7 +12,7 @@ const HeroSection = () => {
   const slides = [
     {
       image: 'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      title: 'Experience Fine Dining',
+      title: 'Indulge In The SAVORIA Experience',
       subtitle: 'Embark on a culinary journey through authentic flavors from around the world'
     },
     {
@@ -89,7 +89,13 @@ const HeroSection = () => {
             className="flex flex-col items-center"
           >
             <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
-              {slides[currentSlide].title} <span className="gold-text">SAVORIA</span>
+              {slides[currentSlide].title === 'Indulge In The SAVORIA Experience' ? (
+                <>
+                  Indulge In The <span className="gold-text">SAVORIA</span> Experience
+                </>
+              ) : (
+                slides[currentSlide].title
+              )}
             </h1>
             
             <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">

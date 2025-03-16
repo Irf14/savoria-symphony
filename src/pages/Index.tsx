@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
 import CuisineShowcase from '@/components/CuisineShowcase';
@@ -11,26 +11,58 @@ import Footer from '@/components/Footer';
 import PopularDishesSection from '@/components/PopularDishesSection';
 import TrendingOffersSection from '@/components/TrendingOffersSection';
 import LatestMemoriesSection from '@/components/LatestMemoriesSection';
+import LoadingScreen from '@/components/LoadingScreen';
+import WelcomeAnimation from '@/components/WelcomeAnimation';
+import ExcellenceSection from '@/components/ExcellenceSection';
 
 const Index = () => {
+  const [loading, setLoading] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
+    
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+      setShowWelcome(true);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
   }, []);
 
+  const handleLoadingComplete = () => {
+    setLoading(false);
+    setShowWelcome(true);
+  };
+
+  const handleWelcomeComplete = () => {
+    setShowWelcome(false);
+    setInitialized(true);
+  };
+
   return (
-    <div className="min-h-screen bg-savoria-black">
-      <Navbar />
-      <HeroSection />
-      <PopularDishesSection />
-      <CuisineShowcase />
-      <SpecialServicesSection />
-      <TrendingOffersSection />
-      <LatestMemoriesSection />
-      <GalleryPreview />
-      <TestimonialSection />
-      <Footer />
-    </div>
+    <>
+      {loading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
+      
+      <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
+      
+      <div className={`min-h-screen bg-savoria-black transition-opacity duration-700 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
+        <Navbar />
+        <HeroSection />
+        <PopularDishesSection />
+        <CuisineShowcase />
+        <ExcellenceSection />
+        <SpecialServicesSection />
+        <TrendingOffersSection />
+        <LatestMemoriesSection />
+        <GalleryPreview />
+        <TestimonialSection />
+        <Footer />
+      </div>
+    </>
   );
 };
 
