@@ -7,10 +7,8 @@ interface WelcomeAnimationProps {
 }
 
 const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
-  if (!visible) return null;
-  
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="sync" onExitComplete={onComplete}>
       {visible && (
         <motion.div 
           className="fixed inset-0 bg-savoria-black flex items-center justify-center z-40"
@@ -18,7 +16,6 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          onAnimationComplete={onComplete}
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}

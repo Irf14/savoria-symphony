@@ -1,2 +1,48 @@
 
 /* Custom styling for the SAVORIA Symphony app */
+
+/* Gold gradient text effect */
+.gold-gradient-text {
+  background: linear-gradient(to right, #D4AF37, #F7DF8C, #996515);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Handle image loading */
+img {
+  transition: opacity 0.3s ease;
+}
+
+img[loading] {
+  opacity: 0.6;
+}
+
+/* Ensure smooth background transitions */
+.bg-image-transition {
+  transition: background-image 0.5s ease, opacity 0.5s ease;
+}
+
+/* Theme transitions */
+body {
+  transition: background-color 0.5s ease;
+}
+
+/* Smooth scrolling between sections */
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

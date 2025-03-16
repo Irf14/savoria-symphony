@@ -60,59 +60,57 @@ const TrendingOffersSection = () => {
         </div>
         
         <div className="max-w-5xl mx-auto relative">
-          <AnimatePresence mode="wait">
-            {offers.map((offer, index) => (
-              <motion.div
-                key={offer.id}
-                className={`relative overflow-hidden rounded-lg`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ 
-                  opacity: currentSlide === index ? 1 : 0,
-                  scale: currentSlide === index ? 1 : 0.95,
-                  display: currentSlide === index ? 'block' : 'none'
-                }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="aspect-w-16 aspect-h-9">
-                  <img 
-                    src={offer.image} 
-                    alt={offer.title} 
-                    className="w-full h-96 object-cover rounded-lg"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
-                </div>
+          {offers.map((offer, index) => (
+            <motion.div
+              key={offer.id}
+              className={`relative overflow-hidden rounded-lg`}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ 
+                opacity: currentSlide === index ? 1 : 0,
+                scale: currentSlide === index ? 1 : 0.95,
+                display: currentSlide === index ? 'block' : 'none'
+              }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="aspect-w-16 aspect-h-9">
+                <img 
+                  src={offer.image} 
+                  alt={offer.title} 
+                  className="w-full h-96 object-cover rounded-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
+              </div>
+              
+              <div className="absolute inset-0 flex flex-col justify-end p-8">
+                <motion.h3 
+                  className="font-playfair text-3xl text-white mb-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                  {offer.title}
+                </motion.h3>
+                <motion.p 
+                  className="text-gray-200 font-cormorant text-xl max-w-xl"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  {offer.description}
+                </motion.p>
                 
-                <div className="absolute inset-0 flex flex-col justify-end p-8">
-                  <motion.h3 
-                    className="font-playfair text-3xl text-white mb-3"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                  >
-                    {offer.title}
-                  </motion.h3>
-                  <motion.p 
-                    className="text-gray-200 font-cormorant text-xl max-w-xl"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                  >
-                    {offer.description}
-                  </motion.p>
-                  
-                  <motion.button 
-                    className="mt-6 w-fit px-6 py-2 bg-gold text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold-dark transition-colors"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                  >
-                    Learn More
-                  </motion.button>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                <motion.button 
+                  className="mt-6 w-fit px-6 py-2 bg-gold text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold-dark transition-colors"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                >
+                  Learn More
+                </motion.button>
+              </div>
+            </motion.div>
+          ))}
           
           {/* Slide indicators */}
           <div className="flex justify-center space-x-2 mt-6">
