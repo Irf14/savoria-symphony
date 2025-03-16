@@ -1,4 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
+
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface WelcomeAnimationProps {
   visible: boolean;
@@ -9,22 +10,20 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
   return (
     <AnimatePresence onExitComplete={onComplete}>
       {visible && (
-        <motion.div
+        <motion.div 
           className="fixed inset-0 bg-savoria-black flex items-center justify-center z-40"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }} // Reduced duration from 0.6 to 0.3
+          transition={{ duration: 1 }}
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
             className="text-center"
           >
-            <h1
-              className={`text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white gold-gradient-text`}
-            >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white">
               Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
             </h1>
             <p className="font-cormorant text-xl text-gray-300">

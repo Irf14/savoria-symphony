@@ -1,17 +1,18 @@
-import { useState, useEffect } from "react";
-import HeroSection from "@/components/HeroSection";
-import CuisineShowcase from "@/components/CuisineShowcase";
-import GalleryPreview from "@/components/GalleryPreview";
-import TestimonialSection from "@/components/TestimonialSection";
-import SpecialServicesSection from "@/components/SpecialServicesSection";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PopularDishesSection from "@/components/PopularDishesSection";
-import TrendingOffersSection from "@/components/TrendingOffersSection";
-import LatestMemoriesSection from "@/components/LatestMemoriesSection";
-import LoadingScreen from "@/components/LoadingScreen";
-import WelcomeAnimation from "@/components/WelcomeAnimation";
-import ExcellenceSection from "@/components/ExcellenceSection";
+
+import { useState, useEffect } from 'react';
+import HeroSection from '@/components/HeroSection';
+import CuisineShowcase from '@/components/CuisineShowcase';
+import GalleryPreview from '@/components/GalleryPreview';
+import TestimonialSection from '@/components/TestimonialSection';
+import SpecialServicesSection from '@/components/SpecialServicesSection';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import PopularDishesSection from '@/components/PopularDishesSection';
+import TrendingOffersSection from '@/components/TrendingOffersSection';
+import LatestMemoriesSection from '@/components/LatestMemoriesSection';
+import LoadingScreen from '@/components/LoadingScreen';
+import WelcomeAnimation from '@/components/WelcomeAnimation';
+import ExcellenceSection from '@/components/ExcellenceSection';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -21,43 +22,50 @@ const Index = () => {
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-
-    // Check if user has already seen the welcome animation
-    const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
-
-    if (!hasSeenWelcome) {
-      // Show welcome animation only for first-time visitors
-      setShowWelcome(true);
-      localStorage.setItem("hasSeenWelcome", "true");
-    } else {
-      // Skip welcome animation for returning visitors
-      setInitialized(true);
-    }
-
+    
     // Simulate loading
     const timer = setTimeout(() => {
       setLoading(false);
+      setShowWelcome(true);
     }, 2000);
-
+    
     return () => clearTimeout(timer);
   }, []);
 
   const handleLoadingComplete = () => {
+    console.log("Loading complete, showing welcome");
     setLoading(false);
+    setShowWelcome(true);
   };
 
   const handleWelcomeComplete = () => {
+    console.log("Welcome complete, showing main content");
     setShowWelcome(false);
     setInitialized(true);
   };
 
+  // Safeguard to ensure the page doesn't get stuck
+  useEffect(() => {
+    // Force transition to main content after 8 seconds if stuck
+    const forceTransition = setTimeout(() => {
+      if (!initialized) {
+        console.log("Force transitioning to main content");
+        setLoading(false);
+        setShowWelcome(false);
+        setInitialized(true);
+      }
+    }, 8000);
+    
+    return () => clearTimeout(forceTransition);
+  }, [initialized]);
+
   return (
     <>
       {loading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
-
-      {showWelcome && <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />}
-
-      <div className={`min-h-screen bg-savoria-black ${initialized ? "opacity-100" : "opacity-0"}`}>
+      
+      <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
+      
+      <div className={`min-h-screen bg-savoria-black ${initialized ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
         <HeroSection />
         <PopularDishesSection />
