@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
 import CuisineShowcase from '@/components/CuisineShowcase';
 import GalleryPreview from '@/components/GalleryPreview';
@@ -34,14 +33,31 @@ const Index = () => {
   }, []);
 
   const handleLoadingComplete = () => {
+    console.log("Loading complete, showing welcome");
     setLoading(false);
     setShowWelcome(true);
   };
 
   const handleWelcomeComplete = () => {
+    console.log("Welcome complete, showing main content");
     setShowWelcome(false);
     setInitialized(true);
   };
+
+  // Safeguard to ensure the page doesn't get stuck
+  useEffect(() => {
+    // Force transition to main content after 8 seconds if stuck
+    const forceTransition = setTimeout(() => {
+      if (!initialized) {
+        console.log("Force transitioning to main content");
+        setLoading(false);
+        setShowWelcome(false);
+        setInitialized(true);
+      }
+    }, 8000);
+    
+    return () => clearTimeout(forceTransition);
+  }, [initialized]);
 
   return (
     <>
@@ -49,7 +65,7 @@ const Index = () => {
       
       <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
       
-      <div className={`min-h-screen bg-savoria-black transition-opacity duration-700 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`min-h-screen bg-savoria-black ${initialized ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
         <HeroSection />
         <PopularDishesSection />

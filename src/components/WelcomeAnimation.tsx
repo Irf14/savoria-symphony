@@ -8,7 +8,7 @@ interface WelcomeAnimationProps {
 
 const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
   return (
-    <AnimatePresence mode="wait" onExitComplete={onComplete}>
+    <AnimatePresence onExitComplete={onComplete}>
       {visible && (
         <motion.div 
           className="fixed inset-0 bg-savoria-black flex items-center justify-center z-40"

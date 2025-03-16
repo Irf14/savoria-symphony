@@ -35,6 +35,27 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Add opacity transition to all components for smoother page transitions */
+.min-h-screen {
+  transition: opacity 0.7s ease;
+}
+
+/* Better visibility for heading text with shadow */
+.section-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Make sure images load properly */
+img {
+  object-fit: cover;
+  opacity: 1;
+}
+
 @keyframes shimmer {
   0% {
     background-position: 0% 50%;
@@ -45,4 +66,17 @@ html {
   100% {
     background-position: 0% 50%;
   }
+}
+
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+  }
+}
+
+.gold-pulse {
+  animation: pulse-gold 2s infinite;
 }

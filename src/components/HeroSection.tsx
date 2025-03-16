@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -54,55 +54,50 @@ const HeroSection = () => {
   return (
     <section className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden">
       {/* Background slideshow */}
-      <AnimatePresence mode="wait">
-        {slides.map((slide, index) => (
-          <motion.div 
-            key={`slide-bg-${index}`}
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ 
-              opacity: currentSlide === index ? 1 : 0,
-              zIndex: currentSlide === index ? 1 : 0
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            style={{
-              backgroundImage: `url(${slide.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          >
-            {/* Overlay for text readability */}
-            <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+      {slides.map((slide, index) => (
+        <motion.div 
+          key={`slide-bg-${index}`}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: currentSlide === index ? 1 : 0,
+            zIndex: currentSlide === index ? 1 : 0
+          }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          style={{
+            backgroundImage: `url(${slide.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          {/* Overlay for text readability */}
+          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        </motion.div>
+      ))}
       
       <div className="container mx-auto px-4 z-10 text-center relative">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`slide-content-${currentSlide}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col items-center"
-          >
-            <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
-              {slides[currentSlide].title === 'Indulge In The SAVORIA Experience' ? (
-                <>
-                  Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
-                </>
-              ) : (
-                slides[currentSlide].title
-              )}
-            </h1>
-            
-            <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
-              {slides[currentSlide].subtitle}
-            </p>
-          </motion.div>
-        </AnimatePresence>
+        <motion.div
+          key={`slide-content-${currentSlide}`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center"
+        >
+          <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
+            {slides[currentSlide].title === 'Indulge In The SAVORIA Experience' ? (
+              <>
+                Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
+              </>
+            ) : (
+              slides[currentSlide].title
+            )}
+          </h1>
+          
+          <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
+            {slides[currentSlide].subtitle}
+          </p>
+        </motion.div>
         
         <div className={cn(
           "transition-all duration-1000 transform mt-12",
