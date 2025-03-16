@@ -54,7 +54,7 @@ const HeroSection = () => {
   return (
     <section className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden">
       {/* Background slideshow */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {slides.map((slide, index) => (
           <motion.div 
             key={`slide-bg-${index}`}
@@ -91,7 +91,7 @@ const HeroSection = () => {
             <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
               {slides[currentSlide].title === 'Indulge In The SAVORIA Experience' ? (
                 <>
-                  Indulge In The <span className="gold-text">SAVORIA</span> Experience
+                  Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
                 </>
               ) : (
                 slides[currentSlide].title

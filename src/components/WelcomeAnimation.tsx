@@ -8,7 +8,7 @@ interface WelcomeAnimationProps {
 
 const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
   return (
-    <AnimatePresence mode="sync" onExitComplete={onComplete}>
+    <AnimatePresence mode="wait" onExitComplete={onComplete}>
       {visible && (
         <motion.div 
           className="fixed inset-0 bg-savoria-black flex items-center justify-center z-40"
@@ -24,7 +24,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
             className="text-center"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white">
-              Indulge In The <span className="bg-gold-gradient bg-clip-text text-transparent animate-gold-shimmer">SAVORIA</span> Experience
+              Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
             </h1>
             <p className="font-cormorant text-xl text-gray-300">
               Where culinary artistry meets exceptional hospitality
