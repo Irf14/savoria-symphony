@@ -16,7 +16,6 @@ import ExcellenceSection from '@/components/ExcellenceSection';
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
-  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -28,14 +27,16 @@ const Index = () => {
     if (!hasSeenWelcome) {
       // Show welcome animation only for first-time visitors
       setShowWelcome(true);
-      localStorage.setItem("hasSeenWelcome", "true");
     } else {
       // Skip welcome animation for returning visitors
-      setInitialized(true);
+      setLoading(false); // Proceed to content directly for returning users
     }
 
     // Simulate loading
     const timer = setTimeout(() => {
+      if (!hasSeenWelcome) {
+        localStorage.setItem("hasSeenWelcome", "true");
+      }
       setLoading(false);
     }, 2000);
 
@@ -48,7 +49,8 @@ const Index = () => {
 
   const handleWelcomeComplete = () => {
     setShowWelcome(false);
-    setInitialized(true);
+    // Once the animation completes, proceed to the page content
+    setLoading(false); // Ensures that page loads after animation completes
   };
 
   return (
@@ -57,7 +59,8 @@ const Index = () => {
 
       {showWelcome && <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />}
 
-      <div className={`min-h-screen bg-savoria-black ${initialized ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Once loading and welcome animation are complete, display the page content */}
+      <div className={`min-h-screen bg-savoria-black ${!loading ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
         <HeroSection />
         <PopularDishesSection />
