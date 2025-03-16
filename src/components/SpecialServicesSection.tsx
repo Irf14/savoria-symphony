@@ -14,7 +14,7 @@ const SpecialServicesSection = () => {
       capacity: '100 Person Meeting Hall',
       description: 'An elegant space for large gatherings, conferences, and celebrations.',
       icon: Users,
-      image: 'https://images.unsplash.com/photo-1562778612-e1e0cda9915c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80'
+      image: 'https://images.unsplash.com/photo-1697630240824-d46712423b39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     },
     {
       name: 'Euphoria',
