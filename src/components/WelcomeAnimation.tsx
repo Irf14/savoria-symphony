@@ -1,6 +1,5 @@
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
 
 interface WelcomeAnimationProps {
   visible: boolean;
@@ -8,26 +7,15 @@ interface WelcomeAnimationProps {
 }
 
 const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (visible) {
-      // Hide after 3 seconds (adjust as needed)
-      timer = setTimeout(() => {
-        onComplete();
-      }, 3000);
-    }
-    return () => clearTimeout(timer);
-  }, [visible, onComplete]);
-
   return (
     <AnimatePresence onExitComplete={onComplete}>
       {visible && (
-        <motion.div
+        <motion.div 
           className="fixed inset-0 bg-savoria-black flex items-center justify-center z-40"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.3 }}  // Reduced duration from 0.6 to 0.3
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -49,6 +37,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
 };
 
 export default WelcomeAnimation;
+
 
   );
 };
