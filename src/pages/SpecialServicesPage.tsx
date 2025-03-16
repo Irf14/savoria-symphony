@@ -105,8 +105,8 @@ const SpecialServicesPage = () => {
       id: "ambrosia",
       name: "Ambrosia",
       description: "Our signature 100-person hall, Ambrosia offers a sophisticated environment for corporate events, weddings, and grand celebrations. With state-of-the-art audio-visual capabilities and elegant décor, it's the perfect backdrop for your most important occasions.",
-      image: "https://images.unsplash.com/photo-1562778612-e1e0cda9915c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80",
-      backgroundImage: "https://images.unsplash.com/photo-1471967183320-ee018f6e114a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80",
+      image: "https://images.unsplash.com/photo-1697630240824-d46712423b39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      backgroundImage: "https://images.unsplash.com/photo-1697630240824-d46712423b39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       features: [
         { icon: Users, text: "Capacity for 100 guests" },
         { icon: Music, text: "Advanced sound system" },
