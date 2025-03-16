@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ChevronRight } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Mock data for menu items
 const menuData = {
@@ -147,30 +148,55 @@ const cuisineInfo = {
     description: 'Experience the harmonious blend of sweet, sour, salty, and spicy flavors that define authentic Thai cuisine.',
     image: 'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
     theme: 'theme-thai',
+    backgroundPatterns: [
+      'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
+      'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      'https://images.unsplash.com/photo-1559314809-0d155014e29e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    ]
   },
   chinese: {
     name: 'Chinese Cuisine',
     description: 'Discover the rich culinary traditions of China, where balance, color, and flavor create a harmonious dining experience.',
     image: 'https://images.unsplash.com/photo-1583032937544-8e7b179a5f23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80',
     theme: 'theme-chinese',
+    backgroundPatterns: [
+      'https://images.unsplash.com/photo-1583032937544-8e7b179a5f23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80',
+      'https://images.unsplash.com/photo-1582883496181-b2bd0a86dd1c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2029&q=80',
+    ]
   },
   indian: {
     name: 'Indian Cuisine',
     description: 'Indulge in the aromatic spices and diverse regional flavors that make Indian cuisine one of the most celebrated in the world.',
     image: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80',
     theme: 'theme-indian',
+    backgroundPatterns: [
+      'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80',
+      'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      'https://images.unsplash.com/photo-1589302168068-964664d93dc0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2487&q=80',
+    ]
   },
   bengali: {
     name: 'Bengali Cuisine',
     description: 'Savor the subtle yet complex flavors of Bengal, where seafood, rice, and mustard create a distinctive culinary identity.',
     image: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
     theme: 'theme-bengali',
+    backgroundPatterns: [
+      'https://images.unsplash.com/photo-1616299915952-04c803388e5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
+      'https://plus.unsplash.com/premium_photo-1663853051825-5db9554de1e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80',
+      'https://images.unsplash.com/photo-1689195806771-9c969b09f4ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    ]
   },
   continental: {
     name: 'Continental Cuisine',
     description: 'Experience the refined elegance of European culinary traditions, where technique and quality ingredients take center stage.',
     image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     theme: 'theme-continental',
+    backgroundPatterns: [
+      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      'https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      'https://images.unsplash.com/photo-1599021419847-d8a7a6aba5b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2178&q=80',
+    ]
   },
 };
 
@@ -179,10 +205,12 @@ const cuisineTypes = Object.keys(menuData) as Array<keyof typeof menuData>;
 const MenuPage = () => {
   const { cuisine = 'thai' } = useParams<{ cuisine: keyof typeof menuData }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [selectedCuisine, setSelectedCuisine] = useState<keyof typeof menuData>(
     cuisineTypes.includes(cuisine as keyof typeof menuData) ? cuisine as keyof typeof menuData : 'thai'
   );
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [backgroundPatternIndex, setBackgroundPatternIndex] = useState(0);
   
   useEffect(() => {
     if (cuisineTypes.includes(cuisine as keyof typeof menuData)) {
@@ -210,6 +238,17 @@ const MenuPage = () => {
       setActiveCategory(categories[0]);
     }
   }, [selectedCuisine, activeCategory]);
+  
+  useEffect(() => {
+    // Auto-advance background pattern for the selected cuisine theme
+    const bgInterval = setInterval(() => {
+      setBackgroundPatternIndex((prev) => 
+        (prev + 1) % cuisineInfo[selectedCuisine].backgroundPatterns.length
+      );
+    }, 7000);
+    
+    return () => clearInterval(bgInterval);
+  }, [selectedCuisine]);
   
   const handleCuisineChange = (cuisine: keyof typeof menuData) => {
     navigate(`/menu/${cuisine}`);
@@ -239,7 +278,28 @@ const MenuPage = () => {
     <div className={`min-h-screen ${currentCuisineInfo.theme}`}>
       <Navbar />
       
-      <section className="pt-24 pb-12 relative">
+      <AnimatePresence>
+        {currentCuisineInfo.backgroundPatterns.map((pattern, index) => (
+          <motion.div
+            key={`bg-pattern-${index}`}
+            className="fixed inset-0 z-0 bg-repeat"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: backgroundPatternIndex === index ? 0.05 : 0,
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5 }}
+            style={{
+              backgroundImage: `url(${pattern})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundAttachment: 'fixed',
+            }}
+          />
+        ))}
+      </AnimatePresence>
+      
+      <section className="pt-28 md:pt-24 pb-12 relative">
         <div 
           className="absolute inset-0 z-0 bg-black opacity-60"
           style={{
@@ -273,7 +333,7 @@ const MenuPage = () => {
         </div>
       </section>
       
-      <section className="py-12">
+      <section className="py-12 relative z-10">
         <div className="container mx-auto px-4">
           {/* Cuisine selector */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -312,30 +372,32 @@ const MenuPage = () => {
           </div>
           
           {/* Mobile category navigation - sidebar style */}
-          <div className="md:hidden fixed right-0 top-1/2 transform -translate-y-1/2 z-30">
-            <div className="bg-savoria-black/90 backdrop-blur-md rounded-l-md p-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => scrollToCategory(category)}
-                  className={cn(
-                    'block w-full text-left px-3 py-2 font-cormorant text-sm transition-colors rounded-sm my-1',
-                    activeCategory === category
-                      ? 'bg-gold text-savoria-black'
-                      : 'text-gold hover:bg-gold/10'
-                  )}
-                >
-                  <span className="flex items-center">
-                    <ChevronRight size={16} className="mr-1" />
-                    {category}
-                  </span>
-                </button>
-              ))}
+          {isMobile && (
+            <div className="md:hidden fixed right-0 top-1/2 transform -translate-y-1/2 z-30">
+              <div className="bg-savoria-black/90 backdrop-blur-md rounded-l-md p-2">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => scrollToCategory(category)}
+                    className={cn(
+                      'block w-full text-left px-3 py-2 font-cormorant text-sm transition-colors rounded-sm my-1',
+                      activeCategory === category
+                        ? 'bg-gold text-savoria-black'
+                        : 'text-gold hover:bg-gold/10'
+                    )}
+                  >
+                    <span className="flex items-center">
+                      <ChevronRight size={16} className="mr-1" />
+                      {category}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           
           {/* Menu items by category */}
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto relative z-10">
             {categories.map((category) => (
               <div 
                 key={category} 
@@ -347,7 +409,7 @@ const MenuPage = () => {
                 {menuByCategory[category].map((item, index) => (
                   <motion.div 
                     key={item.id}
-                    className="menu-item grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-md mb-6"
+                    className="menu-item grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-md mb-6 bg-savoria-black/60 backdrop-blur-sm"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}

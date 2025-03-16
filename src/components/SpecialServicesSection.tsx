@@ -1,5 +1,6 @@
 
-import { useState, useEffect } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Users, Music, Shield } from 'lucide-react';
 

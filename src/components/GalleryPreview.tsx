@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -42,20 +42,27 @@ const GalleryPreview = () => {
   return (
     <section className="py-24 relative overflow-hidden theme-gallery">
       {/* Background slideshow */}
-      {images.map((image, index) => (
-        <div 
-          key={`bg-${index}`}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            backgroundIndex === index ? 'opacity-15' : 'opacity-0'
-          }`}
-          style={{
-            backgroundImage: `url(${image.src})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'brightness(0.2) blur(8px)',
-          }}
-        />
-      ))}
+      <AnimatePresence>
+        {images.map((image, index) => (
+          <motion.div 
+            key={`bg-${index}`}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: backgroundIndex === index ? 0.15 : 0,
+              zIndex: backgroundIndex === index ? 1 : 0
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            style={{
+              backgroundImage: `url(${image.src})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.2) blur(8px)',
+            }}
+          />
+        ))}
+      </AnimatePresence>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
