@@ -14,7 +14,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}  // Reduced duration from 0.6 to 0.3
+          transition={{ duration: 0.3 }} // Reduced duration from 0.6 to 0.3
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -22,7 +22,9 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
             transition={{ delay: 0.2, duration: 0.4 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white">
+            <h1
+              className={`text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white gold-gradient-text`}
+            >
               Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
             </h1>
             <p className="font-cormorant text-xl text-gray-300">
