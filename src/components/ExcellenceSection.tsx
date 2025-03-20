@@ -32,7 +32,7 @@ const ExcellenceSection = () => {
           </h2>
           
           <p className="text-gray-300 max-w-3xl mx-auto font-cormorant text-xl mb-12">
-            At Savoria, we blend artistry with hospitality to create memorable experiences that transcend ordinary dining.
+            At <span className="gold-gradient-text">SAVORIA</span>, we blend artistry with hospitality to create memorable experiences that transcend ordinary dining.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 mb-16">
@@ -57,15 +57,15 @@ const ExcellenceSection = () => {
           
           <div className="mt-8 text-center">
             <h3 className="font-playfair text-2xl md:text-3xl text-white mb-4">
-              Prepare to Your <span className="text-transparent bg-clip-text bg-gold-gradient animate-gold-shimmer">Extraordinary</span> Experience
+              Prepare for Your <span className="gold-gradient-text">Extraordinary</span> Experience
             </h3>
             <p className="text-gray-300 max-w-2xl mx-auto font-cormorant text-lg mb-8">
-              Secure your table at Savoria and embark on a culinary journey that transcends the ordinary. 
+              Secure your table at <span className="gold-gradient-text">SAVORIA</span> and embark on a culinary journey that transcends the ordinary. 
               Our reservation process is designed to ensure your experience is seamless from start to finish.
             </p>
             
             <Link 
-              to="/reservations" 
+              to="/reservation" 
               className="px-8 py-3 bg-gold text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold-dark transition-colors inline-block"
             >
               Make Reservation

@@ -79,10 +79,10 @@ const PopularDishesSection = () => {
   ];
 
   useEffect(() => {
-    // Auto-switch between week and month every 5 seconds
+    // Auto-switch between week and month every 10 seconds (increased from 5)
     const interval = setInterval(() => {
       setTimeframe((prev) => (prev === 'week' ? 'month' : 'week'));
-    }, 5000);
+    }, 10000);
     
     return () => clearInterval(interval);
   }, []);

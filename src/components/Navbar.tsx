@@ -10,6 +10,11 @@ const Navbar = () => {
   const location = useLocation();
 
   const toggleMenu = () => setIsOpen(!isOpen);
+  
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +33,7 @@ const Navbar = () => {
     { name: 'Home', path: '/' },
     { name: 'Menu', path: '/menu' },
     { name: 'Gallery', path: '/gallery' },
+    { name: 'Special Venues', path: '/special-services' },
     { name: 'Reservation', path: '/reservation' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -41,7 +47,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="text-gold font-playfair text-3xl font-bold tracking-wider">
-          SAVORIA
+          <span className="gold-gradient-text">SAVORIA</span>
         </Link>
         
         {/* Desktop Navigation */}
@@ -66,10 +72,10 @@ const Navbar = () => {
         </button>
       </div>
       
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Fixed position with overflow handling */}
       <div
         className={cn(
-          'fixed inset-0 bg-savoria-black/95 z-40 flex flex-col items-center justify-center space-y-8 transition-transform duration-300 md:hidden',
+          'fixed inset-0 bg-savoria-black/95 z-40 flex flex-col items-center justify-center space-y-8 transition-transform duration-300 md:hidden overflow-auto',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
