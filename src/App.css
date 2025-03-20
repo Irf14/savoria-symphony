@@ -3,12 +3,18 @@
 
 /* Gold gradient text effect */
 .gold-gradient-text {
-  background: linear-gradient(to right, #D4AF37, #F7DF8C, #996515);
-  background-size: 200% auto;
+  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #996515);
+  background-size: 300% 300%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 3s linear infinite;
+  animation: goldenFlow 3s infinite linear;
+}
+
+@keyframes goldenFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Handle image loading */

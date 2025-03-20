@@ -11,17 +11,18 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
     <AnimatePresence onExitComplete={onComplete}>
       {visible && (
         <motion.div 
-          className="fixed inset-0 bg-savoria-black flex items-center justify-center z-40"
+          className="fixed inset-0 flex items-center justify-center z-40"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}  // Reduced duration from 0.6 to 0.3
+          transition={{ duration: 0.3 }}
         >
+          <div className="absolute inset-0 bg-gradient-to-b from-savoria-black/80 to-savoria-black/40 backdrop-blur-sm"></div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
-            className="text-center"
+            className="text-center relative z-10"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white">
               Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience

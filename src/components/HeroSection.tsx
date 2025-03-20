@@ -17,12 +17,12 @@ const HeroSection = () => {
     },
     {
       image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
-      title: 'Memorable Gatherings',
+      title: 'Memorable Gatherings at SAVORIA',
       subtitle: 'Create unforgettable moments with friends and family in our elegant spaces'
     },
     {
       image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      title: 'Culinary Excellence',
+      title: 'SAVORIA Culinary Excellence',
       subtitle: 'Meticulously crafted dishes by our master chefs using the finest ingredients'
     }
   ];
@@ -85,9 +85,14 @@ const HeroSection = () => {
           className="flex flex-col items-center"
         >
           <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
-            {slides[currentSlide].title === 'Indulge In The SAVORIA Experience' ? (
+            {slides[currentSlide].title.includes('SAVORIA') ? (
               <>
-                Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
+                {slides[currentSlide].title.split('SAVORIA').map((part, i, array) => (
+                  <span key={i}>
+                    {i > 0 && <span className="gold-gradient-text">SAVORIA</span>}
+                    {part}
+                  </span>
+                ))}
               </>
             ) : (
               slides[currentSlide].title

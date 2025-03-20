@@ -27,7 +27,7 @@ const Index = () => {
     const timer = setTimeout(() => {
       setLoading(false);
       setShowWelcome(true);
-    }, 2000);
+    }, 1500); // Reduced from 2000 to make it faster
     
     return () => clearTimeout(timer);
   }, []);
@@ -46,7 +46,7 @@ const Index = () => {
 
   // Safeguard to ensure the page doesn't get stuck
   useEffect(() => {
-    // Force transition to main content after 8 seconds if stuck
+    // Force transition to main content after 5 seconds if stuck (reduced from 8)
     const forceTransition = setTimeout(() => {
       if (!initialized) {
         console.log("Force transitioning to main content");
@@ -54,7 +54,7 @@ const Index = () => {
         setShowWelcome(false);
         setInitialized(true);
       }
-    }, 8000);
+    }, 5000);
     
     return () => clearTimeout(forceTransition);
   }, [initialized]);
@@ -65,7 +65,7 @@ const Index = () => {
       
       <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
       
-      <div className={`min-h-screen bg-savoria-black ${initialized ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`min-h-screen transition-opacity duration-700 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
         <HeroSection />
         <PopularDishesSection />
