@@ -15,21 +15,35 @@ import WelcomeAnimation from '@/components/WelcomeAnimation';
 import ExcellenceSection from '@/components/ExcellenceSection';
 
 const Index = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [initialized, setInitialized] = useState(false);
-
+  
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setLoading(false);
-      setShowWelcome(true);
-    }, 1500); // Reduced from 2000 to make it faster
+    // Check if this is the first visit
+    const isFirstVisit = sessionStorage.getItem('visited') !== 'true';
     
-    return () => clearTimeout(timer);
+    if (isFirstVisit) {
+      // First visit, show loading screen and welcome animation
+      setLoading(true);
+      sessionStorage.setItem('visited', 'true');
+      
+      // Simulate loading
+      const timer = setTimeout(() => {
+        setLoading(false);
+        setShowWelcome(true);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // Not first visit, skip animations
+      setLoading(false);
+      setShowWelcome(false);
+      setInitialized(true);
+    }
   }, []);
 
   const handleLoadingComplete = () => {
@@ -63,7 +77,7 @@ const Index = () => {
     <>
       {loading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       
-      <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
+      {showWelcome && <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />}
       
       <div className={`min-h-screen transition-opacity duration-700 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
