@@ -1,5 +1,5 @@
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "framer-motion";
 
 interface WelcomeAnimationProps {
   visible: boolean;
@@ -15,12 +15,12 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.3 }}  // Reduced duration from 0.6 to 0.3
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
             className="text-center"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-2 text-white">
