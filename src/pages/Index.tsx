@@ -15,7 +15,7 @@ import WelcomeAnimation from '@/components/WelcomeAnimation';
 import ExcellenceSection from '@/components/ExcellenceSection';
 
 const Index = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
   const [initialized, setInitialized] = useState(false);
   
@@ -30,14 +30,6 @@ const Index = () => {
       // First visit, show loading screen and welcome animation
       setLoading(true);
       localStorage.setItem('visited', 'true');
-      
-      // Simulate loading
-      const timer = setTimeout(() => {
-        setLoading(false);
-        setShowWelcome(true);
-      }, 1500);
-      
-      return () => clearTimeout(timer);
     } else {
       // Not first visit, skip animations
       setLoading(false);
