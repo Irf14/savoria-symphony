@@ -9,6 +9,7 @@ import MenuPage from "./pages/MenuPage";
 import GalleryPage from "./pages/GalleryPage";
 import ContactPage from "./pages/ContactPage";
 import SpecialServicesPage from "./pages/SpecialServicesPage";
+import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
 
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/menu/:cuisine" element={<MenuPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/reservation" element={<ReservationPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/special-services" element={<SpecialServicesPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

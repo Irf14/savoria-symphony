@@ -24,12 +24,12 @@ const Index = () => {
     window.scrollTo(0, 0);
     
     // Check if this is the first visit
-    const isFirstVisit = sessionStorage.getItem('visited') !== 'true';
+    const isFirstVisit = localStorage.getItem('visited') !== 'true';
     
     if (isFirstVisit) {
       // First visit, show loading screen and welcome animation
       setLoading(true);
-      sessionStorage.setItem('visited', 'true');
+      localStorage.setItem('visited', 'true');
       
       // Simulate loading
       const timer = setTimeout(() => {

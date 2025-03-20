@@ -51,6 +51,19 @@ const HeroSection = () => {
     }
   };
 
+  const renderTitleWithGoldGradient = (title) => {
+    if (!title.includes('SAVORIA')) return title;
+    
+    const parts = title.split('SAVORIA');
+    return (
+      <>
+        {parts[0]}
+        <span className="gold-gradient-text">SAVORIA</span>
+        {parts[1]}
+      </>
+    );
+  };
+
   return (
     <section className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden">
       {/* Background slideshow */}
@@ -85,18 +98,7 @@ const HeroSection = () => {
           className="flex flex-col items-center"
         >
           <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
-            {slides[currentSlide].title.includes('SAVORIA') ? (
-              <>
-                {slides[currentSlide].title.split('SAVORIA').map((part, i, array) => (
-                  <span key={i}>
-                    {i > 0 && <span className="gold-gradient-text">SAVORIA</span>}
-                    {part}
-                  </span>
-                ))}
-              </>
-            ) : (
-              slides[currentSlide].title
-            )}
+            {renderTitleWithGoldGradient(slides[currentSlide].title)}
           </h1>
           
           <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
@@ -116,10 +118,10 @@ const HeroSection = () => {
               Explore Menu
             </Link>
             <Link 
-              to="/gallery" 
+              to="/reservation" 
               className="px-8 py-3 bg-transparent border border-gold text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors"
             >
-              View Gallery
+              Reserve Table
             </Link>
           </div>
         </div>
