@@ -19,7 +19,7 @@
 
 /* Handle image loading */
 img {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease;
 }
 
 img[loading] {
@@ -28,7 +28,7 @@ img[loading] {
 
 /* Ensure smooth background transitions */
 .bg-image-transition {
-  transition: background-image 0.8s ease, opacity 0.8s ease;
+  transition: background-image 1.2s ease, opacity 1.2s ease;
 }
 
 /* Theme transitions */
@@ -63,42 +63,40 @@ img {
   opacity: 1;
 }
 
-/* Section transitions - ensures smooth flow between sections */
+/* Enhanced section transitions - ensures smooth flow between sections */
 section {
   position: relative;
   z-index: 1;
   overflow: hidden;
+  margin-top: -2px; /* Fix gap between sections */
+  transition: background-image 0.8s ease; /* Smooth transition for background changes */
 }
 
-/* Improved section transitions with overlapping effect */
-section {
-  position: relative;
-  z-index: 1;
-  margin-top: -2px;  /* Fix gap between sections */
-}
-
+/* Improved gradient transitions between sections */
 section::before {
   content: '';
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 0;
   right: 0;
-  height: 100px;
+  height: 160px;
   background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9), transparent);
   z-index: 1;
   pointer-events: none;
+  opacity: 0.7;
 }
 
 section::after {
   content: '';
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
   left: 0;
   right: 0;
-  height: 100px;
+  height: 160px;
   background: linear-gradient(to top, rgba(10, 10, 10, 0.9), transparent);
   z-index: 1;
   pointer-events: none;
+  opacity: 0.7;
 }
 
 /* Special section transitions */
@@ -161,19 +159,18 @@ section::after {
   animation: gold-shimmer 3s infinite linear;
 }
 
-/* Aspect ratio utility for videos and images */
-.aspect-w-16 {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
-  height: 0;
+/* Background transition effect for cuisine cards */
+.cuisine-bg-transition {
+  transition: opacity 0.8s ease, background-image 0.8s ease;
 }
 
-.aspect-w-16 > * {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+/* Enhance cuisine-card hover effects */
+.cuisine-card::before {
+  transition: background-color 0.5s ease, opacity 0.5s ease;
+}
+
+.cuisine-card:hover::before {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 /* Glass effect for menu items */
@@ -183,6 +180,12 @@ section::after {
   -webkit-backdrop-filter: blur(8px);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 /* Mobile touch enhancements */
@@ -195,6 +198,12 @@ section::after {
   .cuisine-card-info {
     opacity: 1;
     transform: translateY(0);
+  }
+  
+  /* Optimize gradients for mobile */
+  section::before,
+  section::after {
+    height: 100px;
   }
 }
 

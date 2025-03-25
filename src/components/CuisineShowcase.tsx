@@ -14,10 +14,12 @@ interface CuisineCardProps {
     gradient: string;
     path: string;
   };
+  onHover: () => void;
+  isHovered: boolean;
 }
 
-const CuisineCard = ({ cuisine }: CuisineCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
+  const [isCardHovered, setIsCardHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   
   useEffect(() => {
@@ -33,14 +35,22 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
     <Link 
       to={cuisine.path}
       className="cuisine-card group h-80 block rounded-lg relative overflow-hidden"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={() => setIsHovered(true)}
-      onTouchEnd={() => setTimeout(() => setIsHovered(false), 1000)}
+      onMouseEnter={() => {
+        setIsCardHovered(true);
+        onHover();
+      }}
+      onMouseLeave={() => {
+        setIsCardHovered(false);
+      }}
+      onTouchStart={() => {
+        setIsCardHovered(true);
+        onHover();
+      }}
+      onTouchEnd={() => setTimeout(() => setIsCardHovered(false), 1000)}
     >
       <motion.div 
         className="absolute inset-0 z-0"
-        animate={{ scale: isHovered ? 1.05 : 1 }}
+        animate={{ scale: isCardHovered ? 1.05 : 1 }}
         transition={{ duration: 0.6 }}
         style={{
           backgroundImage: `url(${cuisine.image})`,
@@ -60,9 +70,9 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
         <motion.div
           initial={{ height: "0px", opacity: 0 }}
           animate={{ 
-            height: isHovered || isMobile ? "auto" : "0px", 
-            opacity: isHovered || isMobile ? 1 : 0,
-            marginBottom: isHovered || isMobile ? "0.75rem" : "0"
+            height: isCardHovered || isMobile ? "auto" : "0px", 
+            opacity: isCardHovered || isMobile ? 1 : 0,
+            marginBottom: isCardHovered || isMobile ? "0.75rem" : "0"
           }}
           transition={{ duration: 0.3 }}
           className="overflow-hidden"
@@ -75,7 +85,7 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
         {!isMobile && (
           <motion.p 
             className="font-cormorant text-gray-200 mb-4"
-            animate={{ opacity: isHovered ? 0 : 1 }}
+            animate={{ opacity: isCardHovered ? 0 : 1 }}
           >
             {cuisine.shortDescription}
           </motion.p>
@@ -83,7 +93,7 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
         
         <motion.div 
           className="w-12 h-0.5 bg-gold"
-          animate={{ width: isHovered ? "5rem" : "3rem" }}
+          animate={{ width: isCardHovered ? "5rem" : "3rem" }}
           transition={{ duration: 0.3 }}
         />
       </div>
@@ -93,6 +103,8 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
 
 const CuisineShowcase = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [activeBackground, setActiveBackground] = useState('default');
+  const [activeIndex, setActiveIndex] = useState(-1);
   
   const cuisines = [
     {
@@ -103,6 +115,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-thai',
       gradient: 'bg-thai-gradient',
       path: '/menu/thai',
+      background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
     {
       name: 'Chinese Cuisine',
@@ -112,6 +125,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-chinese',
       gradient: 'bg-chinese-gradient',
       path: '/menu/chinese',
+      background: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
     {
       name: 'Indian Cuisine',
@@ -121,6 +135,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-indian',
       gradient: 'bg-indian-gradient',
       path: '/menu/indian',
+      background: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2036&q=80'
     },
     {
       name: 'Bengali Cuisine',
@@ -130,6 +145,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-bengali',
       gradient: 'bg-bengali-gradient',
       path: '/menu/bengali',
+      background: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80'
     },
     {
       name: 'Continental Cuisine',
@@ -139,6 +155,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-continental',
       gradient: 'bg-continental-gradient',
       path: '/menu/continental',
+      background: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
   ];
 
@@ -154,23 +171,57 @@ const CuisineShowcase = () => {
         });
       });
       
-      await Promise.all(imagePromises);
+      // Also preload background images
+      const backgroundPromises = cuisines.map(cuisine => {
+        return new Promise<void>((resolve) => {
+          const img = new Image();
+          img.src = cuisine.background;
+          img.onload = () => resolve();
+          img.onerror = () => resolve(); // Still resolve on error
+        });
+      });
+      
+      await Promise.all([...imagePromises, ...backgroundPromises]);
       setImagesLoaded(true);
     };
     
     preloadImages();
+    
+    // Auto-switch background for mobile
+    if (window.innerWidth < 768) {
+      let currentIndex = 0;
+      const interval = setInterval(() => {
+        setActiveIndex(currentIndex);
+        currentIndex = (currentIndex + 1) % cuisines.length;
+      }, 3000);
+      
+      return () => clearInterval(interval);
+    }
   }, []);
+
+  // Default food-related background 
+  const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80';
+
+  // Set the current background based on activeBackground
+  const currentBackground = activeIndex >= 0 ? cuisines[activeIndex].background : defaultBackground;
+
+  const handleCuisineHover = (index: number) => {
+    setActiveIndex(index);
+  };
 
   return (
     <section id="about" className="py-24 relative overflow-hidden bg-gradient-to-b from-savoria-black to-savoria-dark">
-      {/* Background with subtle food pattern */}
-      <div 
-        className="absolute inset-0 z-0 opacity-10"
+      {/* Dynamic cuisine background with fade transition */}
+      <motion.div 
+        className="absolute inset-0 z-0 transition-opacity duration-1000"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.15 }}
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')`,
+          backgroundImage: `url(${currentBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.15) blur(2px)',
+          filter: 'brightness(0.3)',
+          transition: 'background-image 0.5s ease-in-out'
         }}
       />
       
@@ -200,7 +251,11 @@ const CuisineShowcase = () => {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 viewport={{ once: true }}
               >
-                <CuisineCard cuisine={cuisine} />
+                <CuisineCard 
+                  cuisine={cuisine} 
+                  onHover={() => handleCuisineHover(index)}
+                  isHovered={activeIndex === index}
+                />
               </motion.div>
             ))}
           </div>
@@ -214,6 +269,9 @@ const CuisineShowcase = () => {
         <div className="image-preloader">
           {cuisines.map((cuisine, index) => (
             <img key={index} src={cuisine.image} alt="" />
+          ))}
+          {cuisines.map((cuisine, index) => (
+            <img key={`bg-${index}`} src={cuisine.background} alt="" />
           ))}
         </div>
       </div>

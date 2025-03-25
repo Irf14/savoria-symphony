@@ -27,7 +27,7 @@ const cuisines = {
     gradient: 'bg-chinese-gradient',
     categoryBackgrounds: {
       appetizers: 'https://images.unsplash.com/photo-1541529086526-db283c563270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      mainCourse: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2115&q=80',
       desserts: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2327&q=80'
     }
   },
@@ -182,49 +182,68 @@ const MenuPage = () => {
     navigate(`/menu/${newCuisine}`);
   };
   
-  // Preload all images for current cuisine on initial load
+  // Enhanced preloading strategy for all images
   useEffect(() => {
     const preloadAllImages = async () => {
+      // Start with loading = false but don't immediately reset background
       setLoaded(false);
-      setBackgroundLoaded(false);
       
-      // Preload the main background and all category backgrounds
-      const imagesToPreload = [
+      // We'll keep the previous background until the new one is ready
+      // This creates a smoother transition
+      
+      // Create a list of all images to preload
+      const allBackgrounds = [
         currentCuisine.background,
-        ...Object.values(currentCuisine.categoryBackgrounds)
+        currentCuisine.categoryBackgrounds.appetizers,
+        currentCuisine.categoryBackgrounds.mainCourse,
+        currentCuisine.categoryBackgrounds.desserts
       ];
       
-      // Create a new object to track which images have been loaded
-      const newPreloadedStatus: Record<string, boolean> = {};
+      // Sort the background images so the active category loads first
+      const sortedBackgrounds = [
+        currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds],
+        ...allBackgrounds.filter(bg => 
+          bg !== currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds]
+        )
+      ];
       
-      // Preload all images for the current cuisine
-      const preloadPromises = imagesToPreload.map(src => {
-        return new Promise<void>(resolve => {
-          const img = new Image();
-          img.src = src;
-          img.onload = () => {
-            newPreloadedStatus[src] = true;
-            resolve();
-          };
-          img.onerror = () => {
-            console.error(`Failed to load image: ${src}`);
-            resolve(); // Still resolve to avoid hanging
-          };
-        });
+      // First, attempt to load the active category background immediately
+      const priorityImage = new Image();
+      priorityImage.src = sortedBackgrounds[0];
+      
+      // Set up tracking for which images have loaded
+      const newPreloadedStatus: Record<string, boolean> = {...preloadedImages};
+      
+      // Load the primary image first
+      await new Promise<void>(resolve => {
+        priorityImage.onload = () => {
+          newPreloadedStatus[sortedBackgrounds[0]] = true;
+          setBackgroundLoaded(true);
+          resolve();
+        };
+        priorityImage.onerror = () => {
+          console.error(`Failed to load priority image: ${sortedBackgrounds[0]}`);
+          resolve();
+        };
+        
+        // If image takes too long, continue anyway
+        setTimeout(resolve, 1000);
       });
       
-      // Wait for all images to be preloaded
-      await Promise.all(preloadPromises);
+      // Then preload all other images in the background
+      const remainingImages = sortedBackgrounds.slice(1);
+      remainingImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          newPreloadedStatus[src] = true;
+          setPreloadedImages({...newPreloadedStatus});
+        };
+      });
       
-      // Update the state with preloaded images status
-      setPreloadedImages(newPreloadedStatus);
+      // Mark the page as loaded so content can display
       setLoaded(true);
-      
-      // Set the specific category background as loaded
-      const currentBg = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds];
-      if (newPreloadedStatus[currentBg]) {
-        setBackgroundLoaded(true);
-      }
+      setPreloadedImages(newPreloadedStatus);
     };
     
     // Reset category when cuisine changes
@@ -239,19 +258,31 @@ const MenuPage = () => {
     if (loaded) {
       const currentBg = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds];
       
-      // If this image was already preloaded, set backgroundLoaded immediately
-      if (preloadedImages[currentBg]) {
-        setBackgroundLoaded(true);
-      } else {
-        // If not yet preloaded, try to load it now
-        setBackgroundLoaded(false);
-        const img = new Image();
-        img.src = currentBg;
-        img.onload = () => {
+      // Temporarily set backgroundLoaded to false to trigger a fade transition
+      setBackgroundLoaded(false);
+      
+      // Small timeout before loading new background for smoother transition
+      setTimeout(() => {
+        // If this image was already preloaded, set backgroundLoaded immediately
+        if (preloadedImages[currentBg]) {
           setBackgroundLoaded(true);
-          setPreloadedImages(prev => ({ ...prev, [currentBg]: true }));
-        };
-      }
+        } else {
+          // If not yet preloaded, try to load it now
+          const img = new Image();
+          img.src = currentBg;
+          img.onload = () => {
+            setBackgroundLoaded(true);
+            setPreloadedImages(prev => ({ ...prev, [currentBg]: true }));
+          };
+          
+          // If loading takes too long, show anyway after 1 second
+          setTimeout(() => {
+            if (!backgroundLoaded) {
+              setBackgroundLoaded(true);
+            }
+          }, 1000);
+        }
+      }, 200);
     }
   }, [activeCategory, loaded, currentCuisine]);
   
@@ -331,7 +362,7 @@ const MenuPage = () => {
       
       {/* Main category background with animation */}
       <AnimatePresence mode="wait">
-        {backgroundLoaded && (
+        {(backgroundLoaded || loaded) && (
           <motion.div 
             key={`${validCuisine}-${activeCategory}`}
             initial={{ opacity: 0 }}
@@ -348,6 +379,13 @@ const MenuPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* If no background has loaded yet, show a temporary loader */}
+      {!backgroundLoaded && !loaded && (
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-savoria-black bg-opacity-90">
+          <div className="w-16 h-16 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       
       <div className="relative z-10">
         <Navbar />
@@ -422,22 +460,3 @@ const MenuPage = () => {
                 className="space-y-6"
               >
                 {loaded ? (
-                  menuItems[activeCategory as keyof typeof menuItems].map((item: any) => renderMenuItem(item))
-                ) : (
-                  // Loading state
-                  <div className="flex justify-center items-center h-60">
-                    <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </main>
-        
-        <Footer />
-      </div>
-    </div>
-  );
-};
-
-export default MenuPage;
