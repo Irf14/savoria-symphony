@@ -18,14 +18,14 @@ const SpecialServicesSection = () => {
     },
     {
       name: 'Euphoria',
-      capacity: '50 Person Hall',
+      capacity: '40-50 Person Hall',
       description: 'A versatile space perfect for medium-sized events and business meetings.',
       icon: Music,
       image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2798&q=80'
     },
     {
       name: 'Majestic',
-      capacity: '20 Person Priority Room',
+      capacity: '18-20 Person Priority Room',
       description: 'An intimate setting for exclusive gatherings and private dining experiences.',
       icon: Shield,
       image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'

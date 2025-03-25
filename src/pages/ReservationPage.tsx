@@ -13,6 +13,7 @@ import { CalendarIcon, Clock, Users, Phone, Mail, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const ReservationPage = () => {
   const [date, setDate] = useState<Date>();
@@ -58,10 +59,21 @@ const ReservationPage = () => {
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen pt-24 bg-savoria-black">
-        <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen relative">
+      {/* Elegant background with texture overlay */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center" 
+        style={{ 
+          backgroundImage: "url('https://images.unsplash.com/photo-1532452119098-a3650b3c46d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')",
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-savoria-black/90 via-savoria-black/70 to-savoria-black/80"></div>
+      </div>
+      
+      <div className="relative z-10">
+        <Navbar />
+        <div className="pt-24 container mx-auto px-4 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -82,7 +94,7 @@ const ReservationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-savoria-dark/80 border border-gold/20 rounded-lg p-6 md:p-8 shadow-xl backdrop-blur-sm"
+              className="bg-savoria-dark/40 backdrop-blur-md border border-gold/20 rounded-lg p-6 md:p-8 shadow-xl"
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -237,7 +249,7 @@ const ReservationPage = () => {
                 <div className="text-center pt-4">
                   <Button 
                     type="submit" 
-                    className="px-8 py-6 bg-gold hover:bg-gold-dark text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm transition-colors"
+                    className="px-8 py-6 bg-gold hover:bg-gold/90 text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm transition-colors shadow-gold/20 shadow-lg"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Confirming Reservation..." : "Confirm Reservation"}
@@ -252,7 +264,7 @@ const ReservationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-savoria-dark/30 border border-gold/10 rounded-lg p-6 text-center"
+              className="bg-savoria-dark/30 backdrop-blur-sm border border-gold/10 rounded-lg p-6 text-center"
             >
               <h3 className="font-playfair text-2xl font-bold mb-3 text-gold">Opening Hours</h3>
               <div className="font-cormorant text-lg">
@@ -266,7 +278,7 @@ const ReservationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="bg-savoria-dark/30 border border-gold/10 rounded-lg p-6 text-center"
+              className="bg-savoria-dark/30 backdrop-blur-sm border border-gold/10 rounded-lg p-6 text-center"
             >
               <h3 className="font-playfair text-2xl font-bold mb-3 text-gold">Dress Code</h3>
               <p className="font-cormorant text-lg">
@@ -278,7 +290,7 @@ const ReservationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="bg-savoria-dark/30 border border-gold/10 rounded-lg p-6 text-center"
+              className="bg-savoria-dark/30 backdrop-blur-sm border border-gold/10 rounded-lg p-6 text-center"
             >
               <h3 className="font-playfair text-2xl font-bold mb-3 text-gold">Large Parties</h3>
               <p className="font-cormorant text-lg">
@@ -287,9 +299,9 @@ const ReservationPage = () => {
             </motion.div>
           </div>
         </div>
+        <Footer />
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

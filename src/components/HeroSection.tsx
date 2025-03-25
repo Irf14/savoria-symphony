@@ -20,7 +20,7 @@ const HeroSection = () => {
     {
       image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       title: 'Exclusive Venues by SAVORIA',
-      subtitle: 'Discover our three magnificent venues—Sapphire Hall, Emerald Room, and Ruby Lounge—each perfect for your special celebrations',
+      subtitle: 'Discover our three magnificent venues—Ambrosia (100 persons), Euphoria (40-50 persons), and Majestic (18-20 persons priority room)—each perfect for your special celebrations',
       buttonText: 'View Venues',
       buttonLink: '/special-services'
     },

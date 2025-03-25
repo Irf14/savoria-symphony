@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,6 +13,11 @@ const cuisines = {
     intro: 'Experience the vibrant flavors of Thailand with our authentic dishes crafted with traditional herbs and spices.',
     color: 'theme-thai',
     gradient: 'bg-thai-gradient',
+    categoryBackgrounds: {
+      appetizers: 'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1562167125-ce4c0ec88433?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+      desserts: 'https://images.unsplash.com/photo-1561295089-95d8eb3503fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80'
+    }
   },
   chinese: {
     name: 'Chinese',
@@ -21,6 +25,11 @@ const cuisines = {
     intro: 'Discover the rich culinary heritage of China through our carefully selected dishes representing various regions.',
     color: 'theme-chinese',
     gradient: 'bg-chinese-gradient',
+    categoryBackgrounds: {
+      appetizers: 'https://images.unsplash.com/photo-1541696490-8744a5dc0228?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+      desserts: 'https://images.unsplash.com/photo-1505253716362-afbd238a3fea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+    }
   },
   indian: {
     name: 'Indian',
@@ -28,6 +37,11 @@ const cuisines = {
     intro: 'Indulge in the aromatic spices and complex flavors of India with our authentic recipes passed down through generations.',
     color: 'theme-indian',
     gradient: 'bg-indian-gradient',
+    categoryBackgrounds: {
+      appetizers: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2036&q=80',
+      desserts: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+    }
   },
   bengali: {
     name: 'Bengali',
@@ -35,6 +49,11 @@ const cuisines = {
     intro: 'Sample the subtle yet distinctive flavors of Bengal, where seafood, rice, and mustard come together in perfect harmony.',
     color: 'theme-bengali',
     gradient: 'bg-bengali-gradient',
+    categoryBackgrounds: {
+      appetizers: 'https://images.unsplash.com/photo-1626100134642-dcb2165f315b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1631452180775-b9e3ba03eafa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      desserts: 'https://images.unsplash.com/photo-1589227365533-c092a871e862?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+    }
   },
   continental: {
     name: 'Continental',
@@ -42,6 +61,11 @@ const cuisines = {
     intro: 'Enjoy the refined flavors of Europe with our selection of classic Continental dishes prepared with a modern twist.',
     color: 'theme-continental',
     gradient: 'bg-continental-gradient',
+    categoryBackgrounds: {
+      appetizers: 'https://images.unsplash.com/photo-1541529086526-db283c563270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+      desserts: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80'
+    }
   },
 };
 
@@ -175,6 +199,9 @@ const MenuPage = () => {
   const prevCuisine = cuisineKeys[(currentIndex - 1 + cuisineKeys.length) % cuisineKeys.length];
   const nextCuisine = cuisineKeys[(currentIndex + 1) % cuisineKeys.length];
   
+  // Get current background based on cuisine and active category
+  const currentBackground = currentCuisine.categoryBackgrounds[activeCategory] || currentCuisine.background;
+  
   // Render a single menu item
   const renderMenuItem = (item: any) => (
     <motion.div 
@@ -226,11 +253,11 @@ const MenuPage = () => {
   
   return (
     <div className={`min-h-screen ${currentCuisine.color}`}>
-      {/* Full-width background image with overlay */}
+      {/* Cuisine background image with overlay */}
       <div 
-        className="fixed inset-0 bg-cover bg-center z-0"
+        className="fixed inset-0 bg-cover bg-center z-0 transition-all duration-1000"
         style={{ 
-          backgroundImage: `url(${currentCuisine.background})`,
+          backgroundImage: `url(${currentBackground})`,
           backgroundAttachment: 'fixed',
         }}
       >

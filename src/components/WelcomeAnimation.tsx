@@ -20,7 +20,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           <div 
             className="absolute inset-0 bg-gradient-to-b from-savoria-black/90 to-savoria-black/70"
             style={{
-              backgroundImage: 'url("https://images.unsplash.com/photo-1543353071-10c8ba85a904?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
+              backgroundImage: 'url("https://images.unsplash.com/photo-1514516345957-556ca7c90a34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundBlendMode: 'overlay',
@@ -33,7 +33,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
             className="text-center relative z-10 px-4"
           >
             <div className="mb-4 inline-block">
-              <span className="bg-white/10 backdrop-blur-sm px-6 py-2 rounded-md shadow-lg">
+              <span className="bg-black/40 backdrop-blur-sm px-6 py-2 rounded-md shadow-lg">
                 <motion.span
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
