@@ -12,28 +12,41 @@ const HeroSection = () => {
   const slides = [
     {
       image: 'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      title: 'Extraordinary Dining at SAVORIA',
-      subtitle: 'Embark on a culinary journey through authentic flavors from around the world'
+      title: 'Luxury Fine-Dining at SAVORIA',
+      subtitle: 'Experience the pinnacle of culinary craftsmanship in our elegant dining space, where every detail is perfected for your enjoyment',
+      buttonText: 'Explore Menu',
+      buttonLink: '/menu'
     },
     {
-      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
-      title: 'Memorable Gatherings at SAVORIA',
-      subtitle: 'Create unforgettable moments with friends and family in our elegant spaces'
+      image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      title: 'Exclusive Venues by SAVORIA',
+      subtitle: 'Discover our three magnificent venues—Sapphire Hall, Emerald Room, and Ruby Lounge—each perfect for your special celebrations',
+      buttonText: 'View Venues',
+      buttonLink: '/special-services'
     },
     {
-      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      title: 'SAVORIA Culinary Excellence',
-      subtitle: 'Meticulously crafted dishes by our master chefs using the finest ingredients'
+      image: 'https://images.unsplash.com/photo-1515669097368-22e68427d265?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      title: 'Global Cuisines at SAVORIA',
+      subtitle: 'Embark on a global culinary journey with our five exquisite cuisines: Thai, Chinese, Indian, Bengali, and Continental',
+      buttonText: 'View Cuisines',
+      buttonLink: '/menu'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      title: 'SAVORIA Hospitality Excellence',
+      subtitle: 'Immerse yourself in unparalleled service where our passion for hospitality creates memories that last a lifetime',
+      buttonText: 'Reserve Now',
+      buttonLink: '/reservation'
     }
   ];
 
   useEffect(() => {
     setLoaded(true);
     
-    // Auto-advance slideshow
+    // Auto-advance slideshow with longer duration
     const slideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 8000); // 8 seconds per slide
     
     return () => clearInterval(slideInterval);
   }, [slides.length]);
@@ -83,8 +96,8 @@ const HeroSection = () => {
             backgroundPosition: 'center',
           }}
         >
-          {/* Overlay for text readability */}
-          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+          {/* Overlay for text readability with more modern gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40"></div>
         </motion.div>
       ))}
       
@@ -97,44 +110,51 @@ const HeroSection = () => {
           transition={{ duration: 0.8 }}
           className="flex flex-col items-center"
         >
+          {/* Subtitle label for context */}
+          <motion.span 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="bg-gold/20 backdrop-blur-sm px-4 py-1 rounded-sm text-white/90 font-cormorant text-lg mb-4 inline-block"
+          >
+            {currentSlide === 0 ? "Fine Dining Experience" : 
+             currentSlide === 1 ? "Private Event Spaces" :
+             currentSlide === 2 ? "Culinary Diversity" : "Service Excellence"}
+          </motion.span>
+          
           <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
             {renderTitleWithGoldGradient(slides[currentSlide].title)}
           </h1>
           
-          <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
+          <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10">
             {slides[currentSlide].subtitle}
           </p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <Link 
+              to={slides[currentSlide].buttonLink}
+              className="px-8 py-3 bg-gold/90 text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold transition-colors shadow-lg"
+            >
+              {slides[currentSlide].buttonText}
+            </Link>
+          </motion.div>
         </motion.div>
-        
-        <div className={cn(
-          "transition-all duration-1000 transform mt-12",
-          loaded ? "opacity-100" : "opacity-0"
-        )}>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link 
-              to="/menu/thai" 
-              className="px-8 py-3 bg-gold text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold-dark transition-colors"
-            >
-              Explore Menu
-            </Link>
-            <Link 
-              to="/reservation" 
-              className="px-8 py-3 bg-transparent border border-gold text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors"
-            >
-              Reserve Table
-            </Link>
-          </div>
-        </div>
       </div>
       
-      {/* Slideshow indicators */}
+      {/* Modern slide indicators with pulse animation */}
       <div className="absolute bottom-28 left-0 right-0 z-10 flex justify-center gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-all ${
-              currentSlide === index ? 'bg-gold w-6' : 'bg-white/30'
+              currentSlide === index 
+                ? 'bg-gold w-10 gold-pulse' 
+                : 'bg-white/30 hover:bg-white/50'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

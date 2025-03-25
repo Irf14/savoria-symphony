@@ -30,6 +30,9 @@ const Index = () => {
       // First visit, show loading screen and welcome animation
       setLoading(true);
       localStorage.setItem('visited', 'true');
+      
+      // We'll let the LoadingScreen component handle its own timing
+      // and call handleLoadingComplete when it's done
     } else {
       // Not first visit, skip animations
       setLoading(false);
@@ -52,7 +55,7 @@ const Index = () => {
 
   // Safeguard to ensure the page doesn't get stuck
   useEffect(() => {
-    // Force transition to main content after 5 seconds if stuck (reduced from 8)
+    // Force transition to main content after 7 seconds if stuck
     const forceTransition = setTimeout(() => {
       if (!initialized) {
         console.log("Force transitioning to main content");
@@ -60,7 +63,7 @@ const Index = () => {
         setShowWelcome(false);
         setInitialized(true);
       }
-    }, 5000);
+    }, 7000);
     
     return () => clearTimeout(forceTransition);
   }, [initialized]);
