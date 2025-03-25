@@ -62,6 +62,42 @@ img {
   opacity: 1;
 }
 
+/* Section transitions - ensures smooth flow between sections */
+section {
+  position: relative;
+  z-index: 1;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, rgba(10, 10, 10, 0.8));
+  z-index: 0;
+  pointer-events: none;
+}
+
+section::after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, transparent, rgba(10, 10, 10, 0.8));
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Special section transitions */
+.hero-section + section::before {
+  display: none; /* No gradient on first section */
+}
+
+/* Animations */
 @keyframes shimmer {
   0% {
     background-position: 0% 50%;
@@ -85,4 +121,36 @@ img {
 
 .gold-pulse {
   animation: pulse-gold 2s infinite;
+}
+
+/* Aspect ratio utility for videos and images */
+.aspect-w-16 {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+}
+
+.aspect-w-16 > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Glass effect for menu items */
+.glass-card {
+  background: rgba(15, 15, 15, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile touch enhancements */
+@media (max-width: 768px) {
+  .cuisine-card:active .cuisine-card-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

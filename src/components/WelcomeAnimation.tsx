@@ -18,14 +18,15 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           transition={{ duration: 0.3 }}
         >
           <div 
-            className="absolute inset-0 bg-gradient-to-b from-savoria-black/90 to-savoria-black/70"
+            className="absolute inset-0"
             style={{
-              backgroundImage: 'url("https://images.unsplash.com/photo-1514516345957-556ca7c90a34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
+              backgroundImage: 'url("https://images.unsplash.com/photo-1546549095-5d8b15b8ad41?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3087&q=80")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundBlendMode: 'overlay',
             }}
-          ></div>
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/90 to-black/85"></div>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

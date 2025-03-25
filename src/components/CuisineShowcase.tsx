@@ -25,6 +25,8 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
       className="cuisine-card group h-80 block rounded-lg relative overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={() => setIsHovered(true)}
+      onTouchEnd={() => setTimeout(() => setIsHovered(false), 1000)}
     >
       <motion.div 
         className="absolute inset-0 z-0"
@@ -127,15 +129,15 @@ const CuisineShowcase = () => {
   ];
 
   return (
-    <section id="about" className="py-24 relative overflow-hidden">
+    <section id="about" className="py-24 relative overflow-hidden bg-gradient-to-b from-savoria-black to-savoria-dark">
       {/* Background with subtle food pattern */}
       <div 
-        className="absolute inset-0"
+        className="absolute inset-0 z-0 opacity-10"
         style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.15) blur(3px)',
+          filter: 'brightness(0.15) blur(2px)',
         }}
       />
       
@@ -147,7 +149,9 @@ const CuisineShowcase = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h2 className="section-heading">Our Culinary Journey</h2>
+          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4 text-white">
+            Our Culinary <span className="gold-gradient-text">Journey</span>
+          </h2>
           <p className="text-gray-300 max-w-3xl mx-auto font-cormorant text-xl mt-4">
             Discover our diverse culinary heritage spanning five distinct cuisines, each prepared with passion and precision.
           </p>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,8 +27,8 @@ const cuisines = {
     color: 'theme-chinese',
     gradient: 'bg-chinese-gradient',
     categoryBackgrounds: {
-      appetizers: 'https://images.unsplash.com/photo-1541696490-8744a5dc0228?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      mainCourse: 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+      appetizers: 'https://images.unsplash.com/photo-1541529086526-db283c563270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
       desserts: 'https://images.unsplash.com/photo-1505253716362-afbd238a3fea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     }
   },
@@ -163,6 +164,7 @@ const MenuPage = () => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('appetizers');
   const [loaded, setLoaded] = useState(false);
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   
   // Validate cuisine parameter
   const validCuisine = cuisine && cuisine in cuisines ? cuisine : 'thai';
@@ -183,6 +185,7 @@ const MenuPage = () => {
   useEffect(() => {
     // Simulate page loading
     setLoaded(false);
+    setBackgroundLoaded(false);
     const timer = setTimeout(() => {
       setLoaded(true);
     }, 500);
@@ -190,8 +193,21 @@ const MenuPage = () => {
     // Reset category when cuisine changes
     setActiveCategory('appetizers');
     
+    // Preload the current background image
+    const img = new Image();
+    img.src = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds] || currentCuisine.background;
+    img.onload = () => setBackgroundLoaded(true);
+    
     return () => clearTimeout(timer);
   }, [cuisine]);
+  
+  // Handle category background change
+  useEffect(() => {
+    setBackgroundLoaded(false);
+    const img = new Image();
+    img.src = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds] || currentCuisine.background;
+    img.onload = () => setBackgroundLoaded(true);
+  }, [activeCategory, currentCuisine]);
   
   // Get next and previous cuisines for navigation
   const cuisineKeys = Object.keys(cuisines);
@@ -200,7 +216,7 @@ const MenuPage = () => {
   const nextCuisine = cuisineKeys[(currentIndex + 1) % cuisineKeys.length];
   
   // Get current background based on cuisine and active category
-  const currentBackground = currentCuisine.categoryBackgrounds[activeCategory] || currentCuisine.background;
+  const currentBackground = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds] || currentCuisine.background;
   
   // Render a single menu item
   const renderMenuItem = (item: any) => (
@@ -209,7 +225,7 @@ const MenuPage = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="menu-item p-6 bg-savoria-black bg-opacity-80 rounded-lg"
+      className="menu-item p-6 bg-savoria-black bg-opacity-80 backdrop-blur-sm rounded-lg"
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div className="flex-1">
@@ -254,15 +270,22 @@ const MenuPage = () => {
   return (
     <div className={`min-h-screen ${currentCuisine.color}`}>
       {/* Cuisine background image with overlay */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center z-0 transition-all duration-1000"
-        style={{ 
-          backgroundImage: `url(${currentBackground})`,
-          backgroundAttachment: 'fixed',
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-70"></div>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={`${validCuisine}-${activeCategory}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: backgroundLoaded ? 1 : 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="fixed inset-0 bg-cover bg-center z-0"
+          style={{ 
+            backgroundImage: `url(${currentBackground})`,
+            backgroundAttachment: 'fixed',
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+        </motion.div>
+      </AnimatePresence>
       
       <div className="relative z-10">
         <Navbar />
@@ -273,6 +296,7 @@ const MenuPage = () => {
             <button 
               onClick={() => handleCuisineChange(prevCuisine)}
               className="text-gold hover:text-white transition-colors"
+              aria-label="Previous cuisine"
             >
               <ChevronLeft size={32} />
             </button>
@@ -289,6 +313,7 @@ const MenuPage = () => {
             <button 
               onClick={() => handleCuisineChange(nextCuisine)}
               className="text-gold hover:text-white transition-colors"
+              aria-label="Next cuisine"
             >
               <ChevronRight size={32} />
             </button>
@@ -306,7 +331,7 @@ const MenuPage = () => {
           
           {/* Category navigation */}
           <div className="flex justify-center mb-12">
-            <div className="inline-flex bg-savoria-black bg-opacity-60 rounded-lg p-1.5">
+            <div className="inline-flex bg-savoria-black bg-opacity-60 backdrop-blur-md rounded-lg p-1.5">
               {categories.map((category) => (
                 <button
                   key={category.id}

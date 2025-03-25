@@ -13,6 +13,7 @@ import LatestMemoriesSection from '@/components/LatestMemoriesSection';
 import LoadingScreen from '@/components/LoadingScreen';
 import WelcomeAnimation from '@/components/WelcomeAnimation';
 import ExcellenceSection from '@/components/ExcellenceSection';
+import AmbientVideo from '@/components/AmbientVideo';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -80,6 +81,7 @@ const Index = () => {
         <PopularDishesSection />
         <CuisineShowcase />
         <ExcellenceSection />
+        <AmbientVideo />
         <SpecialServicesSection />
         <TrendingOffersSection />
         <LatestMemoriesSection />
