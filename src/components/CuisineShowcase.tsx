@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,16 @@ interface CuisineCardProps {
 
 const CuisineCard = ({ cuisine }: CuisineCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   return (
     <Link 
@@ -50,9 +60,9 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
         <motion.div
           initial={{ height: "0px", opacity: 0 }}
           animate={{ 
-            height: isHovered ? "auto" : "0px", 
-            opacity: isHovered ? 1 : 0,
-            marginBottom: isHovered ? "0.75rem" : "0"
+            height: isHovered || isMobile ? "auto" : "0px", 
+            opacity: isHovered || isMobile ? 1 : 0,
+            marginBottom: isHovered || isMobile ? "0.75rem" : "0"
           }}
           transition={{ duration: 0.3 }}
           className="overflow-hidden"
@@ -62,12 +72,14 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
           </p>
         </motion.div>
         
-        <motion.p 
-          className="font-cormorant text-gray-200 mb-4"
-          animate={{ opacity: isHovered ? 0 : 1 }}
-        >
-          {cuisine.shortDescription}
-        </motion.p>
+        {!isMobile && (
+          <motion.p 
+            className="font-cormorant text-gray-200 mb-4"
+            animate={{ opacity: isHovered ? 0 : 1 }}
+          >
+            {cuisine.shortDescription}
+          </motion.p>
+        )}
         
         <motion.div 
           className="w-12 h-0.5 bg-gold"
@@ -80,6 +92,8 @@ const CuisineCard = ({ cuisine }: CuisineCardProps) => {
 };
 
 const CuisineShowcase = () => {
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  
   const cuisines = [
     {
       name: 'Thai Cuisine',
@@ -128,6 +142,25 @@ const CuisineShowcase = () => {
     },
   ];
 
+  useEffect(() => {
+    // Preload all cuisine images
+    const preloadImages = async () => {
+      const imagePromises = cuisines.map(cuisine => {
+        return new Promise<void>((resolve) => {
+          const img = new Image();
+          img.src = cuisine.image;
+          img.onload = () => resolve();
+          img.onerror = () => resolve(); // Still resolve on error
+        });
+      });
+      
+      await Promise.all(imagePromises);
+      setImagesLoaded(true);
+    };
+    
+    preloadImages();
+  }, []);
+
   return (
     <section id="about" className="py-24 relative overflow-hidden bg-gradient-to-b from-savoria-black to-savoria-dark">
       {/* Background with subtle food pattern */}
@@ -157,17 +190,30 @@ const CuisineShowcase = () => {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {imagesLoaded ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cuisines.map((cuisine, index) => (
+              <motion.div
+                key={cuisine.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <CuisineCard cuisine={cuisine} />
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-60">
+            <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+        
+        {/* Hidden preloader for cuisine images */}
+        <div className="image-preloader">
           {cuisines.map((cuisine, index) => (
-            <motion.div
-              key={cuisine.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <CuisineCard cuisine={cuisine} />
-            </motion.div>
+            <img key={index} src={cuisine.image} alt="" />
           ))}
         </div>
       </div>

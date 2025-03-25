@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,8 +27,8 @@ const cuisines = {
     gradient: 'bg-chinese-gradient',
     categoryBackgrounds: {
       appetizers: 'https://images.unsplash.com/photo-1541529086526-db283c563270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      mainCourse: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
-      desserts: 'https://images.unsplash.com/photo-1505253716362-afbd238a3fea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+      mainCourse: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      desserts: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2327&q=80'
     }
   },
   indian: {
@@ -51,8 +50,8 @@ const cuisines = {
     color: 'theme-bengali',
     gradient: 'bg-bengali-gradient',
     categoryBackgrounds: {
-      appetizers: 'https://images.unsplash.com/photo-1626100134642-dcb2165f315b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      mainCourse: 'https://images.unsplash.com/photo-1631452180775-b9e3ba03eafa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      appetizers: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
+      mainCourse: 'https://images.unsplash.com/photo-1589538539809-8531b89c6b78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
       desserts: 'https://images.unsplash.com/photo-1589227365533-c092a871e862?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     }
   },
@@ -63,7 +62,7 @@ const cuisines = {
     color: 'theme-continental',
     gradient: 'bg-continental-gradient',
     categoryBackgrounds: {
-      appetizers: 'https://images.unsplash.com/photo-1541529086526-db283c563270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      appetizers: 'https://images.unsplash.com/photo-1626200419199-391ae4be7a9c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       mainCourse: 'https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
       desserts: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80'
     }
@@ -165,6 +164,7 @@ const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState('appetizers');
   const [loaded, setLoaded] = useState(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+  const [preloadedImages, setPreloadedImages] = useState<Record<string, boolean>>({});
   
   // Validate cuisine parameter
   const validCuisine = cuisine && cuisine in cuisines ? cuisine : 'thai';
@@ -182,32 +182,78 @@ const MenuPage = () => {
     navigate(`/menu/${newCuisine}`);
   };
   
+  // Preload all images for current cuisine on initial load
   useEffect(() => {
-    // Simulate page loading
-    setLoaded(false);
-    setBackgroundLoaded(false);
-    const timer = setTimeout(() => {
+    const preloadAllImages = async () => {
+      setLoaded(false);
+      setBackgroundLoaded(false);
+      
+      // Preload the main background and all category backgrounds
+      const imagesToPreload = [
+        currentCuisine.background,
+        ...Object.values(currentCuisine.categoryBackgrounds)
+      ];
+      
+      // Create a new object to track which images have been loaded
+      const newPreloadedStatus: Record<string, boolean> = {};
+      
+      // Preload all images for the current cuisine
+      const preloadPromises = imagesToPreload.map(src => {
+        return new Promise<void>(resolve => {
+          const img = new Image();
+          img.src = src;
+          img.onload = () => {
+            newPreloadedStatus[src] = true;
+            resolve();
+          };
+          img.onerror = () => {
+            console.error(`Failed to load image: ${src}`);
+            resolve(); // Still resolve to avoid hanging
+          };
+        });
+      });
+      
+      // Wait for all images to be preloaded
+      await Promise.all(preloadPromises);
+      
+      // Update the state with preloaded images status
+      setPreloadedImages(newPreloadedStatus);
       setLoaded(true);
-    }, 500);
+      
+      // Set the specific category background as loaded
+      const currentBg = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds];
+      if (newPreloadedStatus[currentBg]) {
+        setBackgroundLoaded(true);
+      }
+    };
     
     // Reset category when cuisine changes
     setActiveCategory('appetizers');
     
-    // Preload the current background image
-    const img = new Image();
-    img.src = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds] || currentCuisine.background;
-    img.onload = () => setBackgroundLoaded(true);
-    
-    return () => clearTimeout(timer);
+    // Start preloading
+    preloadAllImages();
   }, [cuisine]);
   
-  // Handle category background change
+  // Update background when category changes
   useEffect(() => {
-    setBackgroundLoaded(false);
-    const img = new Image();
-    img.src = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds] || currentCuisine.background;
-    img.onload = () => setBackgroundLoaded(true);
-  }, [activeCategory, currentCuisine]);
+    if (loaded) {
+      const currentBg = currentCuisine.categoryBackgrounds[activeCategory as keyof typeof currentCuisine.categoryBackgrounds];
+      
+      // If this image was already preloaded, set backgroundLoaded immediately
+      if (preloadedImages[currentBg]) {
+        setBackgroundLoaded(true);
+      } else {
+        // If not yet preloaded, try to load it now
+        setBackgroundLoaded(false);
+        const img = new Image();
+        img.src = currentBg;
+        img.onload = () => {
+          setBackgroundLoaded(true);
+          setPreloadedImages(prev => ({ ...prev, [currentBg]: true }));
+        };
+      }
+    }
+  }, [activeCategory, loaded, currentCuisine]);
   
   // Get next and previous cuisines for navigation
   const cuisineKeys = Object.keys(cuisines);
@@ -269,22 +315,38 @@ const MenuPage = () => {
   
   return (
     <div className={`min-h-screen ${currentCuisine.color}`}>
-      {/* Cuisine background image with overlay */}
+      {/* Fallback background to ensure something is always visible */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{ 
+          backgroundImage: `url(${currentCuisine.background})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          opacity: 0.5
+        }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-80"></div>
+      </div>
+      
+      {/* Main category background with animation */}
       <AnimatePresence mode="wait">
-        <motion.div 
-          key={`${validCuisine}-${activeCategory}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: backgroundLoaded ? 1 : 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="fixed inset-0 bg-cover bg-center z-0"
-          style={{ 
-            backgroundImage: `url(${currentBackground})`,
-            backgroundAttachment: 'fixed',
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-70"></div>
-        </motion.div>
+        {backgroundLoaded && (
+          <motion.div 
+            key={`${validCuisine}-${activeCategory}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7 }}
+            className="fixed inset-0 bg-cover bg-center z-0"
+            style={{ 
+              backgroundImage: `url(${currentBackground})`,
+              backgroundAttachment: 'fixed',
+            }}
+          >
+            <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+          </motion.div>
+        )}
       </AnimatePresence>
       
       <div className="relative z-10">
@@ -359,7 +421,14 @@ const MenuPage = () => {
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
               >
-                {menuItems[activeCategory as keyof typeof menuItems].map((item: any) => renderMenuItem(item))}
+                {loaded ? (
+                  menuItems[activeCategory as keyof typeof menuItems].map((item: any) => renderMenuItem(item))
+                ) : (
+                  // Loading state
+                  <div className="flex justify-center items-center h-60">
+                    <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>

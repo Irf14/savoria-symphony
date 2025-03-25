@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -6,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const LatestMemoriesSection = () => {
   const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   
   const backgroundImages = [
     'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
@@ -15,12 +15,26 @@ const LatestMemoriesSection = () => {
   ];
 
   useEffect(() => {
-    // Auto-advance background slideshow
-    const bgInterval = setInterval(() => {
-      setBackgroundIndex((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
+    // Preload all background images
+    const imagePromises = backgroundImages.map(src => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = resolve;
+        img.onerror = resolve; // Still resolve even on error to avoid hanging
+      });
+    });
     
-    return () => clearInterval(bgInterval);
+    Promise.all(imagePromises).then(() => {
+      setImagesLoaded(true);
+      
+      // Auto-advance background slideshow
+      const bgInterval = setInterval(() => {
+        setBackgroundIndex((prev) => (prev + 1) % backgroundImages.length);
+      }, 5000);
+      
+      return () => clearInterval(bgInterval);
+    });
   }, [backgroundImages.length]);
 
   const memories = [
@@ -46,14 +60,14 @@ const LatestMemoriesSection = () => {
       id: 4,
       title: 'Wine Tasting Event',
       description: 'Exploring premium vintages from around the world',
-      image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     },
   ];
 
   return (
     <section className="py-20 bg-savoria-dark relative overflow-hidden">
       {/* Background slideshow */}
-      {backgroundImages.map((image, index) => (
+      {imagesLoaded && backgroundImages.map((image, index) => (
         <div 
           key={`bg-${index}`}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
@@ -67,6 +81,18 @@ const LatestMemoriesSection = () => {
           }}
         />
       ))}
+      
+      {/* Backup background in case images don't load */}
+      <div 
+        className="absolute inset-0 bg-savoria-black"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.15,
+          filter: 'brightness(0.3) blur(3px)',
+        }}
+      />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
@@ -84,6 +110,7 @@ const LatestMemoriesSection = () => {
               <TabsTrigger value="dining" className="text-white data-[state=active]:text-gold">Dining</TabsTrigger>
             </TabsList>
           </div>
+          
           
           <TabsContent value="all">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

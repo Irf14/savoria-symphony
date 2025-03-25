@@ -28,12 +28,13 @@ img[loading] {
 
 /* Ensure smooth background transitions */
 .bg-image-transition {
-  transition: background-image 0.5s ease, opacity 0.5s ease;
+  transition: background-image 0.8s ease, opacity 0.8s ease;
 }
 
 /* Theme transitions */
 body {
   transition: background-color 0.5s ease;
+  background-color: #0a0a0a;
 }
 
 /* Smooth scrolling between sections */
@@ -66,35 +67,56 @@ img {
 section {
   position: relative;
   z-index: 1;
+  overflow: hidden;
+}
+
+/* Improved section transitions with overlapping effect */
+section {
+  position: relative;
+  z-index: 1;
+  margin-top: -2px;  /* Fix gap between sections */
 }
 
 section::before {
   content: '';
   position: absolute;
-  top: -50px;
+  top: 0px;
   left: 0;
   right: 0;
   height: 100px;
-  background: linear-gradient(to bottom, transparent, rgba(10, 10, 10, 0.8));
-  z-index: 0;
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9), transparent);
+  z-index: 1;
   pointer-events: none;
 }
 
 section::after {
   content: '';
   position: absolute;
-  bottom: -50px;
+  bottom: 0px;
   left: 0;
   right: 0;
   height: 100px;
-  background: linear-gradient(to top, transparent, rgba(10, 10, 10, 0.8));
-  z-index: 0;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.9), transparent);
+  z-index: 1;
   pointer-events: none;
 }
 
 /* Special section transitions */
-.hero-section + section::before {
-  display: none; /* No gradient on first section */
+.hero-section, .footer-section {
+  margin-top: 0;
+}
+
+.hero-section::before,
+.footer-section::after {
+  display: none; /* No gradient on first and last sections */
+}
+
+/* Fixed background */
+.fixed-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* Animations */
@@ -121,6 +143,22 @@ section::after {
 
 .gold-pulse {
   animation: pulse-gold 2s infinite;
+}
+
+/* Common animation for background shimmer */
+@keyframes gold-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gold-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
+  background-size: 200% 100%;
+  animation: gold-shimmer 3s infinite linear;
 }
 
 /* Aspect ratio utility for videos and images */
@@ -152,5 +190,34 @@ section::after {
   .cuisine-card:active .cuisine-card-info {
     opacity: 1;
     transform: translateY(0);
+  }
+  
+  .cuisine-card-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Image preload utility - hide from view but load for caching */
+.image-preloader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion) {
+  .gold-gradient-text, 
+  .gold-pulse, 
+  .animate-gold-shimmer {
+    animation: none;
+  }
+  
+  * {
+    transition-duration: 0.1s !important;
+    animation-duration: 0.1s !important;
   }
 }
