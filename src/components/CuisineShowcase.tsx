@@ -60,7 +60,7 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
       />
       
       <div className={cn(
-        "absolute inset-0 opacity-70 transition-opacity duration-500 z-10",
+        "absolute inset-0 opacity-60 transition-opacity duration-500 z-10",
         cuisine.gradient
       )} />
       
@@ -125,7 +125,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-chinese',
       gradient: 'bg-chinese-gradient',
       path: '/menu/chinese',
-      background: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+      background: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
     {
       name: 'Indian Cuisine',
@@ -145,7 +145,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-bengali',
       gradient: 'bg-bengali-gradient',
       path: '/menu/bengali',
-      background: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80'
+      background: 'https://images.unsplash.com/photo-1626804475297-41608ea09da1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80'
     },
     {
       name: 'Continental Cuisine',
@@ -213,17 +213,24 @@ const CuisineShowcase = () => {
     <section id="about" className="py-24 relative overflow-hidden bg-gradient-to-b from-savoria-black to-savoria-dark">
       {/* Dynamic cuisine background with fade transition */}
       <motion.div 
-        className="absolute inset-0 z-0 transition-opacity duration-1000"
+        className="absolute inset-0 z-0 transition-opacity duration-700"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.15 }}
+        animate={{ opacity: 0.3 }}
+        transition={{
+          type: "tween",
+          ease: "easeInOut"
+        }}
         style={{
           backgroundImage: `url(${currentBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.3)',
-          transition: 'background-image 0.5s ease-in-out'
+          filter: 'brightness(0.7)',
+          transition: 'background-image 0.7s ease-in-out'
         }}
       />
+      
+      {/* Glassy overlay for better section flow */}
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] z-1"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 

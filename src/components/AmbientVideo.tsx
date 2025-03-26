@@ -30,11 +30,11 @@ const AmbientVideo = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          {/* Increased size by removing aspect ratio constraint */}
+          {/* Further increased height for a more immersive video experience */}
           <div className="w-full">
             <iframe
-              className="w-full h-[60vh] md:h-[70vh]" 
-              src="https://www.youtube.com/embed/nV1w7XQYgPY?autoplay=1&mute=1&loop=1&playlist=nV1w7XQYgPY"
+              className="w-full h-[70vh] md:h-[80vh]" 
+              src="https://www.youtube.com/embed/nV1w7XQYgPY?autoplay=1&mute=1&loop=1&playlist=nV1w7XQYgPY&controls=0&showinfo=0&rel=0"
               title="SAVORIA Restaurant Ambient Video"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -42,14 +42,14 @@ const AmbientVideo = () => {
             />
           </div>
 
-          {/* Subtle gradient overlay for aesthetics, not blocking the video */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent pointer-events-none" />
+          {/* Very subtle gradient overlay for aesthetics, not blocking the video */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent pointer-events-none" />
           
-          {/* Reserve Table button positioned at the bottom instead of over the video */}
-          <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+          {/* Reserve Table button moved to bottom center with reduced opacity until hover */}
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center">
             <Link 
               to="/reservation" 
-              className="px-8 py-3 bg-gold/90 hover:bg-gold text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm transition-colors shadow-lg"
+              className="px-8 py-3 bg-gold/80 hover:bg-gold text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm transition-all duration-300 shadow-lg hover:scale-105"
             >
               Reserve Your Table
             </Link>

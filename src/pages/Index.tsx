@@ -24,18 +24,18 @@ const Index = () => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
-    // Check if this is the first visit
-    const isFirstVisit = localStorage.getItem('visited') !== 'true';
+    // Check if this is the first visit in this session
+    const isFirstVisitInSession = sessionStorage.getItem('visited') !== 'true';
     
-    if (isFirstVisit) {
-      // First visit, show loading screen and welcome animation
+    if (isFirstVisitInSession) {
+      // First visit in this session, show loading screen and welcome animation
       setLoading(true);
-      localStorage.setItem('visited', 'true');
+      sessionStorage.setItem('visited', 'true');
       
       // We'll let the LoadingScreen component handle its own timing
       // and call handleLoadingComplete when it's done
     } else {
-      // Not first visit, skip animations
+      // Not first visit in this session, skip animations
       setLoading(false);
       setShowWelcome(false);
       setInitialized(true);

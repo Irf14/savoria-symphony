@@ -20,7 +20,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           <div 
             className="absolute inset-0"
             style={{
-              backgroundImage: 'url("https://images.unsplash.com/photo-1611599537845-1c7aca0091c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80")',
+              backgroundImage: 'url("https://images.unsplash.com/photo-1611599537845-1c7aca0091c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -46,7 +46,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-4 text-white drop-shadow-lg">
-              Indulge In The <span className="gold-gradient-text">SAVORIA</span> Experience
+              <span className="gold-gradient-text">SAVORIA</span> Experience
             </h1>
             <p className="font-cormorant text-xl text-gray-200 mb-6 max-w-2xl mx-auto">
               Where culinary artistry meets exceptional hospitality
