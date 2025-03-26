@@ -49,14 +49,13 @@ html {
   transition: opacity 0.7s ease;
 }
 
-/* Better visibility for heading text with shadow */
+/* Better visibility for heading text */
 .section-heading {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
   color: white;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Make sure images load properly */
@@ -65,7 +64,7 @@ img {
   opacity: 1;
 }
 
-/* Enhanced section transitions - glass-like effect between sections */
+/* Enhanced section transitions - cleaner look without the glowy effect */
 section {
   position: relative;
   z-index: 1;
@@ -74,20 +73,17 @@ section {
   transition: background-image 0.8s ease;
 }
 
-/* Improved glassy transition between sections */
+/* Removed blurry gradient transitions between sections */
 section::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 160px;
-  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.8), transparent);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9), transparent);
   z-index: 1;
   pointer-events: none;
-  opacity: 0.7;
 }
 
 section::after {
@@ -96,13 +92,10 @@ section::after {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 160px;
-  background: linear-gradient(to top, rgba(10, 10, 10, 0.8), transparent);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  height: 80px;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.9), transparent);
   z-index: 1;
   pointer-events: none;
-  opacity: 0.7;
 }
 
 /* Special section transitions */
@@ -165,11 +158,9 @@ section::after {
   animation: gold-shimmer 3s infinite linear;
 }
 
-/* Glass effect for sections */
+/* Clean section styling without blurriness */
 .glass-section {
-  background: rgba(15, 15, 15, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 15, 15, 0.8);
 }
 
 /* Background transition effect for cuisine cards */
@@ -186,18 +177,16 @@ section::after {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-/* Glass effect for menu items */
+/* Clear card styling without blur */
 .glass-card {
-  background: rgba(15, 15, 15, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 15, 15, 0.9);
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  background: rgba(15, 15, 15, 0.8);
+  background: rgba(15, 15, 15, 0.95);
   border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
@@ -216,7 +205,7 @@ section::after {
   /* Optimize gradients for mobile */
   section::before,
   section::after {
-    height: 100px;
+    height: 60px;
   }
 }
 

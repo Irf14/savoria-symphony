@@ -11,7 +11,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
     <AnimatePresence onExitComplete={onComplete}>
       {visible && (
         <motion.div 
-          className="fixed inset-0 flex items-center justify-center z-40"
+          className="fixed inset-0 flex items-center justify-center z-40 bg-black"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -25,7 +25,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
               backgroundPosition: 'center',
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/90 to-black/85"></div>
+            <div className="absolute inset-0 bg-black/85"></div>
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
