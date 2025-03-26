@@ -1,13 +1,11 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 
 const AmbientVideo = () => {
   return (
     <section className="py-16 relative">
       <div className="container mx-auto px-4">
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -23,33 +21,31 @@ const AmbientVideo = () => {
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="relative rounded-lg overflow-hidden shadow-2xl"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
         >
+          {/* 
+            Adjust the aspect ratio for a larger video. 
+            aspect-w-16 aspect-h-9 is typical 16:9 ratio, 
+            but you can remove it for a more flexible layout.
+          */}
           <div className="aspect-w-16 aspect-h-9">
-            <iframe 
+            <iframe
               className="w-full h-full"
-              src="https://www.yout-ube.com/watch?v=nV1w7XQYgPY" 
-              title="SAVORIA Restaurant Ambient Video" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              src="https://www.youtube.com/embed/nV1w7XQYgPY"
+              title="SAVORIA Restaurant Ambient Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-            ></iframe>
+            />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent pointer-events-none"></div>
-          
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-center">
-            <Link 
-              to="/reservation" 
-              className="inline-flex px-8 py-3 bg-gold hover:bg-gold/90 text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm transition-colors shadow-lg"
-            >
-              Reserve Your Table
-            </Link>
-          </div>
+
+          {/* Subtle gradient overlay for aesthetics, not blocking the video */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent pointer-events-none" />
         </motion.div>
       </div>
     </section>
