@@ -521,13 +521,16 @@ const MenuPage = () => {
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [sectionBackgrounds, setSectionBackgrounds] = useState<Record<string, boolean>>({});
 
-  // Function to preload images
+  // Preload images with a more robust approach
   const preloadImage = (src: string): Promise<void> => {
     return new Promise((resolve) => {
       const img = new Image();
-      img.src = src;
       img.onload = () => resolve();
-      img.onerror = () => resolve(); // Still resolve on error
+      img.onerror = () => {
+        console.error(`Failed to load image: ${src}`);
+        resolve(); // Resolve anyway to not block the UI
+      };
+      img.src = src;
     });
   };
 
@@ -541,42 +544,59 @@ const MenuPage = () => {
       setActiveCuisine(selectedCuisine);
       setActiveSection(selectedCuisine.sections[0].name);
       setIsLoading(true);
+      setBackgroundLoaded(false);
+      setSectionBackgrounds({});
       
-      // Preload all images in parallel for better performance
-      const imagesToPreload = [
-        selectedCuisine.backgroundImage,
-        ...selectedCuisine.sections.map(section => section.image),
-        ...selectedCuisine.sections.flatMap(section => 
-          section.items.map(item => item.image)
-        )
-      ];
-      
-      // Creating a map to track section background loading
       const sectionLoadingMap: Record<string, boolean> = {};
       selectedCuisine.sections.forEach(section => {
         sectionLoadingMap[section.name] = false;
       });
       
-      // Preload cuisine background
-      preloadImage(selectedCuisine.backgroundImage).then(() => {
-        setBackgroundLoaded(true);
-      });
+      // Preload main background
+      preloadImage(selectedCuisine.backgroundImage)
+        .then(() => {
+          console.log('Main background loaded:', selectedCuisine.backgroundImage);
+          setBackgroundLoaded(true);
+        })
+        .catch(error => {
+          console.error('Error loading main background:', error);
+          setBackgroundLoaded(true); // Show content anyway
+        });
       
-      // Preload section backgrounds and update their loading state
+      // Preload all section backgrounds in parallel
       Promise.all(
         selectedCuisine.sections.map(section => 
-          preloadImage(section.image).then(() => {
-            setSectionBackgrounds(prev => ({
-              ...prev,
-              [section.name]: true
-            }));
-          })
+          preloadImage(section.image)
+            .then(() => {
+              console.log('Section background loaded:', section.name);
+              setSectionBackgrounds(prev => ({
+                ...prev,
+                [section.name]: true
+              }));
+            })
+            .catch(error => {
+              console.error(`Error loading section background for ${section.name}:`, error);
+              setSectionBackgrounds(prev => ({
+                ...prev,
+                [section.name]: true // Mark as loaded even if there was an error
+              }));
+            })
         )
-      );
+      ).then(() => {
+        console.log('All section backgrounds loaded');
+      });
       
-      // Preload menu item images
-      Promise.all(imagesToPreload.map(img => preloadImage(img))).then(() => {
+      // Preload all item images
+      Promise.all(
+        selectedCuisine.sections.flatMap(section => 
+          section.items.map(item => preloadImage(item.image))
+        )
+      ).then(() => {
+        console.log('All item images loaded');
         setIsLoading(false);
+      }).catch(error => {
+        console.error('Error loading item images:', error);
+        setIsLoading(false); // Show content anyway
       });
     }
   }, [cuisineParam]);
@@ -590,26 +610,40 @@ const MenuPage = () => {
     setActiveSection(cuisine.sections[0].name);
     
     // Preload main background
-    preloadImage(cuisine.backgroundImage).then(() => {
-      setBackgroundLoaded(true);
-    });
+    preloadImage(cuisine.backgroundImage)
+      .then(() => {
+        setBackgroundLoaded(true);
+      })
+      .catch(() => {
+        setBackgroundLoaded(true); // Show content anyway
+      });
     
-    // Preload all section backgrounds
-    Promise.all(
-      cuisine.sections.map(section => 
-        preloadImage(section.image).then(() => {
-          setSectionBackgrounds(prev => ({
-            ...prev,
-            [section.name]: true
-          }));
-        })
+    // Preload all section backgrounds and item images
+    Promise.all([
+      ...cuisine.sections.map(section => 
+        preloadImage(section.image)
+          .then(() => {
+            setSectionBackgrounds(prev => ({
+              ...prev,
+              [section.name]: true
+            }));
+          })
+      ),
+      ...cuisine.sections.flatMap(section => 
+        section.items.map(item => preloadImage(item.image))
       )
-    ).then(() => {
+    ]).then(() => {
       setIsLoading(false);
+    }).catch(() => {
+      setIsLoading(false); // Show content anyway
     });
   };
 
-  if (!activeCuisine) return <div>Loading...</div>;
+  if (!activeCuisine) return (
+    <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
+      <div className="loader"></div>
+    </div>
+  );
 
   // Helper to get current section
   const getCurrentSection = () => {
@@ -633,7 +667,7 @@ const MenuPage = () => {
           }}
         >
           {/* Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
           
           <div className="container mx-auto px-4 relative z-10 text-center py-20">
             <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-4">
@@ -646,14 +680,14 @@ const MenuPage = () => {
         </div>
         
         {/* Cuisine selection tabs */}
-        <div className="bg-savoria-dark py-6 sticky top-0 z-20 shadow-lg backdrop-blur-md">
+        <div className="bg-savoria-dark/80 py-6 sticky top-0 z-20 shadow-lg backdrop-blur-md">
           <div className="container mx-auto px-4">
             <div className="flex overflow-x-auto pb-2 snap-x scrollbar-none">
               {cuisines.map((cuisine) => (
                 <Link 
                   key={cuisine.id} 
                   to={`/menu/${cuisine.id}`}
-                  className={`flex-shrink-0 snap-start px-5 py-2 mx-1 rounded-sm transition-colors font-cormorant text-lg ${
+                  className={`flex-shrink-0 snap-start px-5 py-2 mx-1 rounded-md transition-colors font-cormorant text-lg ${
                     activeCuisine.id === cuisine.id 
                       ? 'bg-gold text-savoria-black font-semibold' 
                       : 'hover:bg-gold/20'
@@ -701,10 +735,10 @@ const MenuPage = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    {/* Section background - using a div with background-image and another div for fallback color */}
+                    {/* Section background */}
                     <div className="absolute inset-0 -z-10">
                       {/* Solid color fallback */}
-                      <div className="absolute inset-0 bg-savoria-dark"></div>
+                      <div className="absolute inset-0 bg-savoria-dark/90"></div>
                       
                       {/* Background image with preload check */}
                       <div 
@@ -715,9 +749,6 @@ const MenuPage = () => {
                         }}
                       />
                     </div>
-                    
-                    {/* Add a slight glass effect */}
-                    <div className="absolute inset-0 -z-10 bg-black/20 backdrop-blur-[1px]"></div>
                     
                     {/* Section title */}
                     <div className="text-center mb-8">
