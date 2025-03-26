@@ -31,17 +31,15 @@ img[loading] {
   transition: background-image 1.2s ease, opacity 1.2s ease;
 }
 
-/* Theme transitions - dark mode optimized */
+/* Theme transitions */
 body {
   transition: background-color 0.5s ease;
-  background-color: #0a0a0a !important; /* Force dark background */
-  color-scheme: dark; /* Ensures native UI elements are dark */
+  background-color: #0a0a0a;
 }
 
 /* Smooth scrolling between sections */
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
 }
 
 /* Add opacity transition to all components for smoother page transitions */
@@ -49,13 +47,14 @@ html {
   transition: opacity 0.7s ease;
 }
 
-/* Better visibility for heading text */
+/* Better visibility for heading text with shadow */
 .section-heading {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
   color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Make sure images load properly */
@@ -64,13 +63,50 @@ img {
   opacity: 1;
 }
 
-/* Enhanced section transitions - cleaner look */
+/* Enhanced section transitions - ensures smooth flow between sections */
 section {
   position: relative;
   z-index: 1;
   overflow: hidden;
-  margin-top: -2px;
-  transition: background-image 0.8s ease;
+  margin-top: -2px; /* Fix gap between sections */
+  transition: background-image 0.8s ease; /* Smooth transition for background changes */
+}
+
+/* Improved gradient transitions between sections */
+section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9), transparent);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.9), transparent);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Special section transitions */
+.hero-section, .footer-section {
+  margin-top: 0;
+}
+
+.hero-section::before,
+.footer-section::after {
+  display: none; /* No gradient on first and last sections */
 }
 
 /* Fixed background */
@@ -83,14 +119,24 @@ section {
 
 /* Animations */
 @keyframes shimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+  }
 }
 
 .gold-pulse {
@@ -99,8 +145,12 @@ section {
 
 /* Common animation for background shimmer */
 @keyframes gold-shimmer {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }
 
 .animate-gold-shimmer {
@@ -109,22 +159,33 @@ section {
   animation: gold-shimmer 3s infinite linear;
 }
 
-/* Enhanced glass card styling for menu items */
+/* Background transition effect for cuisine cards */
+.cuisine-bg-transition {
+  transition: opacity 0.8s ease, background-image 0.8s ease;
+}
+
+/* Enhance cuisine-card hover effects */
+.cuisine-card::before {
+  transition: background-color 0.5s ease, opacity 0.5s ease;
+}
+
+.cuisine-card:hover::before {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Glass effect for menu items */
 .glass-card {
   background: rgba(15, 15, 15, 0.7);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  background: rgba(25, 25, 25, 0.8);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 /* Mobile touch enhancements */
@@ -138,6 +199,12 @@ section {
     opacity: 1;
     transform: translateY(0);
   }
+  
+  /* Optimize gradients for mobile */
+  section::before,
+  section::after {
+    height: 100px;
+  }
 }
 
 /* Image preload utility - hide from view but load for caching */
@@ -148,14 +215,6 @@ section {
   opacity: 0.01;
   pointer-events: none;
   overflow: hidden;
-}
-
-/* Force dark mode for the entire site */
-@media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
-  html, body {
-    background-color: #0a0a0a !important;
-    color: #ffffff;
-  }
 }
 
 /* Reduced motion preference */
@@ -169,39 +228,5 @@ section {
   * {
     transition-duration: 0.1s !important;
     animation-duration: 0.1s !important;
-  }
-}
-
-/* Loading animation for menu page */
-.loader {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-
-.loader:after {
-  content: " ";
-  display: block;
-  border-radius: 50%;
-  width: 0;
-  height: 0;
-  box-sizing: border-box;
-  border: 32px solid #D4AF37;
-  border-color: #D4AF37 transparent #D4AF37 transparent;
-  animation: loader 1.2s infinite;
-}
-
-@keyframes loader {
-  0% {
-    transform: rotate(0);
-    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-  }
-  50% {
-    transform: rotate(180deg);
-    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
