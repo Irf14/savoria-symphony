@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -518,17 +517,20 @@ const MenuPage = () => {
   const [activeCuisine, setActiveCuisine] = useState<CuisineMenu | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
-  const [sectionBackgrounds, setSectionBackgrounds] = useState<Record<string, boolean>>({});
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
-  // Preload images with a more robust approach
-  const preloadImage = (src: string): Promise<void> => {
+  // Preload images
+  const preloadImage = (src: string, id: string): Promise<void> => {
     return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => resolve();
+      img.onload = () => {
+        setLoadedImages(prev => ({ ...prev, [id]: true }));
+        resolve();
+      };
       img.onerror = () => {
         console.error(`Failed to load image: ${src}`);
-        resolve(); // Resolve anyway to not block the UI
+        setLoadedImages(prev => ({ ...prev, [id]: true })); // Mark as loaded anyway to not block UI
+        resolve();
       };
       img.src = src;
     });
@@ -544,110 +546,44 @@ const MenuPage = () => {
       setActiveCuisine(selectedCuisine);
       setActiveSection(selectedCuisine.sections[0].name);
       setIsLoading(true);
-      setBackgroundLoaded(false);
-      setSectionBackgrounds({});
+      setLoadedImages({});
       
-      const sectionLoadingMap: Record<string, boolean> = {};
-      selectedCuisine.sections.forEach(section => {
-        sectionLoadingMap[section.name] = false;
-      });
+      // Preload background image
+      preloadImage(selectedCuisine.backgroundImage, 'background');
       
-      // Preload main background
-      preloadImage(selectedCuisine.backgroundImage)
+      // Preload all section and item images in parallel
+      const imagesToLoad = [
+        ...selectedCuisine.sections.map(section => ({
+          src: section.image,
+          id: `section-${section.name}`
+        })),
+        ...selectedCuisine.sections.flatMap(section => 
+          section.items.map(item => ({
+            src: item.image,
+            id: `item-${item.id}`
+          }))
+        )
+      ];
+      
+      Promise.all(imagesToLoad.map(img => preloadImage(img.src, img.id)))
         .then(() => {
-          console.log('Main background loaded:', selectedCuisine.backgroundImage);
-          setBackgroundLoaded(true);
+          console.log('All images loaded');
+          setIsLoading(false);
         })
         .catch(error => {
-          console.error('Error loading main background:', error);
-          setBackgroundLoaded(true); // Show content anyway
+          console.error('Error loading images:', error);
+          setIsLoading(false); // Show content anyway
         });
-      
-      // Preload all section backgrounds in parallel
-      Promise.all(
-        selectedCuisine.sections.map(section => 
-          preloadImage(section.image)
-            .then(() => {
-              console.log('Section background loaded:', section.name);
-              setSectionBackgrounds(prev => ({
-                ...prev,
-                [section.name]: true
-              }));
-            })
-            .catch(error => {
-              console.error(`Error loading section background for ${section.name}:`, error);
-              setSectionBackgrounds(prev => ({
-                ...prev,
-                [section.name]: true // Mark as loaded even if there was an error
-              }));
-            })
-        )
-      ).then(() => {
-        console.log('All section backgrounds loaded');
-      });
-      
-      // Preload all item images
-      Promise.all(
-        selectedCuisine.sections.flatMap(section => 
-          section.items.map(item => preloadImage(item.image))
-        )
-      ).then(() => {
-        console.log('All item images loaded');
-        setIsLoading(false);
-      }).catch(error => {
-        console.error('Error loading item images:', error);
-        setIsLoading(false); // Show content anyway
-      });
     }
   }, [cuisineParam]);
-
-  // Handle cuisine change
-  const handleCuisineChange = (cuisine: CuisineMenu) => {
-    setIsLoading(true);
-    setBackgroundLoaded(false);
-    setSectionBackgrounds({});
-    setActiveCuisine(cuisine);
-    setActiveSection(cuisine.sections[0].name);
-    
-    // Preload main background
-    preloadImage(cuisine.backgroundImage)
-      .then(() => {
-        setBackgroundLoaded(true);
-      })
-      .catch(() => {
-        setBackgroundLoaded(true); // Show content anyway
-      });
-    
-    // Preload all section backgrounds and item images
-    Promise.all([
-      ...cuisine.sections.map(section => 
-        preloadImage(section.image)
-          .then(() => {
-            setSectionBackgrounds(prev => ({
-              ...prev,
-              [section.name]: true
-            }));
-          })
-      ),
-      ...cuisine.sections.flatMap(section => 
-        section.items.map(item => preloadImage(item.image))
-      )
-    ]).then(() => {
-      setIsLoading(false);
-    }).catch(() => {
-      setIsLoading(false); // Show content anyway
-    });
-  };
 
   if (!activeCuisine) return (
     <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
       <div className="loader"></div>
     </div>
   );
-
-  // Helper to get current section
+  
   const getCurrentSection = () => {
-    if (!activeCuisine) return null;
     return activeCuisine.sections.find(section => section.name === activeSection);
   };
 
@@ -660,14 +596,14 @@ const MenuPage = () => {
       <main className="pt-16">
         {/* Hero section with cuisine background */}
         <div 
-          className={`relative min-h-[40vh] flex items-center justify-center bg-cover bg-center transition-opacity duration-700 ${backgroundLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className="relative min-h-[40vh] flex items-center justify-center bg-cover bg-center bg-fixed transition-all duration-700"
           style={{ 
             backgroundImage: `url(${activeCuisine.backgroundImage})`,
-            backgroundAttachment: 'fixed'
+            opacity: loadedImages['background'] ? 1 : 0.3
           }}
         >
           {/* Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
           
           <div className="container mx-auto px-4 relative z-10 text-center py-20">
             <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-4">
@@ -679,22 +615,51 @@ const MenuPage = () => {
           </div>
         </div>
         
-        {/* Cuisine selection tabs */}
-        <div className="bg-savoria-dark/80 py-6 sticky top-0 z-20 shadow-lg backdrop-blur-md">
-          <div className="container mx-auto px-4">
-            <div className="flex overflow-x-auto pb-2 snap-x scrollbar-none">
+        {/* Cuisine selection tabs - improved version */}
+        <div className="sticky top-0 z-20 bg-savoria-black/90 backdrop-blur-md shadow-lg border-b border-gold/20">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex overflow-x-auto snap-x scrollbar-none justify-center">
               {cuisines.map((cuisine) => (
                 <Link 
                   key={cuisine.id} 
                   to={`/menu/${cuisine.id}`}
-                  className={`flex-shrink-0 snap-start px-5 py-2 mx-1 rounded-md transition-colors font-cormorant text-lg ${
-                    activeCuisine.id === cuisine.id 
-                      ? 'bg-gold text-savoria-black font-semibold' 
-                      : 'hover:bg-gold/20'
-                  }`}
+                  className={`flex-shrink-0 snap-start px-5 py-2 mx-2 transition-all duration-300 font-cormorant text-lg 
+                    ${activeCuisine.id === cuisine.id 
+                      ? 'bg-gold text-savoria-black font-semibold rounded-md' 
+                      : 'text-white hover:bg-gold/20 rounded-md'
+                    }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleCuisineChange(cuisine);
+                    if (activeCuisine.id !== cuisine.id) {
+                      setIsLoading(true);
+                      setLoadedImages({});
+                      setActiveCuisine(cuisine);
+                      setActiveSection(cuisine.sections[0].name);
+                      
+                      // Preload images for new cuisine
+                      preloadImage(cuisine.backgroundImage, 'background');
+                      
+                      const imagesToLoad = [
+                        ...cuisine.sections.map(section => ({
+                          src: section.image,
+                          id: `section-${section.name}`
+                        })),
+                        ...cuisine.sections.flatMap(section => 
+                          section.items.map(item => ({
+                            src: item.image,
+                            id: `item-${item.id}`
+                          }))
+                        )
+                      ];
+                      
+                      Promise.all(imagesToLoad.map(img => preloadImage(img.src, img.id)))
+                        .then(() => {
+                          setIsLoading(false);
+                        })
+                        .catch(() => {
+                          setIsLoading(false);
+                        });
+                    }
                     window.history.pushState({}, '', `/menu/${cuisine.id}`);
                   }}
                 >
@@ -707,124 +672,129 @@ const MenuPage = () => {
       
         {/* Menu content */}
         <div className="container mx-auto px-4 py-12">
-          {/* Section tabs */}
-          <Tabs defaultValue={activeSection} value={activeSection} onValueChange={setActiveSection} className="w-full">
-            <TabsList className="w-full flex justify-center mb-10 overflow-x-auto bg-savoria-black p-1 rounded-md">
-              {activeCuisine.sections.map((section) => (
-                <TabsTrigger 
-                  key={section.name}
-                  value={section.name}
-                  className="flex-1 max-w-[200px] font-cormorant text-lg data-[state=active]:bg-gold data-[state=active]:text-savoria-black"
-                >
-                  {section.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            
-            {activeCuisine.sections.map((section) => (
-              <TabsContent 
-                key={`${activeCuisine.id}-${section.name}`} 
-                value={section.name}
-                className="relative"
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`${activeCuisine.id}-${section.name}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="loader"></div>
+            </div>
+          ) : (
+            <Tabs defaultValue={activeSection} value={activeSection} onValueChange={setActiveSection} className="w-full">
+              <TabsList className="w-full flex justify-center mb-10 overflow-x-auto bg-savoria-dark/30 backdrop-blur-md p-1 rounded-md border border-gold/10">
+                {activeCuisine.sections.map((section) => (
+                  <TabsTrigger 
+                    key={section.name}
+                    value={section.name}
+                    className="flex-1 max-w-[200px] font-cormorant text-lg data-[state=active]:bg-gold data-[state=active]:text-savoria-black"
                   >
-                    {/* Section background */}
-                    <div className="absolute inset-0 -z-10">
-                      {/* Solid color fallback */}
-                      <div className="absolute inset-0 bg-savoria-dark/90"></div>
+                    {section.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
+              {activeCuisine.sections.map((section) => (
+                <TabsContent 
+                  key={`${activeCuisine.id}-${section.name}`} 
+                  value={section.name}
+                  className="relative"
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${activeCuisine.id}-${section.name}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      {/* Section background with subtle effect */}
+                      <div className="absolute inset-0 -z-10">
+                        <div className="absolute inset-0 bg-savoria-dark/80"></div>
+                        <div 
+                          className="absolute inset-0 bg-cover bg-center bg-fixed opacity-30 transition-opacity duration-500"
+                          style={{ 
+                            backgroundImage: `url(${section.image})`,
+                            opacity: loadedImages[`section-${section.name}`] ? 0.3 : 0
+                          }}
+                        />
+                      </div>
                       
-                      {/* Background image with preload check */}
-                      <div 
-                        className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${sectionBackgrounds[section.name] ? 'opacity-30' : 'opacity-0'}`}
-                        style={{ 
-                          backgroundImage: `url(${section.image})`,
-                          backgroundAttachment: 'fixed'
-                        }}
-                      />
-                    </div>
-                    
-                    {/* Section title */}
-                    <div className="text-center mb-8">
-                      <h2 className="font-playfair text-3xl font-bold">
-                        {section.name}
-                      </h2>
-                    </div>
-                    
-                    {/* Menu items grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {section.items.map((item) => (
-                        <motion.div
-                          key={item.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5 }}
-                          className="glass-card p-5 relative overflow-hidden group"
-                        >
-                          {/* Item image */}
-                          <div className="h-48 mb-4 overflow-hidden rounded-md">
-                            <img 
-                              src={item.image} 
-                              alt={item.name}
-                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                            />
-                          </div>
-                          
-                          {/* Item content */}
-                          <div>
-                            <div className="flex justify-between items-start mb-2">
-                              <h3 className="font-playfair text-xl font-semibold">
-                                {item.name}
-                                {item.spicy && <span className="text-red-500 ml-2">🌶️</span>}
-                                {item.vegetarian && <span className="text-green-500 ml-2">🥬</span>}
-                              </h3>
-                              <span className="text-gold font-cormorant font-bold text-xl">
-                                ${item.price}
-                              </span>
+                      {/* Section title */}
+                      <div className="text-center mb-8">
+                        <h2 className="font-playfair text-3xl font-bold">
+                          <span className="gold-gradient-text">{section.name}</span>
+                        </h2>
+                      </div>
+                      
+                      {/* Menu items grid with improved glass effect */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {section.items.map((item) => (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="glass-card overflow-hidden group relative"
+                          >
+                            {/* Item image */}
+                            <div className="h-48 overflow-hidden">
+                              <img 
+                                src={item.image} 
+                                alt={item.name}
+                                className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
+                                  loadedImages[`item-${item.id}`] ? 'opacity-100' : 'opacity-40'
+                                }`}
+                                onLoad={() => setLoadedImages(prev => ({ ...prev, [`item-${item.id}`]: true }))}
+                              />
                             </div>
                             
-                            <p className="font-cormorant text-gray-300 text-lg">
-                              {item.description}
-                            </p>
-                            
-                            {/* Tags */}
-                            <div className="mt-4 flex flex-wrap gap-2">
-                              {item.popular && (
-                                <span className="text-xs px-2 py-1 bg-gold/20 rounded-full text-gold">
-                                  Popular
+                            {/* Item content */}
+                            <div className="p-5">
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-playfair text-xl font-semibold">
+                                  {item.name}
+                                  {item.spicy && <span className="text-red-500 ml-2">🌶️</span>}
+                                  {item.vegetarian && <span className="text-green-500 ml-2">🥬</span>}
+                                </h3>
+                                <span className="text-gold font-cormorant font-bold text-xl">
+                                  ${item.price}
                                 </span>
-                              )}
-                              {item.featured && (
-                                <span className="text-xs px-2 py-1 bg-purple-500/20 rounded-full text-purple-400">
-                                  Chef's Special
-                                </span>
-                              )}
-                              {item.vegetarian && (
-                                <span className="text-xs px-2 py-1 bg-green-500/20 rounded-full text-green-400">
-                                  Vegetarian
-                                </span>
-                              )}
-                              {item.vegan && (
-                                <span className="text-xs px-2 py-1 bg-emerald-500/20 rounded-full text-emerald-400">
-                                  Vegan
-                                </span>
-                              )}
+                              </div>
+                              
+                              <p className="font-cormorant text-gray-300 text-lg">
+                                {item.description}
+                              </p>
+                              
+                              {/* Tags */}
+                              <div className="mt-4 flex flex-wrap gap-2">
+                                {item.popular && (
+                                  <span className="text-xs px-2 py-1 bg-gold/20 rounded-full text-gold">
+                                    Popular
+                                  </span>
+                                )}
+                                {item.featured && (
+                                  <span className="text-xs px-2 py-1 bg-purple-500/20 rounded-full text-purple-400">
+                                    Chef's Special
+                                  </span>
+                                )}
+                                {item.vegetarian && (
+                                  <span className="text-xs px-2 py-1 bg-green-500/20 rounded-full text-green-400">
+                                    Vegetarian
+                                  </span>
+                                )}
+                                {item.vegan && (
+                                  <span className="text-xs px-2 py-1 bg-emerald-500/20 rounded-full text-emerald-400">
+                                    Vegan
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </TabsContent>
-            ))}
-          </Tabs>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </TabsContent>
+              ))}
+            </Tabs>
+          )}
         </div>
       </main>
       
