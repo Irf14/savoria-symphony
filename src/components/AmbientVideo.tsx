@@ -33,7 +33,7 @@ const AmbientVideo = () => {
           <div className="aspect-w-16 aspect-h-9">
             <iframe 
               className="w-full h-full"
-              src="https://www.youtube.com/embed/KKsy-mBPDwI?autoplay=0&loop=1&rel=0&showinfo=0&color=white&iv_load_policy=3&playlist=KKsy-mBPDwI" 
+              src="https://youtu.be/nV1w7XQYgPY?si=6niFVdbFcwgnWzZ2" 
               title="SAVORIA Restaurant Ambient Video" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
