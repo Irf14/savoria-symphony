@@ -555,7 +555,7 @@ const MenuPage = () => {
       // Fix for Bengali cuisine
       if (newCuisineId === 'bengali') {
         // Use fallback images for Bengali cuisine
-        const fallbackImage = 'https://images.unsplash.com/photo-1535007329628-eebd20ff2cdf?q=80&w=2070&auto=format&fit=crop';
+        const fallbackImage = 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?q=80&w=2574&auto=format&fit=crop';
         const fallbackSectionImage = 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?q=80&w=2574&auto=format&fit=crop';
         
         if (newCuisine) {
@@ -720,7 +720,7 @@ const MenuPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="font-playfair text-5xl md:text-7xl font-bold mb-6 text-gold-gradient"
+              className="font-playfair text-5xl md:text-7xl font-bold mb-6 gold-gradient-text"
             >
               {activeCuisine.name}
             </motion.h1>
@@ -737,7 +737,7 @@ const MenuPage = () => {
         </motion.div>
         
         {/* Cuisine navigation tabs */}
-        <div className="sticky top-0 z-30 bg-black/70 backdrop-blur-lg shadow-lg py-2 border-t border-b border-gold/20">
+        <div className="sticky top-0 z-30 bg-black/40 backdrop-blur-lg shadow-lg py-2 border-t border-b border-gold/20">
           <div className="container mx-auto px-4">
             <div className="flex overflow-x-auto scrollbar-none justify-center py-2">
               {cuisines.map((cuisine) => (
@@ -761,7 +761,7 @@ const MenuPage = () => {
         </div>
         
         {/* Menu section navigation */}
-        <div className="bg-savoria-black/70 border-b border-gold/10 backdrop-blur-sm">
+        <div className="bg-black/30 border-b border-gold/10 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6">
             <div className="flex justify-center space-x-6">
               {activeCuisine.sections.map((section) => (
@@ -772,7 +772,7 @@ const MenuPage = () => {
                   className={`px-8 py-3 rounded transition-all duration-300 font-cormorant text-xl
                     ${activeSection === section.name 
                       ? 'bg-gold text-savoria-black font-semibold' 
-                      : 'bg-black/40 backdrop-blur-sm border border-gold/20 text-white hover:bg-black/60'
+                      : 'bg-black/20 backdrop-blur-sm border border-gold/20 text-white hover:bg-black/40'
                     }`}
                   onClick={() => setActiveSection(section.name)}
                 >
@@ -796,10 +796,10 @@ const MenuPage = () => {
             >
               {/* Section background with improved brightness */}
               <div 
-                className="absolute inset-0 bg-cover bg-center opacity-40 transition-opacity duration-700"
+                className="absolute inset-0 bg-cover bg-center opacity-30 transition-opacity duration-700"
                 style={{ backgroundImage: `url(${currentSection.backgroundImage})` }}
               >
-                <div className="absolute inset-0 bg-black/50"></div>
+                <div className="absolute inset-0 bg-black/30"></div>
               </div>
               
               <div className="container mx-auto px-4 relative z-10">
@@ -814,40 +814,44 @@ const MenuPage = () => {
                         transition={{ duration: 0.4 }}
                         className={`relative overflow-hidden rounded-md transition-all duration-500 
                           ${hoveredItemId === item.id 
-                            ? 'bg-white/20 backdrop-blur-md shadow-xl transform scale-[1.02] border border-gold/30' 
-                            : 'bg-black/30 backdrop-blur-sm shadow-md border border-white/5'
+                            ? 'bg-white/20 backdrop-blur-lg shadow-xl transform scale-[1.02] border border-gold/30' 
+                            : 'bg-black/20 backdrop-blur-sm shadow-md border border-white/10'
                           }`}
                         onMouseEnter={() => setHoveredItemId(item.id)}
                         onMouseLeave={() => setHoveredItemId(null)}
                       >
                         <div className="p-6">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className={`font-playfair text-xl md:text-2xl transition-all duration-300 ${
-                              hoveredItemId === item.id ? 'text-gold' : 'text-white'
-                            } ${item.chefsChoice ? 'relative' : ''}`}>
-                              {item.name}
-                              {item.chefsChoice && (
-                                <span className="absolute top-0 -right-6 text-gold text-sm rotate-45">★</span>
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h3 className="font-playfair text-2xl font-semibold text-gold">
+                                {item.name}
+                                {item.chefsChoice && (
+                                  <span className="ml-2 text-sm bg-gold/20 text-gold px-2 py-1 rounded font-cormorant">
+                                    Chef's Choice
+                                  </span>
+                                )}
+                              </h3>
+                              <p className="font-cormorant text-lg mt-2 text-white/90">{item.description}</p>
+                              
+                              {/* Show rating on hover */}
+                              {hoveredItemId === item.id && item.rating && (
+                                <motion.div 
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="mt-3"
+                                >
+                                  <div className="flex items-center space-x-1">
+                                    <span className="text-white/80 font-cormorant text-sm">Rating:</span>
+                                    {renderStarRating(item.rating)}
+                                    <span className="text-gold font-semibold ml-1">{item.rating}/5</span>
+                                  </div>
+                                </motion.div>
                               )}
-                            </h3>
-                            <span className="text-gold font-cormorant text-xl font-semibold">${item.price}</span>
+                            </div>
+                            <div className="text-gold font-playfair text-2xl font-bold">
+                              ${item.price}
+                            </div>
                           </div>
-                          
-                          <p className="font-cormorant text-white/90 mb-3 text-lg">
-                            {item.description}
-                          </p>
-                          
-                          {hoveredItemId === item.id && item.rating && (
-                            <motion.div 
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3 }}
-                              className="flex items-center"
-                            >
-                              {renderStarRating(item.rating)}
-                              <span className="ml-2 text-gold/80">({item.rating})</span>
-                            </motion.div>
-                          )}
                         </div>
                       </motion.div>
                     ))}
