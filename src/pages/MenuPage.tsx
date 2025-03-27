@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -820,4 +821,51 @@ const MenuPage = () => {
                         onMouseLeave={() => setHoveredItemId(null)}
                       >
                         <div className="p-6">
-                          <div className="flex justify-between
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h3 className="font-playfair text-2xl font-semibold text-gold">
+                                {item.name}
+                                {item.chefsChoice && (
+                                  <span className="ml-2 text-sm bg-gold/20 text-gold px-2 py-1 rounded font-cormorant">
+                                    Chef's Choice
+                                  </span>
+                                )}
+                              </h3>
+                              <p className="font-cormorant text-lg mt-2 text-white/90">{item.description}</p>
+                              
+                              {/* Show rating on hover */}
+                              {hoveredItemId === item.id && item.rating && (
+                                <motion.div 
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="mt-3"
+                                >
+                                  <div className="flex items-center space-x-1">
+                                    <span className="text-white/80 font-cormorant text-sm">Rating:</span>
+                                    {renderStarRating(item.rating)}
+                                    <span className="text-gold font-semibold ml-1">{item.rating}/5</span>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </div>
+                            <div className="text-gold font-playfair text-2xl font-bold">
+                              ${item.price}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default MenuPage;
