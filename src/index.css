@@ -122,6 +122,25 @@
     @apply scale-110;
   }
   
+  /* Glass effect for menu items */
+  .glass-card {
+    @apply bg-black/40 backdrop-blur-sm border border-white/10 rounded-md shadow-lg transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply bg-white/15 backdrop-blur-md shadow-xl transform scale-[1.02];
+  }
+  
+  /* Gold gradient text */
+  .gold-gradient-text {
+    background: linear-gradient(90deg, #F0D080 0%, #D4AF37 50%, #B8860B 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    display: inline-block;
+    position: relative;
+  }
+  
   /* Enhanced animations */
   .fade-in {
     animation: fadeIn 1s ease-out forwards;
@@ -148,6 +167,17 @@
     animation: shine 3s ease-in-out infinite;
   }
   
+  /* Pulsing gold animation for indicators */
+  .gold-pulse {
+    animation: goldPulse 2s infinite;
+  }
+  
+  @keyframes goldPulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+  }
+  
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -162,6 +192,21 @@
   @keyframes shine {
     0% { left: -100%; }
     100% { left: 100%; }
+  }
+  
+  /* Add smoothness to all transitions */
+  .transition-smooth {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Remove scrollbar but keep functionality */
+  .scrollbar-none {
+    -ms-overflow-style: none;  /* Internet Explorer and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 }
 

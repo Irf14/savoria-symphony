@@ -15,7 +15,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
         >
           <div 
             className="absolute inset-0"
@@ -30,7 +30,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
             className="text-center relative z-10 px-4"
           >
             <div className="mb-4 inline-block">
@@ -38,23 +38,33 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
                 <motion.span
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
+                  transition={{ duration: 0.7, delay: 0.3 }}
                   className="inline-block"
                 >
                   <span className="font-cormorant text-white text-2xl italic tracking-wide">welcome to</span>
                 </motion.span>
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-4 text-white drop-shadow-lg">
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-4 text-white drop-shadow-lg"
+            >
               <span className="gold-gradient-text">SAVORIA</span> Experience
-            </h1>
-            <p className="font-cormorant text-xl text-gray-200 mb-6 max-w-2xl mx-auto">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="font-cormorant text-xl text-gray-200 mb-6 max-w-2xl mx-auto"
+            >
               Where culinary artistry meets exceptional hospitality
-            </p>
+            </motion.p>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
               className="inline-block"
             >
               <span className="bg-gold/20 backdrop-blur-sm px-4 py-1 rounded-sm text-gold font-cormorant italic text-lg">

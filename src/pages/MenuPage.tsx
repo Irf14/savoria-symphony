@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Types for menu data
 type MenuItem = {
@@ -11,18 +12,14 @@ type MenuItem = {
   name: string;
   description: string;
   price: string;
-  image: string;
-  featured?: boolean;
-  spicy?: boolean;
-  vegetarian?: boolean;
-  vegan?: boolean;
-  popular?: boolean;
+  rating?: number;
+  chefsChoice?: boolean;
 };
 
 type MenuSection = {
   name: string;
   items: MenuItem[];
-  image: string;
+  backgroundImage: string;
 };
 
 type CuisineMenu = {
@@ -33,97 +30,95 @@ type CuisineMenu = {
   backgroundImage: string;
 };
 
-// Sample data for different cuisines
+// Sample data for different cuisines with reliable image sources
 const cuisines: CuisineMenu[] = [
   {
     id: 'thai',
     name: 'Thai Cuisine',
-    description: 'Experience the vibrant flavors and aromatic spices of Thailand, where sweet, sour, salty, and spicy elements create a perfect harmony.',
-    backgroundImage: 'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?q=80&w=2532&auto=format&fit=crop',
+    description: 'Experience the vibrant flavors of Thailand with our authentic dishes crafted with traditional herbs and spices.',
+    backgroundImage: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?q=80&w=2070&auto=format&fit=crop',
     sections: [
       {
         name: 'Appetizers',
-        image: 'https://images.unsplash.com/photo-1580824456624-90e15a242caf?q=80&w=2574&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?q=80&w=2064&auto=format&fit=crop',
         items: [
           {
             id: 1,
-            name: 'Tod Mun Pla (Thai Fish Cakes)',
-            description: 'Spiced fish cakes with red curry paste, kaffir lime leaves, and green beans served with cucumber relish.',
-            price: '12.95',
-            image: 'https://images.unsplash.com/photo-1604908176997-125f7c9c7b92?q=80&w=2013&auto=format&fit=crop',
-            spicy: true,
-            popular: true
+            name: 'Tom Yum Soup',
+            description: 'Hot and sour soup with lemongrass, galangal, and Thai herbs',
+            price: '12.99',
+            rating: 4.8,
+            chefsChoice: true
           },
           {
             id: 2,
-            name: 'Satay Gai',
-            description: 'Marinated chicken skewers grilled to perfection, served with peanut sauce and cucumber relish.',
-            price: '10.95',
-            image: 'https://images.unsplash.com/photo-1616361782121-83e13661e4f6?q=80&w=2080&auto=format&fit=crop',
+            name: 'Thai Spring Rolls',
+            description: 'Crispy rolls filled with vegetables and served with sweet chili sauce',
+            price: '9.99',
+            rating: 4.5
           },
           {
             id: 3,
-            name: 'Som Tum (Green Papaya Salad)',
-            description: 'Shredded green papaya mixed with tomatoes, long beans, peanuts in a spicy lime dressing.',
-            price: '11.95',
-            image: 'https://images.unsplash.com/photo-1626804475297-41608ea09da1?q=80&w=2070&auto=format&fit=crop',
-            spicy: true,
-            vegetarian: true
+            name: 'Satay Chicken',
+            description: 'Grilled chicken skewers with peanut sauce and cucumber relish',
+            price: '11.99',
+            rating: 4.7
           }
         ]
       },
       {
-        name: 'Main Courses',
-        image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?q=80&w=2070&auto=format&fit=crop',
+        name: 'Main Course',
+        backgroundImage: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
             id: 4,
             name: 'Pad Thai',
-            description: 'Stir-fried rice noodles with egg, tofu, bean sprouts, and crushed peanuts in our house special sauce.',
-            price: '16.95',
-            image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?q=80&w=2070&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            description: 'Stir-fried rice noodles with tofu, bean sprouts, peanuts and lime',
+            price: '16.99',
+            rating: 4.9,
+            chefsChoice: true
           },
           {
             id: 5,
-            name: 'Gaeng Keow Wan (Green Curry)',
-            description: 'Aromatic green curry with coconut milk, bamboo shoots, Thai eggplant, and sweet basil.',
-            price: '18.95',
-            image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=2071&auto=format&fit=crop',
-            spicy: true
+            name: 'Green Curry',
+            description: 'Aromatic curry with coconut milk, Thai eggplant, and sweet basil',
+            price: '18.99',
+            rating: 4.8
           },
           {
             id: 6,
-            name: 'Pla Rad Prik',
-            description: 'Crispy whole fish topped with spicy three-flavor sauce, bell peppers, and kaffir lime leaves.',
-            price: '24.95',
-            image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=2070&auto=format&fit=crop',
-            spicy: true,
-            featured: true
+            name: 'Pineapple Fried Rice',
+            description: 'Aromatic rice with pineapple chunks, cashews, and curry powder',
+            price: '17.99',
+            rating: 4.6
           }
         ]
       },
       {
         name: 'Desserts',
-        image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=2066&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1621293954908-907159247fc8?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
             id: 7,
-            name: 'Khao Niao Mamuang',
-            description: 'Sweet sticky rice with fresh mango slices and coconut cream.',
-            price: '8.95',
-            image: 'https://images.unsplash.com/photo-1621293954908-907159247fc8?q=80&w=2070&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            name: 'Mango Sticky Rice',
+            description: 'Sweet sticky rice with fresh mango slices and coconut cream',
+            price: '9.99',
+            rating: 4.9,
+            chefsChoice: true
           },
           {
             id: 8,
-            name: 'Tab Tim Grob',
-            description: 'Water chestnut rubies in sweetened coconut milk with crushed ice.',
-            price: '7.95',
-            image: 'https://images.unsplash.com/photo-1619011502616-87b5f1b6b2a3?q=80&w=1964&auto=format&fit=crop',
-            vegetarian: true
+            name: 'Thai Tea Panna Cotta',
+            description: 'Creamy panna cotta infused with Thai tea flavors',
+            price: '8.99',
+            rating: 4.7
+          },
+          {
+            id: 9,
+            name: 'Coconut Ice Cream',
+            description: 'Homemade coconut ice cream served with crushed peanuts',
+            price: '7.99',
+            rating: 4.6
           }
         ]
       }
@@ -132,89 +127,90 @@ const cuisines: CuisineMenu[] = [
   {
     id: 'chinese',
     name: 'Chinese Cuisine',
-    description: 'Discover the rich culinary traditions of China with our selection of authentic dishes representing various regional styles of Chinese cooking.',
-    backgroundImage: 'https://images.unsplash.com/photo-1518983546435-32def8dce589?q=80&w=2067&auto=format&fit=crop',
+    description: 'Discover the rich culinary traditions of China with our selection of authentic dishes representing various regional styles.',
+    backgroundImage: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=2060&auto=format&fit=crop',
     sections: [
       {
         name: 'Appetizers',
-        image: 'https://images.unsplash.com/photo-1625938145744-533e82abfaf9?q=80&w=2070&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1625938145744-533e82abfaf9?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 9,
-            name: 'Dim Sum Platter',
-            description: 'Assortment of steamed dumplings including har gow, siu mai, and vegetable dumplings.',
-            price: '14.95',
-            image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?q=80&w=2029&auto=format&fit=crop',
-            popular: true
-          },
-          {
             id: 10,
-            name: 'Spring Rolls',
-            description: 'Crispy rolls filled with vegetables and shiitake mushrooms, served with sweet chili sauce.',
-            price: '9.95',
-            image: 'https://images.unsplash.com/photo-1615361200098-9e630ec29b4e?q=80&w=2070&auto=format&fit=crop',
-            vegetarian: true
+            name: 'Dim Sum Platter',
+            description: 'Assortment of dumplings including har gow, siu mai, and vegetable dumplings',
+            price: '14.99',
+            rating: 4.8,
+            chefsChoice: true
           },
           {
             id: 11,
-            name: 'Crispy Peking Duck Rolls',
-            description: 'Thin pancakes wrapped with roasted duck, scallions, cucumber, and hoisin sauce.',
-            price: '16.95',
-            image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=2067&auto=format&fit=crop',
-            featured: true
+            name: 'Spring Rolls',
+            description: 'Crispy rolls filled with vegetables and shiitake mushrooms',
+            price: '9.99',
+            rating: 4.5
+          },
+          {
+            id: 12,
+            name: 'Hot and Sour Soup',
+            description: 'Traditional soup with tofu, bamboo shoots, and wood ear mushrooms',
+            price: '8.99',
+            rating: 4.6
           }
         ]
       },
       {
-        name: 'Main Courses',
-        image: 'https://images.unsplash.com/photo-1623689043725-b190a3a293b0?q=80&w=2070&auto=format&fit=crop',
+        name: 'Main Course',
+        backgroundImage: 'https://images.unsplash.com/photo-1623689043725-b190a3a293b0?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 12,
-            name: 'Kung Pao Chicken',
-            description: 'Stir-fried chicken with peanuts, vegetables, and chili peppers in a spicy Sichuan sauce.',
-            price: '17.95',
-            image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?q=80&w=2070&auto=format&fit=crop',
-            spicy: true,
-            popular: true
-          },
-          {
             id: 13,
-            name: 'Mapo Tofu',
-            description: 'Soft tofu in a spicy fermented bean sauce with minced pork and Sichuan peppercorns.',
-            price: '15.95',
-            image: 'https://images.unsplash.com/photo-1582415892685-48956b19b332?q=80&w=2874&auto=format&fit=crop',
-            spicy: true
+            name: 'Kung Pao Chicken',
+            description: 'Stir-fried chicken with peanuts, vegetables, and dried chili peppers',
+            price: '17.99',
+            rating: 4.7
           },
           {
             id: 14,
             name: 'Peking Duck',
-            description: 'Whole roasted duck with crispy skin, served with pancakes, scallions, cucumber, and hoisin sauce.',
-            price: '39.95',
-            image: 'https://images.unsplash.com/photo-1518492104633-130d0cc84637?q=80&w=2148&auto=format&fit=crop',
-            featured: true
+            description: 'Roasted duck served with thin pancakes, scallions, cucumber, and hoisin sauce',
+            price: '32.99',
+            rating: 4.9,
+            chefsChoice: true
+          },
+          {
+            id: 15,
+            name: 'Mapo Tofu',
+            description: 'Soft tofu in a spicy sauce with minced pork and Sichuan peppercorns',
+            price: '15.99',
+            rating: 4.6
           }
         ]
       },
       {
         name: 'Desserts',
-        image: 'https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?q=80&w=1887&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1547414368-ac947d00b91d?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 15,
+            id: 16,
             name: 'Egg Custard Tarts',
-            description: 'Flaky pastry shells filled with sweet egg custard, baked to golden perfection.',
-            price: '6.95',
-            image: 'https://images.unsplash.com/photo-1603736087997-76d754516c97?q=80&w=2532&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Flaky pastry shells filled with sweet egg custard',
+            price: '6.99',
+            rating: 4.7
           },
           {
-            id: 16,
+            id: 17,
+            name: 'Tangyuan',
+            description: 'Sweet rice balls filled with black sesame paste in ginger syrup',
+            price: '7.99',
+            rating: 4.6,
+            chefsChoice: true
+          },
+          {
+            id: 18,
             name: 'Mango Pudding',
-            description: 'Smooth mango-flavored pudding topped with fresh mango pieces and evaporated milk.',
-            price: '7.95',
-            image: 'https://images.unsplash.com/photo-1511018556340-d16986a1c194?q=80&w=2069&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Smooth mango-flavored pudding topped with fresh fruit',
+            price: '8.99',
+            rating: 4.8
           }
         ]
       }
@@ -228,86 +224,85 @@ const cuisines: CuisineMenu[] = [
     sections: [
       {
         name: 'Appetizers',
-        image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?q=80&w=2071&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1517244683847-7456b63c5969?q=80&w=2588&auto=format&fit=crop',
         items: [
           {
-            id: 17,
-            name: 'Vegetable Samosas',
-            description: 'Crispy pastry filled with spiced potatoes and peas, served with tamarind and mint chutneys.',
-            price: '8.95',
-            image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=2071&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
-          },
-          {
-            id: 18,
-            name: 'Onion Bhaji',
-            description: 'Crispy fritters made with sliced onions and chickpea flour, served with mint yogurt sauce.',
-            price: '7.95',
-            image: 'https://images.unsplash.com/photo-1619683815207-31fc5ef8ca7d?q=80&w=2067&auto=format&fit=crop',
-            vegetarian: true
-          },
-          {
             id: 19,
-            name: 'Tandoori Chicken Tikka',
-            description: 'Tender chicken pieces marinated in yogurt and spices, cooked in a tandoor oven.',
-            price: '12.95',
-            image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?q=80&w=2069&auto=format&fit=crop',
-            spicy: true
+            name: 'Samosa Platter',
+            description: 'Crispy pastries filled with spiced potatoes and peas, served with chutneys',
+            price: '9.99',
+            rating: 4.7
+          },
+          {
+            id: 20,
+            name: 'Paneer Tikka',
+            description: 'Grilled cottage cheese marinated in yogurt and spices',
+            price: '12.99',
+            rating: 4.8,
+            chefsChoice: true
+          },
+          {
+            id: 21,
+            name: 'Onion Bhaji',
+            description: 'Crispy fritters made with sliced onions and chickpea flour',
+            price: '8.99',
+            rating: 4.6
           }
         ]
       },
       {
-        name: 'Main Courses',
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?q=80&w=2070&auto=format&fit=crop',
+        name: 'Main Course',
+        backgroundImage: 'https://images.unsplash.com/photo-1585937421612-70a008356c36?q=80&w=2136&auto=format&fit=crop',
         items: [
           {
-            id: 20,
-            name: 'Butter Chicken',
-            description: 'Tandoori chicken in a rich tomato and butter sauce, finished with cream and fenugreek.',
-            price: '18.95',
-            image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?q=80&w=2070&auto=format&fit=crop',
-            popular: true
-          },
-          {
-            id: 21,
-            name: 'Lamb Rogan Josh',
-            description: 'Tender lamb pieces slow-cooked in a fragrant Kashmiri spice blend with tomatoes and yogurt.',
-            price: '20.95',
-            image: 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?q=80&w=1887&auto=format&fit=crop',
-            spicy: true
-          },
-          {
             id: 22,
-            name: 'Vegetable Biryani',
-            description: 'Fragrant basmati rice cooked with mixed vegetables, saffron, and aromatic spices.',
-            price: '16.95',
-            image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=1974&auto=format&fit=crop',
-            vegetarian: true,
-            featured: true
+            name: 'Butter Chicken',
+            description: 'Tandoori chicken in a rich tomato and butter sauce with cream',
+            price: '18.99',
+            rating: 4.9,
+            chefsChoice: true
+          },
+          {
+            id: 23,
+            name: 'Lamb Biryani',
+            description: 'Fragrant basmati rice cooked with tender lamb and aromatic spices',
+            price: '21.99',
+            rating: 4.8
+          },
+          {
+            id: 24,
+            name: 'Palak Paneer',
+            description: 'Cottage cheese cubes in a creamy spinach sauce',
+            price: '16.99',
+            rating: 4.7
           }
         ]
       },
       {
         name: 'Desserts',
-        image: 'https://images.unsplash.com/photo-1575224300306-1b8da36134ec?q=80&w=2015&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1589308154028-d591034a4af6?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 23,
+            id: 25,
             name: 'Gulab Jamun',
-            description: 'Soft milk dumplings soaked in rose-flavored sugar syrup, garnished with pistachios.',
-            price: '6.95',
-            image: 'https://images.unsplash.com/photo-1605197948654-68a7e064e911?q=80&w=1974&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            description: 'Soft milk dumplings soaked in rose-flavored sugar syrup',
+            price: '6.99',
+            rating: 4.8,
+            chefsChoice: true
           },
           {
-            id: 24,
+            id: 26,
+            name: 'Rasmalai',
+            description: 'Soft cottage cheese patties in sweetened, cardamom-flavored milk',
+            price: '7.99',
+            rating: 4.7
+          },
+          {
+            id: 27,
             name: 'Kheer',
-            description: 'Creamy rice pudding flavored with cardamom, saffron, and garnished with nuts.',
-            price: '7.95',
-            image: 'https://images.unsplash.com/photo-1633275833583-9e3428444204?q=80&w=1972&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Creamy rice pudding with cardamom, saffron, and nuts',
+            price: '6.99',
+            rating: 4.6
           }
         ]
       }
@@ -317,95 +312,89 @@ const cuisines: CuisineMenu[] = [
     id: 'bengali',
     name: 'Bengali Cuisine',
     description: 'Indulge in the subtle yet complex flavors of Bengal, featuring seafood, rice, and distinctive mustard and poppy seed preparations.',
-    backgroundImage: 'https://images.unsplash.com/photo-1589738943768-8fdd9c2b69d7?q=80&w=2069&auto=format&fit=crop',
+    backgroundImage: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?q=80&w=2069&auto=format&fit=crop',
     sections: [
       {
         name: 'Appetizers',
-        image: 'https://images.unsplash.com/photo-1603099080016-5ee7be05c186?q=80&w=2070&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1603099080016-5ee7be05c186?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 25,
+            id: 28,
             name: 'Beguni',
-            description: 'Crispy eggplant fritters coated in gram flour batter, seasoned with nigella seeds.',
-            price: '7.95',
-            image: 'https://images.unsplash.com/photo-1606923829579-0cb981a83e2e?q=80&w=2070&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Crispy eggplant fritters coated in gram flour batter',
+            price: '7.99',
+            rating: 4.5
           },
           {
-            id: 26,
-            name: 'Puchka (Pani Puri)',
-            description: 'Hollow crispy spheres filled with spiced potatoes, chickpeas and tangy tamarind water.',
-            price: '8.95',
-            image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?q=80&w=2071&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            id: 29,
+            name: 'Phuchka',
+            description: 'Hollow crispy puris filled with spiced potatoes and tangy water',
+            price: '8.99',
+            rating: 4.8,
+            chefsChoice: true
           },
           {
-            id: 27,
+            id: 30,
             name: 'Fish Chop',
-            description: 'Spiced fish cakes with potato and panko coating, served with kasundi mustard sauce.',
-            price: '10.95',
-            image: 'https://images.unsplash.com/photo-1626436819821-79bd89fc3ef5?q=80&w=1974&auto=format&fit=crop'
+            description: 'Spiced fish cakes with potato and panko coating',
+            price: '10.99',
+            rating: 4.6
           }
         ]
       },
       {
-        name: 'Main Courses',
-        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop',
+        name: 'Main Course',
+        backgroundImage: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 28,
+            id: 31,
             name: 'Ilish Bhapa',
-            description: 'Steamed hilsa fish in a rich mustard and coconut sauce, wrapped in banana leaf.',
-            price: '22.95',
-            image: 'https://images.unsplash.com/photo-1611599538835-b52a8c2af7fe?q=80&w=1974&auto=format&fit=crop',
-            featured: true
+            description: 'Steamed hilsa fish in a mustard and coconut sauce',
+            price: '24.99',
+            rating: 4.9,
+            chefsChoice: true
           },
           {
-            id: 29,
+            id: 32,
             name: 'Kosha Mangsho',
-            description: 'Slow-cooked Bengali mutton curry with aromatic spices and potatoes.',
-            price: '21.95',
-            image: 'https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?q=80&w=2074&auto=format&fit=crop',
-            popular: true
+            description: 'Slow-cooked Bengali mutton curry with aromatic spices',
+            price: '22.99',
+            rating: 4.8
           },
           {
-            id: 30,
-            name: 'Chingri Malai Curry',
-            description: 'Prawns cooked in a creamy coconut sauce with ginger and green chilies.',
-            price: '20.95',
-            image: 'https://images.unsplash.com/photo-1665490484977-5ad44e57749a?q=80&w=1780&auto=format&fit=crop'
+            id: 33,
+            name: 'Chingri Malaikari',
+            description: 'Prawns cooked in a creamy coconut sauce with spices',
+            price: '23.99',
+            rating: 4.7
           }
         ]
       },
       {
         name: 'Desserts',
-        image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=1864&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=2071&auto=format&fit=crop',
         items: [
           {
-            id: 31,
+            id: 34,
             name: 'Rasgulla',
-            description: 'Spongy cottage cheese balls soaked in light sugar syrup, a Bengali classic.',
-            price: '6.95',
-            image: 'https://images.unsplash.com/photo-1598140993689-0361bef5e0c7?q=80&w=2068&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            description: 'Spongy cottage cheese balls soaked in light sugar syrup',
+            price: '6.99',
+            rating: 4.7
           },
           {
-            id: 32,
+            id: 35,
             name: 'Mishti Doi',
-            description: 'Sweetened yogurt dessert with caramelized flavor, served chilled in a clay pot.',
-            price: '5.95',
-            image: 'https://images.unsplash.com/photo-1624813704378-ec63106d53c5?q=80&w=1974&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Sweetened yogurt dessert with caramelized flavor',
+            price: '5.99',
+            rating: 4.6
           },
           {
-            id: 33,
+            id: 36,
             name: 'Sandesh',
-            description: 'Delicate Bengali sweet made from paneer and flavored with cardamom and saffron.',
-            price: '7.95',
-            image: 'https://images.unsplash.com/photo-1608198399988-341f712c3711?q=80&w=2070&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Delicate Bengali sweet made from paneer with cardamom',
+            price: '7.99',
+            rating: 4.8,
+            chefsChoice: true
           }
         ]
       }
@@ -419,92 +408,85 @@ const cuisines: CuisineMenu[] = [
     sections: [
       {
         name: 'Appetizers',
-        image: 'https://images.unsplash.com/photo-1485963631004-f2f00b1d6606?q=80&w=2075&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1447279506476-3faec8071eee?q=80&w=2070&auto=format&fit=crop',
         items: [
           {
-            id: 34,
-            name: 'Escargot à la Bourguignonne',
-            description: 'Snails baked with garlic herb butter, served with crusty baguette.',
-            price: '14.95',
-            image: 'https://images.unsplash.com/photo-1546549095-5d8bc3c37ffc?q=80&w=2070&auto=format&fit=crop'
+            id: 37,
+            name: 'Escargot',
+            description: 'Snails baked with garlic herb butter, served with baguette',
+            price: '14.99',
+            rating: 4.6
           },
           {
-            id: 35,
-            name: 'Steak Tartare',
-            description: 'Hand-cut raw beef seasoned with capers, mustard, shallots, and egg yolk.',
-            price: '15.95',
-            image: 'https://images.unsplash.com/photo-1511910849309-0dffb8785146?q=80&w=2072&auto=format&fit=crop',
-            featured: true
-          },
-          {
-            id: 36,
+            id: 38,
             name: 'Caprese Salad',
-            description: 'Fresh mozzarella, tomatoes, and basil drizzled with balsamic reduction and olive oil.',
-            price: '12.95',
-            image: 'https://images.unsplash.com/photo-1608682684307-61d5653da583?q=80&w=1974&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            description: 'Fresh mozzarella, tomatoes, and basil with balsamic reduction',
+            price: '12.99',
+            rating: 4.7,
+            chefsChoice: true
+          },
+          {
+            id: 39,
+            name: 'Beef Carpaccio',
+            description: 'Thinly sliced raw beef with capers, arugula, and parmesan',
+            price: '15.99',
+            rating: 4.8
           }
         ]
       },
       {
-        name: 'Main Courses',
-        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=2070&auto=format&fit=crop',
+        name: 'Main Course',
+        backgroundImage: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop',
         items: [
           {
-            id: 37,
+            id: 40,
             name: 'Beef Wellington',
-            description: 'Tender filet mignon wrapped in puff pastry with mushroom duxelles and prosciutto.',
-            price: '38.95',
-            image: 'https://images.unsplash.com/photo-1602196849608-35e863c3f124?q=80&w=1974&auto=format&fit=crop',
-            featured: true
+            description: 'Filet mignon wrapped in puff pastry with mushroom duxelles',
+            price: '38.99',
+            rating: 4.9,
+            chefsChoice: true
           },
           {
-            id: 38,
+            id: 41,
             name: 'Coq au Vin',
-            description: 'Chicken braised with wine, lardons, mushrooms, and garlic in a rich sauce.',
-            price: '24.95',
-            image: 'https://images.unsplash.com/photo-1542854711-359f7afc7a4f?q=80&w=1974&auto=format&fit=crop',
-            popular: true
+            description: 'Chicken braised with wine, bacon, mushrooms, and garlic',
+            price: '26.99',
+            rating: 4.7
           },
           {
-            id: 39,
+            id: 42,
             name: 'Risotto ai Funghi',
-            description: 'Creamy Arborio rice with wild mushrooms, white wine, and Parmesan cheese.',
-            price: '20.95',
-            image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=2069&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Creamy Arborio rice with wild mushrooms and Parmesan',
+            price: '22.99',
+            rating: 4.6
           }
         ]
       },
       {
         name: 'Desserts',
-        image: 'https://images.unsplash.com/photo-1519915028121-7d3463d5b1ff?q=80&w=1887&auto=format&fit=crop',
+        backgroundImage: 'https://images.unsplash.com/photo-1579306194872-64d3b7bac4c2?q=80&w=2068&auto=format&fit=crop',
         items: [
           {
-            id: 40,
+            id: 43,
             name: 'Crème Brûlée',
-            description: 'Classic vanilla custard with a caramelized sugar crust, served with fresh berries.',
-            price: '9.95',
-            image: 'https://images.unsplash.com/photo-1488477304112-4944851de03d?q=80&w=1887&auto=format&fit=crop',
-            vegetarian: true,
-            popular: true
+            description: 'Classic vanilla custard with a caramelized sugar crust',
+            price: '9.99',
+            rating: 4.8,
+            chefsChoice: true
           },
           {
-            id: 41,
+            id: 44,
             name: 'Tiramisu',
-            description: 'Espresso-soaked ladyfingers layered with mascarpone cream and dusted with cocoa.',
-            price: '8.95',
-            image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?q=80&w=2075&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Espresso-soaked ladyfingers with mascarpone cream',
+            price: '8.99',
+            rating: 4.7
           },
           {
-            id: 42,
+            id: 45,
             name: 'Apple Tarte Tatin',
-            description: 'Caramelized upside-down apple tart served warm with crème fraîche.',
-            price: '10.95',
-            image: 'https://images.unsplash.com/photo-1568571780765-9276235b0182?q=80&w=1974&auto=format&fit=crop',
-            vegetarian: true
+            description: 'Caramelized upside-down apple tart with crème fraîche',
+            price: '10.99',
+            rating: 4.6
           }
         ]
       }
@@ -516,26 +498,10 @@ const MenuPage = () => {
   const { cuisine: cuisineParam } = useParams();
   const [activeCuisine, setActiveCuisine] = useState<CuisineMenu | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
-
-  // Preload images
-  const preloadImage = (src: string, id: string): Promise<void> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => ({ ...prev, [id]: true }));
-        resolve();
-      };
-      img.onerror = () => {
-        console.error(`Failed to load image: ${src}`);
-        setLoadedImages(prev => ({ ...prev, [id]: true })); // Mark as loaded anyway to not block UI
-        resolve();
-      };
-      img.src = src;
-    });
-  };
-
+  const [loadingImages, setLoadingImages] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
+  
+  // Preload critical images
   useEffect(() => {
     // Find the cuisine from the URL parameter or default to Thai
     const selectedCuisine = cuisineParam 
@@ -545,257 +511,337 @@ const MenuPage = () => {
     if (selectedCuisine) {
       setActiveCuisine(selectedCuisine);
       setActiveSection(selectedCuisine.sections[0].name);
-      setIsLoading(true);
-      setLoadedImages({});
       
-      // Preload background image
-      preloadImage(selectedCuisine.backgroundImage, 'background');
-      
-      // Preload all section and item images in parallel
+      // Preload background image and section images
       const imagesToLoad = [
-        ...selectedCuisine.sections.map(section => ({
-          src: section.image,
-          id: `section-${section.name}`
-        })),
-        ...selectedCuisine.sections.flatMap(section => 
-          section.items.map(item => ({
-            src: item.image,
-            id: `item-${item.id}`
-          }))
-        )
+        selectedCuisine.backgroundImage,
+        ...selectedCuisine.sections.map(section => section.backgroundImage)
       ];
       
-      Promise.all(imagesToLoad.map(img => preloadImage(img.src, img.id)))
-        .then(() => {
-          console.log('All images loaded');
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error loading images:', error);
-          setIsLoading(false); // Show content anyway
-        });
+      let loadedCount = 0;
+      const newImagesLoaded = {...imagesLoaded};
+      
+      imagesToLoad.forEach(src => {
+        const img = new Image();
+        img.onload = () => {
+          newImagesLoaded[src] = true;
+          loadedCount++;
+          if (loadedCount === imagesToLoad.length) {
+            setLoadingImages(false);
+            setImagesLoaded(newImagesLoaded);
+          }
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image: ${src}`);
+          newImagesLoaded[src] = true; // Mark as "loaded" to avoid blocking UI
+          loadedCount++;
+          if (loadedCount === imagesToLoad.length) {
+            setLoadingImages(false);
+            setImagesLoaded(newImagesLoaded);
+          }
+        };
+        img.src = src;
+      });
     }
   }, [cuisineParam]);
 
-  if (!activeCuisine) return (
-    <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
-      <div className="loader"></div>
-    </div>
-  );
-  
+  // Handle cuisine changes
+  const handleCuisineChange = (newCuisineId: string) => {
+    // Only change if it's different
+    if (activeCuisine?.id !== newCuisineId) {
+      setLoadingImages(true);
+      const newCuisine = cuisines.find(c => c.id === newCuisineId);
+      if (newCuisine) {
+        // Preload critical images before showing cuisine
+        const imagesToLoad = [
+          newCuisine.backgroundImage,
+          ...newCuisine.sections.map(section => section.backgroundImage)
+        ];
+        
+        let loadedCount = 0;
+        const newImagesLoaded = {...imagesLoaded};
+        
+        imagesToLoad.forEach(src => {
+          // If already cached, consider it loaded
+          if (imagesLoaded[src]) {
+            loadedCount++;
+            if (loadedCount === imagesToLoad.length) {
+              setActiveCuisine(newCuisine);
+              setActiveSection(newCuisine.sections[0].name);
+              setLoadingImages(false);
+            }
+            return;
+          }
+          
+          const img = new Image();
+          img.onload = () => {
+            newImagesLoaded[src] = true;
+            loadedCount++;
+            if (loadedCount === imagesToLoad.length) {
+              setActiveCuisine(newCuisine);
+              setActiveSection(newCuisine.sections[0].name);
+              setLoadingImages(false);
+              setImagesLoaded(newImagesLoaded);
+            }
+          };
+          img.onerror = () => {
+            console.error(`Failed to load image: ${src}`);
+            newImagesLoaded[src] = true;
+            loadedCount++;
+            if (loadedCount === imagesToLoad.length) {
+              setActiveCuisine(newCuisine);
+              setActiveSection(newCuisine.sections[0].name);
+              setLoadingImages(false);
+              setImagesLoaded(newImagesLoaded);
+            }
+          };
+          img.src = src;
+        });
+        
+        // Update URL without page reload
+        window.history.pushState({}, '', `/menu/${newCuisineId}`);
+      }
+    }
+  };
+
+  // Get the current section
   const getCurrentSection = () => {
+    if (!activeCuisine) return null;
     return activeCuisine.sections.find(section => section.name === activeSection);
   };
 
+  // Handle menu item hover for rating display
+  const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
+
+  if (!activeCuisine) {
+    return (
+      <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
   const currentSection = getCurrentSection();
 
+  // Render star ratings
+  const renderStarRating = (rating: number = 0) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = [];
+    
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<span key={`full-${i}`} className="text-gold">★</span>);
+    }
+    
+    // Half star
+    if (hasHalfStar) {
+      stars.push(<span key="half" className="text-gold">★</span>);
+    }
+    
+    // Empty stars
+    const emptyStars = 5 - stars.length;
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<span key={`empty-${i}`} className="text-gold/30">★</span>);
+    }
+    
+    return <div className="flex">{stars}</div>;
+  };
+
   return (
-    <div className="min-h-screen bg-savoria-black text-white">
+    <div className="min-h-screen bg-savoria-black text-white overflow-x-hidden">
       <Navbar />
       
-      <main className="pt-16">
+      <main className="relative pt-16">
+        {/* Loading overlay */}
+        {loadingImages && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div className="loader"></div>
+          </div>
+        )}
+        
         {/* Hero section with cuisine background */}
-        <div 
-          className="relative min-h-[40vh] flex items-center justify-center bg-cover bg-center bg-fixed transition-all duration-700"
+        <motion.div 
+          key={`hero-${activeCuisine.id}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative min-h-[50vh] flex items-center justify-center bg-cover bg-center"
           style={{ 
             backgroundImage: `url(${activeCuisine.backgroundImage})`,
-            opacity: loadedImages['background'] ? 1 : 0.3
           }}
         >
           {/* Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
           
-          <div className="container mx-auto px-4 relative z-10 text-center py-20">
-            <h1 className="font-playfair text-4xl md:text-6xl font-bold mb-4">
-              <span className="gold-gradient-text">{activeCuisine.name}</span>
-            </h1>
-            <p className="font-cormorant text-xl md:text-2xl max-w-3xl mx-auto">
+          {/* Cuisine navigation arrows */}
+          <button 
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 p-2 rounded-full 
+                      backdrop-blur-md border border-white/10 hover:bg-black/50 transition-all z-10"
+            onClick={() => {
+              const currentIndex = cuisines.findIndex(c => c.id === activeCuisine.id);
+              const prevIndex = (currentIndex - 1 + cuisines.length) % cuisines.length;
+              handleCuisineChange(cuisines[prevIndex].id);
+            }}
+          >
+            <ChevronLeft size={24} className="text-white" />
+          </button>
+          
+          <button 
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 p-2 rounded-full 
+                      backdrop-blur-md border border-white/10 hover:bg-black/50 transition-all z-10"
+            onClick={() => {
+              const currentIndex = cuisines.findIndex(c => c.id === activeCuisine.id);
+              const nextIndex = (currentIndex + 1) % cuisines.length;
+              handleCuisineChange(cuisines[nextIndex].id);
+            }}
+          >
+            <ChevronRight size={24} className="text-white" />
+          </button>
+          
+          <div className="container mx-auto px-4 relative z-10 text-center py-16">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="font-playfair text-5xl md:text-7xl font-bold mb-6 text-gold-gradient"
+            >
+              {activeCuisine.name}
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="font-cormorant text-xl md:text-2xl max-w-3xl mx-auto"
+            >
               {activeCuisine.description}
-            </p>
+            </motion.p>
+          </div>
+        </motion.div>
+        
+        {/* Cuisine navigation tabs */}
+        <div className="sticky top-0 z-30 bg-black/80 backdrop-blur-md shadow-lg py-2 border-t border-b border-gold/20">
+          <div className="container mx-auto px-4">
+            <div className="flex overflow-x-auto scrollbar-none justify-center py-2">
+              {cuisines.map((cuisine) => (
+                <motion.button
+                  key={cuisine.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`mx-2 px-5 py-2 font-cormorant text-lg rounded-sm transition-all duration-300
+                    ${activeCuisine.id === cuisine.id 
+                      ? 'bg-gold text-savoria-black font-semibold' 
+                      : 'text-white hover:bg-white/10'
+                    }`}
+                  onClick={() => handleCuisineChange(cuisine.id)}
+                >
+                  {cuisine.name}
+                </motion.button>
+              ))}
+            </div>
           </div>
         </div>
         
-        {/* Cuisine selection tabs - improved version */}
-        <div className="sticky top-0 z-20 bg-savoria-black/90 backdrop-blur-md shadow-lg border-b border-gold/20">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex overflow-x-auto snap-x scrollbar-none justify-center">
-              {cuisines.map((cuisine) => (
-                <Link 
-                  key={cuisine.id} 
-                  to={`/menu/${cuisine.id}`}
-                  className={`flex-shrink-0 snap-start px-5 py-2 mx-2 transition-all duration-300 font-cormorant text-lg 
-                    ${activeCuisine.id === cuisine.id 
-                      ? 'bg-gold text-savoria-black font-semibold rounded-md' 
-                      : 'text-white hover:bg-gold/20 rounded-md'
+        {/* Menu section navigation */}
+        <div className="bg-savoria-black border-b border-gold/10">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex justify-center space-x-6">
+              {activeCuisine.sections.map((section) => (
+                <motion.button
+                  key={section.name}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`px-8 py-3 rounded transition-all duration-300 font-cormorant text-xl
+                    ${activeSection === section.name 
+                      ? 'bg-gold text-savoria-black font-semibold' 
+                      : 'bg-black/40 backdrop-blur-sm border border-gold/20 text-white hover:bg-black/60'
                     }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (activeCuisine.id !== cuisine.id) {
-                      setIsLoading(true);
-                      setLoadedImages({});
-                      setActiveCuisine(cuisine);
-                      setActiveSection(cuisine.sections[0].name);
-                      
-                      // Preload images for new cuisine
-                      preloadImage(cuisine.backgroundImage, 'background');
-                      
-                      const imagesToLoad = [
-                        ...cuisine.sections.map(section => ({
-                          src: section.image,
-                          id: `section-${section.name}`
-                        })),
-                        ...cuisine.sections.flatMap(section => 
-                          section.items.map(item => ({
-                            src: item.image,
-                            id: `item-${item.id}`
-                          }))
-                        )
-                      ];
-                      
-                      Promise.all(imagesToLoad.map(img => preloadImage(img.src, img.id)))
-                        .then(() => {
-                          setIsLoading(false);
-                        })
-                        .catch(() => {
-                          setIsLoading(false);
-                        });
-                    }
-                    window.history.pushState({}, '', `/menu/${cuisine.id}`);
-                  }}
+                  onClick={() => setActiveSection(section.name)}
                 >
-                  {cuisine.name}
-                </Link>
+                  {section.name}
+                </motion.button>
               ))}
             </div>
           </div>
         </div>
-      
-        {/* Menu content */}
-        <div className="container mx-auto px-4 py-12">
-          {isLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="loader"></div>
-            </div>
-          ) : (
-            <Tabs defaultValue={activeSection} value={activeSection} onValueChange={setActiveSection} className="w-full">
-              <TabsList className="w-full flex justify-center mb-10 overflow-x-auto bg-savoria-dark/30 backdrop-blur-md p-1 rounded-md border border-gold/10">
-                {activeCuisine.sections.map((section) => (
-                  <TabsTrigger 
-                    key={section.name}
-                    value={section.name}
-                    className="flex-1 max-w-[200px] font-cormorant text-lg data-[state=active]:bg-gold data-[state=active]:text-savoria-black"
-                  >
-                    {section.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+        
+        {/* Menu section content */}
+        <AnimatePresence mode="wait">
+          {currentSection && (
+            <motion.div 
+              key={`${activeCuisine.id}-${currentSection.name}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="relative min-h-[60vh] py-16"
+            >
+              {/* Section background with subtle effect */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center opacity-20"
+                style={{ backgroundImage: `url(${currentSection.backgroundImage})` }}
+              >
+                <div className="absolute inset-0 bg-black/80"></div>
+              </div>
               
-              {activeCuisine.sections.map((section) => (
-                <TabsContent 
-                  key={`${activeCuisine.id}-${section.name}`} 
-                  value={section.name}
-                  className="relative"
-                >
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`${activeCuisine.id}-${section.name}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      {/* Section background with subtle effect */}
-                      <div className="absolute inset-0 -z-10">
-                        <div className="absolute inset-0 bg-savoria-dark/80"></div>
-                        <div 
-                          className="absolute inset-0 bg-cover bg-center bg-fixed opacity-30 transition-opacity duration-500"
-                          style={{ 
-                            backgroundImage: `url(${section.image})`,
-                            opacity: loadedImages[`section-${section.name}`] ? 0.3 : 0
-                          }}
-                        />
-                      </div>
-                      
-                      {/* Section title */}
-                      <div className="text-center mb-8">
-                        <h2 className="font-playfair text-3xl font-bold">
-                          <span className="gold-gradient-text">{section.name}</span>
-                        </h2>
-                      </div>
-                      
-                      {/* Menu items grid with improved glass effect */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {section.items.map((item) => (
-                          <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="glass-card overflow-hidden group relative"
-                          >
-                            {/* Item image */}
-                            <div className="h-48 overflow-hidden">
-                              <img 
-                                src={item.image} 
-                                alt={item.name}
-                                className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
-                                  loadedImages[`item-${item.id}`] ? 'opacity-100' : 'opacity-40'
-                                }`}
-                                onLoad={() => setLoadedImages(prev => ({ ...prev, [`item-${item.id}`]: true }))}
-                              />
-                            </div>
-                            
-                            {/* Item content */}
-                            <div className="p-5">
-                              <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-playfair text-xl font-semibold">
-                                  {item.name}
-                                  {item.spicy && <span className="text-red-500 ml-2">🌶️</span>}
-                                  {item.vegetarian && <span className="text-green-500 ml-2">🥬</span>}
-                                </h3>
-                                <span className="text-gold font-cormorant font-bold text-xl">
-                                  ${item.price}
-                                </span>
+              <div className="container mx-auto px-4 relative z-10">
+                <div className="max-w-5xl mx-auto">
+                  {/* Menu items */}
+                  <div className="space-y-8">
+                    {currentSection.items.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className={`relative overflow-hidden rounded-md transition-all duration-300 
+                          ${hoveredItemId === item.id 
+                            ? 'bg-white/15 backdrop-blur-md shadow-xl transform scale-[1.02]' 
+                            : 'bg-black/40 backdrop-blur-sm shadow-md'
+                          }`}
+                        onMouseEnter={() => setHoveredItemId(item.id)}
+                        onMouseLeave={() => setHoveredItemId(null)}
+                      >
+                        <div className="p-6">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-playfair text-2xl font-semibold group-hover:text-gold transition-colors flex items-center">
+                                {item.name}
+                                {item.chefsChoice && (
+                                  <span className="ml-3 text-xs bg-gold/80 text-savoria-black px-3 py-1 rounded-sm uppercase font-semibold tracking-wider">
+                                    Chef's Choice
+                                  </span>
+                                )}
+                              </h3>
+                              
+                              <div className="mt-1 mb-3">
+                                {renderStarRating(item.rating)}
+                                {item.rating && (
+                                  <span className="text-sm text-gray-400 ml-2">{item.rating}</span>
+                                )}
                               </div>
                               
-                              <p className="font-cormorant text-gray-300 text-lg">
+                              <p className="font-cormorant text-xl text-gray-300">
                                 {item.description}
                               </p>
-                              
-                              {/* Tags */}
-                              <div className="mt-4 flex flex-wrap gap-2">
-                                {item.popular && (
-                                  <span className="text-xs px-2 py-1 bg-gold/20 rounded-full text-gold">
-                                    Popular
-                                  </span>
-                                )}
-                                {item.featured && (
-                                  <span className="text-xs px-2 py-1 bg-purple-500/20 rounded-full text-purple-400">
-                                    Chef's Special
-                                  </span>
-                                )}
-                                {item.vegetarian && (
-                                  <span className="text-xs px-2 py-1 bg-green-500/20 rounded-full text-green-400">
-                                    Vegetarian
-                                  </span>
-                                )}
-                                {item.vegan && (
-                                  <span className="text-xs px-2 py-1 bg-emerald-500/20 rounded-full text-emerald-400">
-                                    Vegan
-                                  </span>
-                                )}
-                              </div>
                             </div>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </TabsContent>
-              ))}
-            </Tabs>
+                            
+                            <span className="text-gold font-playfair text-2xl font-semibold">
+                              ${item.price}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </main>
       
       <Footer />

@@ -32,11 +32,11 @@ const Index = () => {
       setLoading(true);
       sessionStorage.setItem('visited', 'true');
       
-      // We'll show the loading screen for 2.5 seconds
+      // We'll show the loading screen for 2 seconds (reduced from 2.5)
       setTimeout(() => {
         setLoading(false);
         setShowWelcome(true);
-      }, 2500);
+      }, 2000);
     } else {
       // Not first visit in this session, skip animations
       setLoading(false);
@@ -57,25 +57,25 @@ const Index = () => {
     setInitialized(true);
   };
 
-  // Safeguard to ensure the page doesn't get stuck
+  // Safeguard to ensure the page doesn't get stuck - reduced timeouts
   useEffect(() => {
-    // Force transition to main content after 5 seconds if still showing welcome animation
+    // Force transition to main content after 4 seconds (reduced from 5)
     const welcomeTimeout = setTimeout(() => {
       if (showWelcome) {
         console.log("Force transitioning from welcome to main content");
         setShowWelcome(false);
         setInitialized(true);
       }
-    }, 5000);
+    }, 4000);
     
-    // Force transition to main content after 3 seconds if still loading
+    // Force transition to main content after 2.5 seconds (reduced from 3)
     const loadingTimeout = setTimeout(() => {
       if (loading) {
         console.log("Force transitioning from loading to welcome");
         setLoading(false);
         setShowWelcome(true);
       }
-    }, 3000);
+    }, 2500);
     
     return () => {
       clearTimeout(welcomeTimeout);
