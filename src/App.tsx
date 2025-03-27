@@ -11,7 +11,6 @@ import ContactPage from "./pages/ContactPage";
 import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
-import ChatAssistant from "@/components/ChatAssistant";
 import { useState } from "react";
 import "./App.css";
 
@@ -38,7 +37,6 @@ const App = () => {
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <ChatAssistant />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
