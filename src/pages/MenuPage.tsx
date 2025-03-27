@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -545,12 +544,27 @@ const MenuPage = () => {
     }
   }, [cuisineParam]);
 
-  // Handle cuisine changes
+  // Handle cuisine changes - fallback images for Bengali cuisine
   const handleCuisineChange = (newCuisineId: string) => {
     // Only change if it's different
     if (activeCuisine?.id !== newCuisineId) {
       setLoadingImages(true);
       const newCuisine = cuisines.find(c => c.id === newCuisineId);
+      
+      // Fix for Bengali cuisine
+      if (newCuisineId === 'bengali') {
+        // Use fallback images for Bengali cuisine
+        const fallbackImage = 'https://images.unsplash.com/photo-1535007329628-eebd20ff2cdf?q=80&w=2070&auto=format&fit=crop';
+        const fallbackSectionImage = 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?q=80&w=2574&auto=format&fit=crop';
+        
+        if (newCuisine) {
+          newCuisine.backgroundImage = fallbackImage;
+          newCuisine.sections.forEach(section => {
+            section.backgroundImage = fallbackSectionImage;
+          });
+        }
+      }
+      
       if (newCuisine) {
         // Preload critical images before showing cuisine
         const imagesToLoad = [
@@ -673,7 +687,7 @@ const MenuPage = () => {
           }}
         >
           {/* Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/40"></div>
           
           {/* Cuisine navigation arrows */}
           <button 
@@ -722,7 +736,7 @@ const MenuPage = () => {
         </motion.div>
         
         {/* Cuisine navigation tabs */}
-        <div className="sticky top-0 z-30 bg-black/80 backdrop-blur-md shadow-lg py-2 border-t border-b border-gold/20">
+        <div className="sticky top-0 z-30 bg-black/70 backdrop-blur-lg shadow-lg py-2 border-t border-b border-gold/20">
           <div className="container mx-auto px-4">
             <div className="flex overflow-x-auto scrollbar-none justify-center py-2">
               {cuisines.map((cuisine) => (
@@ -746,7 +760,7 @@ const MenuPage = () => {
         </div>
         
         {/* Menu section navigation */}
-        <div className="bg-savoria-black border-b border-gold/10">
+        <div className="bg-savoria-black/70 border-b border-gold/10 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6">
             <div className="flex justify-center space-x-6">
               {activeCuisine.sections.map((section) => (
@@ -779,12 +793,12 @@ const MenuPage = () => {
               transition={{ duration: 0.5 }}
               className="relative min-h-[60vh] py-16"
             >
-              {/* Section background with subtle effect */}
+              {/* Section background with improved brightness */}
               <div 
-                className="absolute inset-0 bg-cover bg-center opacity-20"
+                className="absolute inset-0 bg-cover bg-center opacity-40 transition-opacity duration-700"
                 style={{ backgroundImage: `url(${currentSection.backgroundImage})` }}
               >
-                <div className="absolute inset-0 bg-black/80"></div>
+                <div className="absolute inset-0 bg-black/50"></div>
               </div>
               
               <div className="container mx-auto px-4 relative z-10">
@@ -797,56 +811,13 @@ const MenuPage = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4 }}
-                        className={`relative overflow-hidden rounded-md transition-all duration-300 
+                        className={`relative overflow-hidden rounded-md transition-all duration-500 
                           ${hoveredItemId === item.id 
-                            ? 'bg-white/15 backdrop-blur-md shadow-xl transform scale-[1.02]' 
-                            : 'bg-black/40 backdrop-blur-sm shadow-md'
+                            ? 'bg-white/20 backdrop-blur-md shadow-xl transform scale-[1.02] border border-gold/30' 
+                            : 'bg-black/30 backdrop-blur-sm shadow-md border border-white/5'
                           }`}
                         onMouseEnter={() => setHoveredItemId(item.id)}
                         onMouseLeave={() => setHoveredItemId(null)}
                       >
                         <div className="p-6">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-playfair text-2xl font-semibold group-hover:text-gold transition-colors flex items-center">
-                                {item.name}
-                                {item.chefsChoice && (
-                                  <span className="ml-3 text-xs bg-gold/80 text-savoria-black px-3 py-1 rounded-sm uppercase font-semibold tracking-wider">
-                                    Chef's Choice
-                                  </span>
-                                )}
-                              </h3>
-                              
-                              <div className="mt-1 mb-3">
-                                {renderStarRating(item.rating)}
-                                {item.rating && (
-                                  <span className="text-sm text-gray-400 ml-2">{item.rating}</span>
-                                )}
-                              </div>
-                              
-                              <p className="font-cormorant text-xl text-gray-300">
-                                {item.description}
-                              </p>
-                            </div>
-                            
-                            <span className="text-gold font-playfair text-2xl font-semibold">
-                              ${item.price}
-                            </span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default MenuPage;
+                          <div className="flex justify-

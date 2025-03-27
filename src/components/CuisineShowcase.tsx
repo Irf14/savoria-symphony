@@ -34,7 +34,7 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
   return (
     <Link 
       to={cuisine.path}
-      className="cuisine-card group h-80 block rounded-lg relative overflow-hidden"
+      className="cuisine-card group h-full block rounded-lg relative overflow-hidden"
       onMouseEnter={() => {
         setIsCardHovered(true);
         onHover();
@@ -61,11 +61,11 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
       
       <div className={cn(
         "absolute inset-0 opacity-60 transition-opacity duration-500 z-10",
-        cuisine.gradient
+        "bg-black/30 backdrop-blur-sm"
       )} />
       
       <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
-        <h3 className="font-playfair text-3xl font-bold text-white mb-2">{cuisine.name}</h3>
+        <h3 className="font-playfair text-2xl font-bold text-white mb-2">{cuisine.name}</h3>
         
         <motion.div
           initial={{ height: "0px", opacity: 0 }}
@@ -108,7 +108,7 @@ const CuisineShowcase = () => {
   
   const cuisines = [
     {
-      name: 'Thai Cuisine',
+      name: 'Thai',
       shortDescription: 'Aromatic herbs and spices',
       description: 'Experience the aromatic herbs and spices of Thailand in every bite, crafted with authentic techniques.',
       image: 'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
@@ -118,7 +118,7 @@ const CuisineShowcase = () => {
       background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
     {
-      name: 'Chinese Cuisine',
+      name: 'Chinese',
       shortDescription: 'Perfect harmony of flavors',
       description: 'Savor the perfect harmony of flavors in our authentic Chinese dishes, prepared with traditional methods.',
       image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2680&q=80',
@@ -128,7 +128,7 @@ const CuisineShowcase = () => {
       background: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
     {
-      name: 'Indian Cuisine',
+      name: 'Indian',
       shortDescription: 'Rich tapestry of spices',
       description: 'Discover the rich tapestry of spices that define Indian culinary tradition, creating bold and memorable flavors.',
       image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2676&q=80',
@@ -138,17 +138,18 @@ const CuisineShowcase = () => {
       background: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2036&q=80'
     },
     {
-      name: 'Bengali Cuisine',
+      name: 'Bengali',
       shortDescription: 'Subtle flavors and artistry',
       description: 'Enjoy the subtle flavors and artistic preparations of traditional Bengali food, highlighting regional specialties.',
       image: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80',
       color: 'bg-savoria-bengali',
       gradient: 'bg-bengali-gradient',
       path: '/menu/bengali',
-      background: 'https://images.unsplash.com/photo-1626804475297-41608ea09da1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80'
+      // Fixed reliable image for Bengali cuisine
+      background: 'https://images.unsplash.com/photo-1535007329628-eebd20ff2cdf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     },
     {
-      name: 'Continental Cuisine',
+      name: 'Continental',
       shortDescription: 'Sophisticated European flavors',
       description: 'Experience the sophisticated flavors of European culinary excellence with our refined continental offerings.',
       image: 'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
@@ -213,24 +214,25 @@ const CuisineShowcase = () => {
     <section id="about" className="py-24 relative overflow-hidden bg-gradient-to-b from-savoria-black to-savoria-dark">
       {/* Dynamic cuisine background with fade transition */}
       <motion.div 
-        className="absolute inset-0 z-0 transition-opacity duration-700"
+        className="absolute inset-0 z-0 transition-opacity duration-1000"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
+        animate={{ opacity: 0.4 }}
         transition={{
           type: "tween",
-          ease: "easeInOut"
+          ease: "easeInOut",
+          duration: 1
         }}
         style={{
           backgroundImage: `url(${currentBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'brightness(0.7)',
-          transition: 'background-image 0.7s ease-in-out'
+          transition: 'background-image 1s ease-in-out'
         }}
       />
       
       {/* Glassy overlay for better section flow */}
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] z-1"></div>
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-1"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -240,16 +242,17 @@ const CuisineShowcase = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4 text-white">
-            Our Culinary <span className="gold-gradient-text">Journey</span>
+          <h2 className="font-playfair text-5xl font-bold mb-4 text-white">
+            Our <span className="text-gold">Culinary</span> Journey
           </h2>
+          <div className="w-24 h-1 bg-gold mx-auto mt-2 mb-6"></div>
           <p className="text-gray-300 max-w-3xl mx-auto font-cormorant text-xl mt-4">
             Discover our diverse culinary heritage spanning five distinct cuisines, each prepared with passion and precision.
           </p>
         </motion.div>
         
         {imagesLoaded ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             {cuisines.map((cuisine, index) => (
               <motion.div
                 key={cuisine.name}
@@ -257,6 +260,7 @@ const CuisineShowcase = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 viewport={{ once: true }}
+                className="h-80 md:h-96"
               >
                 <CuisineCard 
                   cuisine={cuisine} 

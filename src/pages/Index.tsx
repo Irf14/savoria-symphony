@@ -15,6 +15,18 @@ import WelcomeAnimation from '@/components/WelcomeAnimation';
 import ExcellenceSection from '@/components/ExcellenceSection';
 import AmbientVideo from '@/components/AmbientVideo';
 
+// Transitional divider component
+const SectionDivider = ({ light = false }: { light?: boolean }) => (
+  <div className={`relative w-full ${light ? 'bg-savoria-black/50' : 'bg-savoria-dark/70'} py-8 overflow-hidden`}>
+    <div className="container mx-auto px-4">
+      <div className="flex justify-center">
+        <div className="w-24 h-0.5 bg-gold/30"></div>
+      </div>
+    </div>
+    <div className={`absolute inset-0 backdrop-blur-sm -z-10 ${light ? 'bg-black/10' : 'bg-black/30'}`}></div>
+  </div>
+);
+
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
@@ -32,7 +44,7 @@ const Index = () => {
       setLoading(true);
       sessionStorage.setItem('visited', 'true');
       
-      // We'll show the loading screen for 2 seconds (reduced from 2.5)
+      // We'll show the loading screen for 2 seconds
       setTimeout(() => {
         setLoading(false);
         setShowWelcome(true);
@@ -57,9 +69,9 @@ const Index = () => {
     setInitialized(true);
   };
 
-  // Safeguard to ensure the page doesn't get stuck - reduced timeouts
+  // Safeguard to ensure the page doesn't get stuck
   useEffect(() => {
-    // Force transition to main content after 4 seconds (reduced from 5)
+    // Force transition to main content after 4 seconds
     const welcomeTimeout = setTimeout(() => {
       if (showWelcome) {
         console.log("Force transitioning from welcome to main content");
@@ -68,7 +80,7 @@ const Index = () => {
       }
     }, 4000);
     
-    // Force transition to main content after 2.5 seconds (reduced from 3)
+    // Force transition to main content after 2.5 seconds
     const loadingTimeout = setTimeout(() => {
       if (loading) {
         console.log("Force transitioning from loading to welcome");
@@ -92,15 +104,36 @@ const Index = () => {
       <div className={`min-h-screen transition-opacity duration-700 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
         <HeroSection />
-        <PopularDishesSection />
-        <CuisineShowcase />
-        <ExcellenceSection />
-        <AmbientVideo />
-        <SpecialServicesSection />
-        <TrendingOffersSection />
-        <LatestMemoriesSection />
-        <GalleryPreview />
-        <TestimonialSection />
+        
+        <div className="relative">
+          <SectionDivider light />
+          <PopularDishesSection />
+          
+          <SectionDivider />
+          <CuisineShowcase />
+          
+          <SectionDivider light />
+          <ExcellenceSection />
+          
+          <SectionDivider />
+          <AmbientVideo />
+          
+          <SectionDivider light />
+          <SpecialServicesSection />
+          
+          <SectionDivider />
+          <TrendingOffersSection />
+          
+          <SectionDivider light />
+          <LatestMemoriesSection />
+          
+          <SectionDivider />
+          <GalleryPreview />
+          
+          <SectionDivider light />
+          <TestimonialSection />
+        </div>
+        
         <Footer />
       </div>
     </>
