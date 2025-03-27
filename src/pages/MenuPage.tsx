@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -820,4 +821,47 @@ const MenuPage = () => {
                         onMouseLeave={() => setHoveredItemId(null)}
                       >
                         <div className="p-6">
-                          <div className="flex justify-
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className={`font-playfair text-xl md:text-2xl transition-all duration-300 ${
+                              hoveredItemId === item.id ? 'text-gold' : 'text-white'
+                            } ${item.chefsChoice ? 'relative' : ''}`}>
+                              {item.name}
+                              {item.chefsChoice && (
+                                <span className="absolute top-0 -right-6 text-gold text-sm rotate-45">★</span>
+                              )}
+                            </h3>
+                            <span className="text-gold font-cormorant text-xl font-semibold">${item.price}</span>
+                          </div>
+                          
+                          <p className="font-cormorant text-white/90 mb-3 text-lg">
+                            {item.description}
+                          </p>
+                          
+                          {hoveredItemId === item.id && item.rating && (
+                            <motion.div 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="flex items-center"
+                            >
+                              {renderStarRating(item.rating)}
+                              <span className="ml-2 text-gold/80">({item.rating})</span>
+                            </motion.div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default MenuPage;
