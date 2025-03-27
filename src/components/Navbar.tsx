@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import HelperChat from './HelperChat';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
