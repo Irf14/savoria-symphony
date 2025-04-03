@@ -17,18 +17,20 @@
   100% { background-position: 0% 50%; }
 }
 
-/* Handle image loading */
+/* Handle image loading with progressive enhancement */
 img {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: opacity, transform;
 }
 
 img[loading] {
   opacity: 0.6;
 }
 
-/* Ensure smooth background transitions */
+/* Performance optimizations for smoother animations */
 .bg-image-transition {
-  transition: background-image 1.5s ease, opacity 1.5s ease;
+  transition: background-image 0.7s ease, opacity 0.7s ease;
+  will-change: background-image, opacity;
 }
 
 /* Theme transitions - dark mode optimized */
@@ -38,15 +40,20 @@ body {
   color-scheme: dark; /* Ensures native UI elements are dark */
 }
 
-/* Smooth scrolling between sections */
-html {
+/* Add hardware acceleration for smoother scrolling */
+html, body {
   scroll-behavior: smooth;
   color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* Add opacity transition to all components for smoother page transitions */
 .min-h-screen {
   transition: opacity 0.7s ease;
+  will-change: opacity;
 }
 
 /* Better visibility for heading text */
@@ -58,7 +65,7 @@ html {
   color: white;
 }
 
-/* Make sure images load properly */
+/* Make sure images load properly with progressive enhancement */
 img {
   object-fit: cover;
   opacity: 1;
@@ -69,18 +76,20 @@ section {
   position: relative;
   z-index: 1;
   overflow: hidden;
-  transition: background-image 1.2s ease;
+  transition: background-image 0.7s ease;
+  will-change: transform;
 }
 
-/* Fixed background */
+/* Fixed background with performance optimizations */
 .fixed-bg {
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  transform: translateZ(0);
 }
 
-/* Animations */
+/* Optimized animations */
 @keyframes shimmer {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -94,6 +103,7 @@ section {
 
 .gold-pulse {
   animation: pulse-gold 2s infinite;
+  will-change: box-shadow;
 }
 
 /* Common animation for background shimmer */
@@ -106,6 +116,7 @@ section {
   background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
   background-size: 200% 100%;
   animation: gold-shimmer 3s infinite linear;
+  will-change: background-position;
 }
 
 /* Enhanced glass card styling for menu items */
@@ -117,6 +128,7 @@ section {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.5s ease;
+  will-change: transform, background, border-color;
 }
 
 .glass-card:hover {
@@ -134,6 +146,7 @@ section {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform, background, border-color;
 }
 
 .menu-item-card:hover {
@@ -188,11 +201,13 @@ section {
   overflow: hidden;
 }
 
-/* Force dark mode for the entire site */
+/* Force dark mode for the entire site with hardware acceleration */
 @media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
   html, body {
     background-color: #0a0a0a !important;
     color: #ffffff;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 }
 
@@ -228,6 +243,7 @@ section {
   border: 32px solid #D4AF37;
   border-color: #D4AF37 transparent #D4AF37 transparent;
   animation: loader 1.2s infinite;
+  will-change: transform;
 }
 
 @keyframes loader {
@@ -246,5 +262,6 @@ section {
 
 /* Enhanced transitions for background changes */
 .cuisine-background-transition {
-  transition: background-image 1.2s ease-in-out, opacity 1.2s ease-in-out;
+  transition: background-image 0.7s ease-in-out, opacity 0.7s ease-in-out;
+  will-change: background-image, opacity;
 }

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -59,9 +59,10 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
         }}
       />
       
+      {/* Darker overlay for better text contrast and no blurry effect */}
       <div className={cn(
-        "absolute inset-0 opacity-60 transition-opacity duration-500 z-10",
-        "bg-black/50 backdrop-blur-sm"
+        "absolute inset-0 transition-opacity duration-300 z-10",
+        "bg-black/70"
       )} />
       
       <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
@@ -105,8 +106,10 @@ const CuisineShowcase = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [activeBackground, setActiveBackground] = useState('default');
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [backgroundIsLoading, setBackgroundIsLoading] = useState(false);
+  const backgroundRef = useRef<HTMLDivElement>(null);
   
-  // Updated cuisine images with better food focus and darker backgrounds
+  // Updated cuisine images with higher quality and better reliability
   const cuisines = [
     {
       name: 'Thai',
@@ -126,7 +129,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-chinese',
       gradient: 'bg-chinese-gradient',
       path: '/menu/chinese',
-      background: 'https://images.unsplash.com/photo-1623689043725-b190a3a293b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=90'
+      background: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=90'
     },
     {
       name: 'Indian',
@@ -136,7 +139,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-indian',
       gradient: 'bg-indian-gradient',
       path: '/menu/indian',
-      background: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=90'
+      background: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=90'
     },
     {
       name: 'Bengali',
@@ -146,8 +149,7 @@ const CuisineShowcase = () => {
       color: 'bg-savoria-bengali',
       gradient: 'bg-bengali-gradient',
       path: '/menu/bengali',
-      // Reliable image for Bengali cuisine
-      background: 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2574&q=90'
+      background: 'https://images.unsplash.com/photo-1631515242808-497c3d4a69c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2146&q=90'
     },
     {
       name: 'Continental',
@@ -161,33 +163,45 @@ const CuisineShowcase = () => {
     },
   ];
 
+  // Preload images immediately on component mount and cache them
   useEffect(() => {
-    // Preload all cuisine images with higher quality
-    const preloadImages = async () => {
-      const imagePromises = cuisines.map(cuisine => {
-        return new Promise<void>((resolve) => {
-          const img = new Image();
-          img.src = cuisine.image;
-          img.onload = () => resolve();
-          img.onerror = () => resolve(); // Still resolve on error
-        });
+    const preloadImage = (src: string) => {
+      return new Promise<void>((resolve, reject) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => resolve();
+        img.onerror = () => {
+          console.error(`Failed to load image: ${src}`);
+          resolve(); // Still resolve to prevent blocking
+        };
       });
-      
-      // Also preload background images
-      const backgroundPromises = cuisines.map(cuisine => {
-        return new Promise<void>((resolve) => {
-          const img = new Image();
-          img.src = cuisine.background;
-          img.onload = () => resolve();
-          img.onerror = () => resolve(); // Still resolve on error
-        });
-      });
-      
-      await Promise.all([...imagePromises, ...backgroundPromises]);
-      setImagesLoaded(true);
     };
     
-    preloadImages();
+    const preloadAllImages = async () => {
+      setImagesLoaded(false);
+      
+      // Preload card images
+      const cardPromises = cuisines.map(cuisine => preloadImage(cuisine.image));
+      
+      // Preload background images
+      const backgroundPromises = cuisines.map(cuisine => preloadImage(cuisine.background));
+      
+      // Also preload default background
+      const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=90';
+      backgroundPromises.push(preloadImage(defaultBackground));
+      
+      try {
+        await Promise.all([...cardPromises, ...backgroundPromises]);
+        console.log("All cuisine images preloaded successfully");
+        setImagesLoaded(true);
+      } catch (error) {
+        console.error("Error preloading images:", error);
+        // Set loaded anyway to prevent blocking the UI
+        setImagesLoaded(true);
+      }
+    };
+    
+    preloadAllImages();
     
     // Auto-switch background for mobile
     if (window.innerWidth < 768) {
@@ -208,32 +222,34 @@ const CuisineShowcase = () => {
   const currentBackground = activeIndex >= 0 ? cuisines[activeIndex].background : defaultBackground;
 
   const handleCuisineHover = (index: number) => {
+    setBackgroundIsLoading(true);
     setActiveIndex(index);
+    
+    // Preload the background image to ensure smooth transition
+    const img = new Image();
+    img.src = cuisines[index].background;
+    img.onload = () => {
+      setBackgroundIsLoading(false);
+    };
   };
 
   return (
     <section id="about" className="py-24 relative overflow-hidden bg-gradient-to-b from-savoria-black to-savoria-dark">
       {/* Dynamic cuisine background with smoother fade transition */}
-      <motion.div 
-        className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.5 }}
-        transition={{
-          type: "tween",
-          ease: "easeInOut",
-          duration: 1.5
-        }}
+      <div 
+        ref={backgroundRef}
+        className="absolute inset-0 z-0 bg-fixed transition-opacity duration-700"
         style={{
           backgroundImage: `url(${currentBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.7)',
-          transition: 'background-image 1.5s ease-in-out'
+          opacity: backgroundIsLoading ? 0.2 : 0.4,
+          transition: 'background-image 0.7s ease-in-out, opacity 0.7s ease-in-out'
         }}
       />
       
-      {/* Glassy overlay for better section flow */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-1"></div>
+      {/* Improved glassy overlay for better section flow - removed blur for cleaner look */}
+      <div className="absolute inset-0 bg-black/60 z-1"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -276,16 +292,6 @@ const CuisineShowcase = () => {
             <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
-        
-        {/* Hidden preloader for cuisine images */}
-        <div className="image-preloader">
-          {cuisines.map((cuisine, index) => (
-            <img key={index} src={cuisine.image} alt="" />
-          ))}
-          {cuisines.map((cuisine, index) => (
-            <img key={`bg-${index}`} src={cuisine.background} alt="" />
-          ))}
-        </div>
       </div>
     </section>
   );
