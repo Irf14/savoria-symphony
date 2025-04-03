@@ -59,10 +59,10 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
         }}
       />
       
-      {/* Darker overlay for better text contrast and no blurry effect */}
+      {/* Darker overlay with reduced blur for better visibility */}
       <div className={cn(
         "absolute inset-0 transition-opacity duration-300 z-10",
-        "bg-black/70"
+        "bg-black/80"
       )} />
       
       <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
@@ -109,89 +109,114 @@ const CuisineShowcase = () => {
   const [backgroundIsLoading, setBackgroundIsLoading] = useState(false);
   const backgroundRef = useRef<HTMLDivElement>(null);
   
-  // Updated cuisine images with higher quality and better reliability
+  // Updated cuisine images with more reliable sources
   const cuisines = [
     {
       name: 'Thai',
       shortDescription: 'Aromatic herbs and spices',
       description: 'Experience the aromatic herbs and spices of Thailand in every bite, crafted with authentic techniques.',
-      image: 'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=90',
+      image: 'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?q=80&w=2064&auto=format&fit=crop',
       color: 'bg-savoria-thai',
       gradient: 'bg-thai-gradient',
       path: '/menu/thai',
-      background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=90'
+      background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?q=80&w=2070&auto=format&fit=crop'
     },
     {
       name: 'Chinese',
       shortDescription: 'Perfect harmony of flavors',
       description: 'Savor the perfect harmony of flavors in our authentic Chinese dishes, prepared with traditional methods.',
-      image: 'https://images.unsplash.com/photo-1625938145744-533e82abfaf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=90',
+      image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?q=80&w=2070&auto=format&fit=crop',
       color: 'bg-savoria-chinese',
       gradient: 'bg-chinese-gradient',
       path: '/menu/chinese',
-      background: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=90'
+      background: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=2060&auto=format&fit=crop'
     },
     {
       name: 'Indian',
       shortDescription: 'Rich tapestry of spices',
       description: 'Discover the rich tapestry of spices that define Indian culinary tradition, creating bold and memorable flavors.',
-      image: 'https://images.unsplash.com/photo-1585937421612-70a008356c36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2136&q=90',
+      image: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?q=80&w=2080&auto=format&fit=crop',
       color: 'bg-savoria-indian',
       gradient: 'bg-indian-gradient',
       path: '/menu/indian',
-      background: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=90'
+      background: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?q=80&w=2000&auto=format&fit=crop'
     },
     {
       name: 'Bengali',
       shortDescription: 'Subtle flavors and artistry',
       description: 'Enjoy the subtle flavors and artistic preparations of traditional Bengali food, highlighting regional specialties.',
-      image: 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2574&q=90',
+      image: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?q=80&w=2069&auto=format&fit=crop',
       color: 'bg-savoria-bengali',
       gradient: 'bg-bengali-gradient',
       path: '/menu/bengali',
-      background: 'https://images.unsplash.com/photo-1631515242808-497c3d4a69c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2146&q=90'
+      background: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?q=80&w=2070&auto=format&fit=crop'
     },
     {
       name: 'Continental',
       shortDescription: 'Sophisticated European flavors',
       description: 'Experience the sophisticated flavors of European culinary excellence with our refined continental offerings.',
-      image: 'https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=90',
+      image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop',
       color: 'bg-savoria-continental',
       gradient: 'bg-continental-gradient',
       path: '/menu/continental',
-      background: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=90'
+      background: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop'
     },
   ];
 
-  // Preload images immediately on component mount and cache them
+  // More aggressive image preloading to ensure images are available
   useEffect(() => {
-    const preloadImage = (src: string) => {
-      return new Promise<void>((resolve, reject) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => resolve();
-        img.onerror = () => {
-          console.error(`Failed to load image: ${src}`);
-          resolve(); // Still resolve to prevent blocking
-        };
-      });
-    };
-    
     const preloadAllImages = async () => {
       setImagesLoaded(false);
       
-      // Preload card images
-      const cardPromises = cuisines.map(cuisine => preloadImage(cuisine.image));
+      // Create an array of promises for all images
+      const imagePromises = [];
       
-      // Preload background images
-      const backgroundPromises = cuisines.map(cuisine => preloadImage(cuisine.background));
+      // Preload card images and backgrounds
+      for (const cuisine of cuisines) {
+        // Main image
+        imagePromises.push(
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            img.src = cuisine.image;
+            img.onload = () => resolve();
+            img.onerror = () => {
+              console.error(`Failed to load cuisine image: ${cuisine.image}`);
+              resolve(); // Still resolve to prevent blocking
+            };
+          })
+        );
+        
+        // Background image
+        imagePromises.push(
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            img.src = cuisine.background;
+            img.onload = () => resolve();
+            img.onerror = () => {
+              console.error(`Failed to load background image: ${cuisine.background}`);
+              resolve(); // Still resolve to prevent blocking
+            };
+          })
+        );
+      }
       
       // Also preload default background
-      const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=90';
-      backgroundPromises.push(preloadImage(defaultBackground));
+      const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop';
+      imagePromises.push(
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          img.src = defaultBackground;
+          img.onload = () => resolve();
+          img.onerror = () => {
+            console.error(`Failed to load default background: ${defaultBackground}`);
+            resolve();
+          };
+        })
+      );
       
+      // Wait for all images to load (or fail)
       try {
-        await Promise.all([...cardPromises, ...backgroundPromises]);
+        await Promise.all(imagePromises);
         console.log("All cuisine images preloaded successfully");
         setImagesLoaded(true);
       } catch (error) {
@@ -216,19 +241,38 @@ const CuisineShowcase = () => {
   }, []);
 
   // Default food-related background 
-  const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=90';
+  const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop';
 
   // Set the current background based on activeBackground
   const currentBackground = activeIndex >= 0 ? cuisines[activeIndex].background : defaultBackground;
 
+  // Improved cuisine hover handler with smoother transitions and failsafe
   const handleCuisineHover = (index: number) => {
+    if (index < 0 || index >= cuisines.length) {
+      console.error("Invalid cuisine index:", index);
+      return;
+    }
+
     setBackgroundIsLoading(true);
     setActiveIndex(index);
     
-    // Preload the background image to ensure smooth transition
+    // Improved preloading with timeout protection
     const img = new Image();
     img.src = cuisines[index].background;
+    
+    // Set a timeout to ensure we don't wait forever
+    const loadTimeout = setTimeout(() => {
+      setBackgroundIsLoading(false);
+    }, 1000);
+    
     img.onload = () => {
+      clearTimeout(loadTimeout);
+      setBackgroundIsLoading(false);
+    };
+    
+    img.onerror = () => {
+      clearTimeout(loadTimeout);
+      console.error(`Failed to load background image: ${cuisines[index].background}`);
       setBackgroundIsLoading(false);
     };
   };
@@ -238,18 +282,17 @@ const CuisineShowcase = () => {
       {/* Dynamic cuisine background with smoother fade transition */}
       <div 
         ref={backgroundRef}
-        className="absolute inset-0 z-0 bg-fixed transition-opacity duration-700"
+        className="absolute inset-0 z-0 bg-fixed transition-all duration-500"
         style={{
           backgroundImage: `url(${currentBackground})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: backgroundIsLoading ? 0.2 : 0.4,
-          transition: 'background-image 0.7s ease-in-out, opacity 0.7s ease-in-out'
         }}
       />
       
-      {/* Improved glassy overlay for better section flow - removed blur for cleaner look */}
-      <div className="absolute inset-0 bg-black/60 z-1"></div>
+      {/* Enhanced overlay for better section flow - removed blur for cleaner look */}
+      <div className="absolute inset-0 bg-black/70 z-1"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 

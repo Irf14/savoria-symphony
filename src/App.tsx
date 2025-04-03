@@ -12,14 +12,40 @@ import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
 import ChatAssistant from "@/components/ChatAssistant";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => {
-  // Import the useState hook to fix the error in Index.tsx
   const [state] = useState("");
+  
+  // Add preloading for key images
+  useEffect(() => {
+    // Preload important images for faster initial loading
+    const preloadImages = [
+      // Add critical images to preload here
+      'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1',
+      'https://images.unsplash.com/photo-1559314809-0d155014e29e',
+      'https://images.unsplash.com/photo-1563245372-f21724e3856d',
+      'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2',
+      'https://images.unsplash.com/photo-1616299915952-04c803388e5f',
+      'https://images.unsplash.com/photo-1544025162-d76694265947'
+    ];
+    
+    preloadImages.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
   
   return (
     <QueryClientProvider client={queryClient}>

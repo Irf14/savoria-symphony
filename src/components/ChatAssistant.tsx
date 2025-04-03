@@ -1,898 +1,479 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useToast } from "@/hooks/use-toast";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bot, X, Send, Loader2, MessageSquare } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from '@/components/ui/use-toast';
 
-type Message = {
-  id: number;
+// Menu data for recommendations
+const venueOptions = [
+  { name: "Savoria Hall", capacity: 50, description: "Intimate dining hall for small to medium gatherings" },
+  { name: "Ambrosia Hall", capacity: 150, description: "Grand dining hall for large events and celebrations" },
+  { name: "Symphony Room", capacity: 30, description: "Private dining room for intimate gatherings" },
+  { name: "Culinary Garden", capacity: 80, description: "Beautiful outdoor dining space (weather permitting)" }
+];
+
+// Simple NLP matching rules for basic intent recognition
+const intentRules = [
+  { keywords: ['reserve', 'book', 'reservation'], intent: 'reservation' },
+  { keywords: ['menu', 'food', 'dish', 'cuisine'], intent: 'menu' },
+  { keywords: ['contact', 'call', 'email', 'phone'], intent: 'contact' },
+  { keywords: ['hall', 'venue', 'event', 'space', 'room', 'ambrosia', 'savoria', 'symphony', 'garden'], intent: 'venue' },
+  { keywords: ['people', 'guests', 'persons', 'capacity'], intent: 'capacity' },
+  { keywords: ['gallery', 'photos', 'images', 'pictures'], intent: 'gallery' },
+  { keywords: ['time', 'open', 'closed', 'when', 'hour'], intent: 'hours' }
+];
+
+interface Message {
+  id: string;
   sender: 'user' | 'assistant';
   text: string;
-  options?: Array<{
-    text: string;
-    action: () => void;
-  }>;
-};
-
-// Venues information with more details for better recommendations
-const venues = [
-  { 
-    name: 'Ambrosia', 
-    capacity: '80-100 persons',
-    description: 'Our grand hall perfect for large gatherings and corporate events',
-    idealFor: ['large parties', 'corporate events', 'weddings', 'conferences'],
-    path: '/special-services#ambrosia'
-  },
-  {
-    name: 'Euphoria',
-    capacity: '35-50 persons',
-    description: 'An elegant space for medium-sized celebrations',
-    idealFor: ['medium gatherings', 'birthday parties', 'family reunions'],
-    path: '/special-services#euphoria'
-  },
-  {
-    name: 'Majestic',
-    capacity: '18-20 persons',
-    description: 'Our priority room for intimate gatherings',
-    idealFor: ['small meetings', 'intimate dinners', 'private celebrations'],
-    path: '/special-services#majestic'
-  }
-];
-
-// Cuisines information with expanded details
-const cuisines = [
-  { 
-    name: 'Thai', 
-    path: '/menu/thai',
-    specialties: ['Pad Thai', 'Tom Yum Soup', 'Green Curry'],
-    keywords: ['spicy', 'aromatic', 'fresh', 'herbs', 'thai', 'exotic']
-  },
-  { 
-    name: 'Chinese', 
-    path: '/menu/chinese',
-    specialties: ['Peking Duck', 'Dim Sum', 'Kung Pao Chicken'],
-    keywords: ['umami', 'stir-fry', 'dim sum', 'chinese', 'asian', 'traditional']
-  },
-  { 
-    name: 'Indian', 
-    path: '/menu/indian',
-    specialties: ['Butter Chicken', 'Biryani', 'Tandoori'],
-    keywords: ['curry', 'spicy', 'rich', 'indian', 'exotic', 'tandoori']
-  },
-  { 
-    name: 'Bengali', 
-    path: '/menu/bengali',
-    specialties: ['Fish Curry', 'Mishti Doi', 'Shorshe Ilish'],
-    keywords: ['fish', 'mustard', 'sweet', 'bengali', 'traditional']
-  },
-  { 
-    name: 'Continental', 
-    path: '/menu/continental',
-    specialties: ['Beef Wellington', 'Coq au Vin', 'Ratatouille'],
-    keywords: ['elegant', 'refined', 'european', 'continental', 'sophisticated']
-  }
-];
+  timestamp: Date;
+}
 
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      sender: 'assistant',
+      text: "Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.",
+      timestamp: new Date()
+    }
+  ]);
+  const [inputValue, setInputValue] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [lastUserIntent, setLastUserIntent] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  // Auto-scroll to the bottom of chat
+
+  // Auto-scroll to bottom when new messages come in
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
-  
-  // Reset chat when closed
+
+  // Focus input when chat opens
   useEffect(() => {
-    if (!isOpen) {
-      // Wait for close animation to finish
-      const timer = setTimeout(() => {
-        setMessages([]);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else if (isOpen && messages.length === 0) {
-      // Send greeting when opened
-      sendGreeting();
+    if (isOpen && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
     }
   }, [isOpen]);
-  
-  const sendGreeting = () => {
-    setIsTyping(true);
-    
-    setTimeout(() => {
-      setMessages([
-        {
-          id: 1,
-          sender: 'assistant',
-          text: 'Welcome to SAVORIA! I\'m your personal concierge. How may I assist you today?',
-          options: [
-            {
-              text: 'Explore cuisines',
-              action: () => handleCuisineNavigation()
-            },
-            {
-              text: 'Special venues',
-              action: () => handleVenueQuestions()
-            },
-            {
-              text: 'Make a reservation',
-              action: () => navigate('/reservation')
-            },
-            {
-              text: 'Contact information',
-              action: () => navigate('/contact')
-            }
-          ]
-        }
-      ]);
-      setIsTyping(false);
-    }, 600);
+
+  // Helper to handle menu navigation
+  const navigateToMenu = (cuisine?: string) => {
+    setIsOpen(false);
+    if (cuisine) {
+      navigate(`/menu/${cuisine.toLowerCase()}`);
+    } else {
+      navigate('/menu');
+    }
   };
-  
-  // Improved natural language processing function
-  const processNaturalLanguage = (text: string) => {
-    text = text.toLowerCase();
+
+  // Helper to handle reservation
+  const navigateToReservation = () => {
+    setIsOpen(false);
+    navigate('/reservation');
+    toast({
+      title: "Redirecting to Reservations",
+      description: "You're being taken to our reservation page.",
+      duration: 3000
+    });
+  };
+
+  // Extract intent from user message using simple NLP rules
+  const extractIntent = (message: string): { intent: string; confidence: number; entities: Record<string, any> } => {
+    const lowercaseMsg = message.toLowerCase();
+    const entities: Record<string, any> = {};
     
-    // Venue size recognition with improved patterns
-    const largeGroupPatterns = [/(\b100\b|\b8[0-9]\b|\b9[0-9]\b|\blarge\b|\bbig\b|\bwedding\b|\bconference\b)/];
-    const mediumGroupPatterns = [/(\b[3-5][0-9]\b|\bmedium\b|\bbirthday\b|\bfamily reunion\b)/];
-    const smallGroupPatterns = [/(\b1[0-9]\b|\b20\b|\bsmall\b|\bintimate\b|\bprivate\b)/];
-    
-    // Check for venue size mentions
-    if (largeGroupPatterns.some(pattern => pattern.test(text))) {
-      return {
-        intent: 'venue',
-        size: 'large',
-        venueRecommendation: venues[0] // Ambrosia for large groups
-      };
-    } else if (mediumGroupPatterns.some(pattern => pattern.test(text))) {
-      return {
-        intent: 'venue',
-        size: 'medium',
-        venueRecommendation: venues[1] // Euphoria for medium groups
-      };
-    } else if (smallGroupPatterns.some(pattern => pattern.test(text))) {
-      return {
-        intent: 'venue',
-        size: 'small',
-        venueRecommendation: venues[2] // Majestic for small groups
-      };
+    // Extract capacity numbers
+    const capacityMatch = lowercaseMsg.match(/(\d+)\s*(people|person|guests|capacity)/i);
+    if (capacityMatch) {
+      entities.capacity = parseInt(capacityMatch[1], 10);
     }
     
-    // Cuisine preference detection
-    for (const cuisine of cuisines) {
-      if (text.includes(cuisine.name.toLowerCase()) || 
-          cuisine.keywords.some(keyword => text.includes(keyword))) {
-        return {
-          intent: 'cuisine',
-          cuisine: cuisine
-        };
+    // Extract cuisine types
+    const cuisineTypes = ['thai', 'chinese', 'indian', 'bengali', 'continental'];
+    for (const cuisine of cuisineTypes) {
+      if (lowercaseMsg.includes(cuisine)) {
+        entities.cuisine = cuisine;
+        break;
       }
     }
     
-    // General intent detection
-    if (text.includes('menu') || text.includes('cuisine') || text.includes('food') || 
-        text.includes('dish') || text.includes('eat') || text.includes('taste')) {
-      return { intent: 'cuisine' };
-    } else if (text.includes('venue') || text.includes('hall') || text.includes('space') || 
-               text.includes('people') || text.includes('persons') || text.includes('capacity') ||
-               text.includes('event') || text.includes('party') || text.includes('host')) {
-      return { intent: 'venue' };
-    } else if (text.includes('booking') || text.includes('reservation') || text.includes('table') ||
-               text.includes('reserve')) {
-      return { intent: 'reservation' };
-    } else if (text.includes('contact') || text.includes('phone') || text.includes('email') || 
-               text.includes('call') || text.includes('message') || text.includes('reach')) {
-      return { intent: 'contact' };
-    } else if (text.includes('vibe') || text.includes('atmosphere') || text.includes('experience') || 
-               text.includes('feel') || text.includes('ambience') || text.includes('look')) {
-      return { intent: 'ambience' };
+    // Check for venue mentions
+    const venueNames = ['ambrosia', 'savoria hall', 'symphony', 'garden'];
+    for (const venue of venueNames) {
+      if (lowercaseMsg.includes(venue)) {
+        entities.venue = venue;
+        break;
+      }
     }
     
-    // No clear intent detected
-    return { intent: 'unknown' };
-  };
-  
-  const handleUserInput = async () => {
-    if (input.trim() === '') return;
+    // Match against our intent rules
+    let highestScore = 0;
+    let matchedIntent = 'unknown';
     
-    // Add user message
+    for (const rule of intentRules) {
+      const matchedKeywords = rule.keywords.filter(keyword => lowercaseMsg.includes(keyword));
+      const score = matchedKeywords.length / rule.keywords.length;
+      
+      if (score > highestScore) {
+        highestScore = score;
+        matchedIntent = rule.intent;
+      }
+    }
+    
+    // If we have capacity entities but no clear intent, likely venue-related
+    if (entities.capacity && matchedIntent === 'unknown') {
+      matchedIntent = 'venue';
+    }
+    
+    // Transform short questions into intents
+    if (lowercaseMsg.startsWith('how') && lowercaseMsg.includes('reserve')) matchedIntent = 'reservation';
+    if (lowercaseMsg.startsWith('where') && lowercaseMsg.includes('find')) matchedIntent = 'navigation';
+    if (lowercaseMsg.startsWith('what') && (lowercaseMsg.includes('menu') || lowercaseMsg.includes('food'))) matchedIntent = 'menu';
+    
+    return { 
+      intent: matchedIntent, 
+      confidence: highestScore,
+      entities 
+    };
+  };
+
+  // Generate an AI response based on intent and entities
+  const generateResponse = async (userMessage: string, intent: string, entities: Record<string, any>): Promise<string> => {
+    // For demo, we're simulating API call with a delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Store the user's intent for context in conversation
+    setLastUserIntent(intent);
+    
+    // Handle based on intent
+    switch (intent) {
+      case 'reservation':
+        if (entities.capacity) {
+          const people = entities.capacity;
+          
+          if (people > 100) {
+            return `For a party of ${people} people, I recommend our Ambrosia Hall which can accommodate up to 150 guests. Would you like to make a reservation? Click here to proceed to our reservation page.`;
+          } else if (people > 50) {
+            return `For a party of ${people} people, I recommend our Culinary Garden (weather permitting) which can accommodate up to 80 guests, or Ambrosia Hall for indoor events. Would you like to make a reservation?`;
+          } else {
+            return `For a party of ${people} people, both our Savoria Hall (50 guests) and Symphony Room (30 guests) would be suitable. Would you like to proceed with a reservation?`;
+          }
+        }
+        return "I'd be happy to help you make a reservation. How many people will be dining with us, and what date and time are you considering?";
+        
+      case 'menu':
+        if (entities.cuisine) {
+          return `Our ${entities.cuisine.charAt(0).toUpperCase() + entities.cuisine.slice(1)} menu features delicious authentic dishes. Would you like to view the ${entities.cuisine} menu?`;
+        }
+        return "We offer various cuisines including Thai, Chinese, Indian, Bengali and Continental. Which cuisine would you like to explore?";
+        
+      case 'venue':
+        if (entities.capacity) {
+          const people = entities.capacity;
+          let recommendedVenues = venueOptions.filter(v => v.capacity >= people);
+          
+          if (recommendedVenues.length === 0) {
+            if (people > 150) {
+              return "For groups larger than 150 people, we recommend our Ambrosia Hall which can accommodate up to 150 guests. For larger events, please contact us directly to discuss custom arrangements.";
+            }
+            recommendedVenues = venueOptions;
+          }
+          
+          const venueList = recommendedVenues.map(v => `${v.name} (up to ${v.capacity} guests)`).join(', ');
+          return `For a party of ${people} people, we recommend: ${venueList}. Would you like more information or to book a venue?`;
+        }
+        
+        if (entities.venue) {
+          const venue = venueOptions.find(v => v.name.toLowerCase().includes(entities.venue));
+          if (venue) {
+            return `${venue.name} can accommodate up to ${venue.capacity} guests. ${venue.description}. Would you like to make a reservation?`;
+          }
+        }
+        
+        return "We have several venues: Savoria Hall (50 guests), Ambrosia Hall (150 guests), Symphony Room (30 guests), and Culinary Garden (80 guests, outdoor). Which one interests you?";
+        
+      case 'contact':
+        return "You can reach us at contact@savoria.com or call us at (555) 123-4567. Our operating hours are 11 AM to 11 PM every day. How else can I assist you?";
+        
+      case 'gallery':
+        return "Would you like to view our gallery showcasing our cuisine, venues, and past events? I can take you to our gallery page.";
+        
+      case 'hours':
+        return "Savoria is open daily from 11 AM to 11 PM. Last orders are taken at 10:30 PM. Our reservation desk is available from 9 AM to 9 PM daily.";
+        
+      default:
+        // Try to make sense of common questions
+        if (userMessage.toLowerCase().includes('hello') || userMessage.toLowerCase().includes('hi')) {
+          return "Hello! Welcome to Savoria. How can I assist you today?";
+        }
+        
+        if (userMessage.toLowerCase().includes('thank')) {
+          return "You're welcome! Is there anything else I can help you with?";
+        }
+        
+        if (userMessage.toLowerCase().includes('bye') || userMessage.toLowerCase().includes('goodbye')) {
+          return "Thank you for chatting with me! Have a wonderful day, and we hope to see you at Savoria soon.";
+        }
+        
+        return "I'm not sure I understand. Would you like to know about our menu, make a reservation, or learn about our special venues?";
+    }
+  };
+
+  // Handle sending messages
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isProcessing) return;
+    
+    const userMessageId = Date.now().toString();
     const userMessage: Message = {
-      id: messages.length + 1,
+      id: userMessageId,
       sender: 'user',
-      text: input
+      text: inputValue,
+      timestamp: new Date()
     };
     
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    setInputValue('');
+    setIsProcessing(true);
     
-    // Show typing indicator
-    setIsTyping(true);
+    // Process the message to determine intent
+    const { intent, confidence, entities } = extractIntent(inputValue);
+    console.log('Detected intent:', intent, 'with confidence:', confidence, 'entities:', entities);
     
-    // Process user input with improved NLP
-    const nlpResult = processNaturalLanguage(input);
-    console.log("NLP Result:", nlpResult);
-    
-    setTimeout(() => {
-      if (nlpResult.intent === 'cuisine') {
-        if (nlpResult.cuisine) {
-          // Direct cuisine recommendation
-          handleSpecificCuisineRecommendation(nlpResult.cuisine);
-        } else {
-          // General cuisine navigation
-          handleCuisineNavigation();
-        }
-      } else if (nlpResult.intent === 'venue') {
-        if (nlpResult.size) {
-          // Direct venue recommendation based on detected size
-          handleDirectVenueRecommendation(nlpResult.size, nlpResult.venueRecommendation);
-        } else {
-          // General venue questions
-          handleVenueQuestions();
-        }
-      } else if (nlpResult.intent === 'reservation') {
-        handleReservation();
-      } else if (nlpResult.intent === 'contact') {
-        handleContactInfo();
-      } else if (nlpResult.intent === 'ambience') {
-        handleAmbience();
-      } else {
-        // Default response for other queries with more helpful guidance
-        const assistantMessage: Message = {
-          id: messages.length + 2,
-          sender: 'assistant',
-          text: "I'm here to help with your dining and event needs. Can you tell me more about what you're looking for? I can assist with our cuisines, venue options, making reservations, or providing contact information.",
-          options: [
-            {
-              text: 'Explore cuisines',
-              action: () => handleCuisineNavigation()
-            },
-            {
-              text: 'Special venues',
-              action: () => handleVenueQuestions()
-            },
-            {
-              text: 'Make a reservation',
-              action: () => navigate('/reservation')
-            },
-            {
-              text: 'Contact information',
-              action: () => navigate('/contact')
-            }
-          ]
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      }
-      setIsTyping(false);
-    }, 800);
-  };
-  
-  // Direct venue recommendation for when size is clearly mentioned
-  const handleDirectVenueRecommendation = (size: string, venueRecommendation: any) => {
-    const venue = venueRecommendation;
-    
-    setMessages(prev => [...prev, {
-      id: prev.length + 1,
-      sender: 'assistant',
-      text: `For a group of your size, I recommend our ${venue.name} venue. ${venue.description} with a capacity of ${venue.capacity}. It's perfect for ${venue.idealFor.join(', ')}.`,
-      options: [
-        {
-          text: `View ${venue.name} details`,
-          action: () => {
-            setTimeout(() => {
-              navigate(venue.path);
-              toast({
-                title: "Venue Selected",
-                description: `You're viewing our ${venue.name} venue information`,
-              });
-              setIsOpen(false);
-            }, 500);
-          }
-        },
-        {
-          text: 'Make a reservation now',
-          action: () => {
-            setTimeout(() => {
-              navigate('/reservation');
-              toast({
-                title: "Reservation Page",
-                description: "You can now make your reservation",
-              });
-              setIsOpen(false);
-            }, 500);
-          }
-        },
-        {
-          text: 'View all venue options',
-          action: () => {
-            setTimeout(() => {
-              navigate('/special-services');
-              toast({
-                title: "Special Venues",
-                description: "Explore all our special venue options",
-              });
-              setIsOpen(false);
-            }, 500);
-          }
-        }
-      ]
-    }]);
-  };
-  
-  // Direct cuisine recommendation
-  const handleSpecificCuisineRecommendation = (cuisine: any) => {
-    setMessages(prev => [...prev, {
-      id: prev.length + 1,
-      sender: 'assistant',
-      text: `Our ${cuisine.name} cuisine offers exquisite flavors and specialties including ${cuisine.specialties.join(', ')}. Would you like to explore our ${cuisine.name} menu?`,
-      options: [
-        {
-          text: `View ${cuisine.name} menu`,
-          action: () => {
-            setTimeout(() => {
-              navigate(cuisine.path);
-              toast({
-                title: `${cuisine.name} Menu`,
-                description: `Exploring our ${cuisine.name} culinary selection`,
-              });
-              setIsOpen(false);
-            }, 500);
-          }
-        },
-        {
-          text: 'Explore all cuisines',
-          action: () => handleCuisineNavigation()
-        },
-        {
-          text: 'Make a reservation',
-          action: () => {
-            setTimeout(() => {
-              navigate('/reservation');
-              setIsOpen(false);
-            }, 500);
-          }
-        }
-      ]
-    }]);
-  };
-  
-  // Handle cuisine navigation
-  const handleCuisineNavigation = () => {
-    const assistantMessage: Message = {
-      id: messages.length + 2,
-      sender: 'assistant',
-      text: 'We offer five exquisite cuisines at SAVORIA. Each cuisine has its unique specialties. Which would you like to explore?',
-      options: cuisines.map(cuisine => ({
-        text: cuisine.name,
-        action: () => {
-          setMessages(prev => [...prev, {
-            id: prev.length + 1,
-            sender: 'user',
-            text: `I'd like to see the ${cuisine.name} menu`
-          }]);
-          
-          setTimeout(() => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'assistant',
-              text: `Great choice! Our ${cuisine.name} menu features ${cuisine.specialties.join(', ')} and other specialties. I'll take you there now.`,
-            }]);
-            
-            setTimeout(() => {
-              navigate(cuisine.path);
-              toast({
-                title: `${cuisine.name} Menu`,
-                description: `Exploring our ${cuisine.name} culinary selection`,
-              });
-              setIsOpen(false);
-            }, 800);
-          }, 500);
-        }
-      }))
-    };
-    
-    setMessages(prev => [...prev, assistantMessage]);
-  };
-  
-  // Handle venue questions with improved recommendations
-  const handleVenueQuestions = () => {
-    const assistantMessage: Message = {
-      id: messages.length + 2,
-      sender: 'assistant',
-      text: 'We have three magnificent venues for special occasions. How many guests are you expecting?',
-      options: [
-        {
-          text: 'Large group (80-100)',
-          action: () => handleVenueRecommendation('large')
-        },
-        {
-          text: 'Medium group (35-50)',
-          action: () => handleVenueRecommendation('medium')
-        },
-        {
-          text: 'Small group (11-20)',
-          action: () => handleVenueRecommendation('small')
-        },
-        {
-          text: 'View all venues',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I want to see all venues'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `I'll take you to our special venues page where you can explore all options.`,
-              }]);
-              
-              setTimeout(() => {
-                navigate('/special-services');
-                toast({
-                  title: "Special Venues",
-                  description: "Explore all our special venue options",
-                });
-                setIsOpen(false);
-              }, 800);
-            }, 500);
-          }
-        }
-      ]
-    };
-    
-    setMessages(prev => [...prev, assistantMessage]);
-  };
-  
-  // Handle venue recommendation based on group size
-  const handleVenueRecommendation = (size: 'large' | 'medium' | 'small') => {
-    let venue;
-    let userText;
-    
-    if (size === 'large') {
-      venue = venues[0]; // Ambrosia
-      userText = "I need space for 80-100 people";
-    } else if (size === 'medium') {
-      venue = venues[1]; // Euphoria
-      userText = "I need space for 35-50 people";
-    } else {
-      venue = venues[2]; // Majestic
-      userText = "I need space for 11-20 people";
+    // If we have low confidence but specific entities, we can still help
+    let finalIntent = intent;
+    if (confidence < 0.3 && Object.keys(entities).length > 0) {
+      if (entities.cuisine) finalIntent = 'menu';
+      if (entities.capacity) finalIntent = 'venue';
+      if (entities.venue) finalIntent = 'venue';
     }
     
-    setMessages(prev => [...prev, {
-      id: prev.length + 1,
-      sender: 'user',
-      text: userText
-    }]);
-    
-    setTimeout(() => {
+    try {
+      // Get AI response
+      const responseText = await generateResponse(inputValue, finalIntent, entities);
+      
+      // Add response with a slight delay to seem more natural
+      setTimeout(() => {
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: 'assistant',
+          text: responseText,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        setIsProcessing(false);
+        
+        // Handle automatic actions based on conversation flow
+        if (finalIntent === 'menu' && responseText.includes('Would you like to view the')) {
+          const actionButton = document.createElement('button');
+          actionButton.textContent = 'View Menu';
+          actionButton.onclick = () => navigateToMenu(entities.cuisine);
+          // In a real implementation, we'd render this button in the UI
+        }
+        
+        if (responseText.includes('proceed with a reservation') || 
+            responseText.includes('make a reservation')) {
+          const actionButton = document.createElement('button');
+          actionButton.textContent = 'Make Reservation';
+          actionButton.onclick = () => navigateToReservation();
+          // In a real implementation, we'd render this button in the UI
+        }
+      }, 800);
+    } catch (error) {
+      console.error('Error generating response:', error);
       setMessages(prev => [...prev, {
-        id: prev.length + 1,
+        id: (Date.now() + 1).toString(),
         sender: 'assistant',
-        text: `For a group of that size, I recommend our ${venue.name} venue. ${venue.description} with a capacity of ${venue.capacity}. It's perfect for ${venue.idealFor.join(', ')}.`,
-        options: [
-          {
-            text: `View ${venue.name}`,
-            action: () => {
-              setTimeout(() => {
-                navigate(venue.path);
-                toast({
-                  title: "Venue Selected",
-                  description: `You're viewing our ${venue.name} venue information`,
-                });
-                setIsOpen(false);
-              }, 500);
-            }
-          },
-          {
-            text: 'Make a reservation',
-            action: () => {
-              setTimeout(() => {
-                navigate('/reservation');
-                toast({
-                  title: "Reservation Page",
-                  description: "You can now make your reservation",
-                });
-                setIsOpen(false);
-              }, 500);
-            }
-          },
-          {
-            text: 'View all venues',
-            action: () => {
-              setTimeout(() => {
-                navigate('/special-services');
-                toast({
-                  title: "Special Venues",
-                  description: "Explore all our special venue options",
-                });
-                setIsOpen(false);
-              }, 500);
-            }
-          }
-        ]
+        text: "I'm sorry, I'm having trouble processing your request right now. Please try again later.",
+        timestamp: new Date()
       }]);
-    }, 800);
+      setIsProcessing(false);
+    }
   };
-  
-  // Handle reservation with more options
-  const handleReservation = () => {
-    const assistantMessage: Message = {
-      id: messages.length + 2,
-      sender: 'assistant',
-      text: 'I can help you with reservations. What type of reservation are you interested in?',
-      options: [
-        {
-          text: 'Dining reservation',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I want to make a dining reservation'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `I'll take you to our reservation page to book a table. You can select your preferred date, time, and number of guests there.`,
-              }]);
-              
-              setTimeout(() => {
-                navigate('/reservation');
-                toast({
-                  title: "Reservation Page",
-                  description: "You can now make your dining reservation",
-                });
-                setIsOpen(false);
-              }, 800);
-            }, 500);
-          }
-        },
-        {
-          text: 'Venue booking',
-          action: () => handleVenueQuestions()
-        },
-        {
-          text: 'Special event',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I want to book for a special event'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `For special events, we recommend contacting our events team directly. They can customize every aspect of your experience.`,
-                options: [
-                  {
-                    text: 'Contact events team',
-                    action: () => {
-                      setTimeout(() => {
-                        navigate('/contact');
-                        toast({
-                          title: "Contact Page",
-                          description: "Reach out to our events team for your special occasion",
-                        });
-                        setIsOpen(false);
-                      }, 500);
-                    }
-                  },
-                  {
-                    text: 'View venue options first',
-                    action: () => handleVenueQuestions()
-                  }
-                ]
-              }]);
-            }, 500);
-          }
-        }
-      ]
-    };
-    
-    setMessages(prev => [...prev, assistantMessage]);
+
+  // Handle action buttons in responses
+  const handleActionClick = (action: string, param?: string) => {
+    switch (action) {
+      case 'viewMenu':
+        navigateToMenu(param);
+        break;
+      case 'makeReservation':
+        navigateToReservation();
+        break;
+      case 'viewGallery':
+        setIsOpen(false);
+        navigate('/gallery');
+        break;
+      case 'contact':
+        setIsOpen(false);
+        navigate('/contact');
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
   };
-  
-  // Handle contact information
-  const handleContactInfo = () => {
-    const assistantMessage: Message = {
-      id: messages.length + 2,
-      sender: 'assistant',
-      text: 'Our team is ready to assist you! How would you like to connect with us?',
-      options: [
-        {
-          text: 'View contact details',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I want to see the contact details'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `I'll take you to our contact page where you'll find all our contact information, location details, and a contact form.`,
-              }]);
-              
-              setTimeout(() => {
-                navigate('/contact');
-                toast({
-                  title: "Contact Page",
-                  description: "Find all our contact information here",
-                });
-                setIsOpen(false);
-              }, 800);
-            }, 500);
-          }
-        },
-        {
-          text: 'Manager contact',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I need the manager\'s contact'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `For special requests or inquiries, you can reach our manager at (555) 123-4567 or manager@savoria.com. They'll be happy to assist with any concerns or special arrangements.`,
-                options: [
-                  {
-                    text: 'View all contact options',
-                    action: () => {
-                      setTimeout(() => {
-                        navigate('/contact');
-                        toast({
-                          title: "Contact Page",
-                          description: "Find all our contact information here",
-                        });
-                        setIsOpen(false);
-                      }, 500);
-                    }
-                  },
-                  {
-                    text: 'Make a reservation',
-                    action: () => {
-                      setTimeout(() => {
-                        navigate('/reservation');
-                        setIsOpen(false);
-                      }, 500);
-                    }
-                  }
-                ]
-              }]);
-            }, 500);
-          }
-        },
-        {
-          text: 'Events team',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I need to speak with the events team'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `Our events team can be reached at events@savoria.com or (555) 987-6543. They specialize in planning and executing flawless special occasions at our venues.`,
-                options: [
-                  {
-                    text: 'View venues',
-                    action: () => {
-                      setTimeout(() => {
-                        navigate('/special-services');
-                        setIsOpen(false);
-                      }, 500);
-                    }
-                  }
-                ]
-              }]);
-            }, 500);
-          }
-        }
-      ]
-    };
-    
-    setMessages(prev => [...prev, assistantMessage]);
-  };
-  
-  // Handle ambience questions
-  const handleAmbience = () => {
-    const assistantMessage: Message = {
-      id: messages.length + 2,
-      sender: 'assistant',
-      text: 'SAVORIA offers an elegant and luxurious dining atmosphere with thoughtful lighting, sophisticated decor, and immersive cultural touches for each cuisine. Would you like to see our ambience and gallery?',
-      options: [
-        {
-          text: 'View gallery',
-          action: () => {
-            setMessages(prev => [...prev, {
-              id: prev.length + 1,
-              sender: 'user',
-              text: 'I want to see the gallery'
-            }]);
-            
-            setTimeout(() => {
-              setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                sender: 'assistant',
-                text: `I'll take you to our gallery to explore the SAVORIA experience through beautiful images that showcase our venues, cuisine, and ambience.`,
-              }]);
-              
-              setTimeout(() => {
-                navigate('/gallery');
-                toast({
-                  title: "Gallery",
-                  description: "Explore the visual beauty of SAVORIA",
-                });
-                setIsOpen(false);
-              }, 800);
-            }, 500);
-          }
-        },
-        {
-          text: 'Experience SAVORIA',
-          action: () => {
-            navigate('/#ambient');
-            toast({
-              title: "Ambience Section",
-              description: "Discover the unique atmosphere of SAVORIA",
-            });
-            setIsOpen(false);
-          }
-        },
-        {
-          text: 'Make a reservation',
-          action: () => {
-            setTimeout(() => {
-              navigate('/reservation');
-              toast({
-                title: "Reservation",
-                description: "Experience SAVORIA in person",
-              });
-              setIsOpen(false);
-            }, 500);
-          }
-        }
-      ]
-    };
-    
-    setMessages(prev => [...prev, assistantMessage]);
-  };
-  
+
   return (
     <>
-      {/* Chat button with subtle pulse animation */}
+      {/* Chat toggle button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 p-4 bg-black/70 backdrop-blur-lg rounded-full shadow-lg hover:bg-black/80 transition-all duration-300 border border-gold/20 gold-pulse"
-        aria-label="Chat with our assistant"
+        className="fixed bottom-6 right-6 z-50 bg-gold hover:bg-gold/90 text-black p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+        aria-label="Open chat assistant"
       >
-        <MessageCircle className="w-6 h-6 text-gold" />
+        <MessageSquare size={24} />
       </button>
-      
-      {/* Chat window */}
+
+      {/* Chat dialog */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-96 max-h-[600px] bg-black/80 backdrop-blur-lg rounded-lg shadow-xl border border-gold/30 overflow-hidden"
+            className="fixed bottom-20 right-6 z-50 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-black border border-gold/20 rounded-lg shadow-2xl flex flex-col overflow-hidden"
           >
-            {/* Header */}
-            <div className="p-4 border-b border-gold/20 flex justify-between items-center">
-              <h3 className="text-xl font-playfair text-gold">How can I help?</h3>
-              <button 
+            {/* Chat header */}
+            <div className="p-3 bg-gradient-to-r from-black to-zinc-900 border-b border-gold/20 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <div className="bg-gold rounded-full p-1.5">
+                  <Bot size={18} className="text-black" />
+                </div>
+                <h3 className="font-playfair text-lg text-white">Savoria Assistant</h3>
+              </div>
+              <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/10 rounded-full transition-colors"
+                className="text-gray-400 hover:text-white transition-colors"
                 aria-label="Close chat"
               >
-                <X className="w-5 h-5 text-white" />
+                <X size={20} />
               </button>
             </div>
-            
-            {/* Messages */}
-            <div className="p-4 h-[400px] overflow-y-auto space-y-4 scrollbar-gold">
-              {messages.map(message => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className={cn(
-                    "flex flex-col",
-                    message.sender === 'user' ? 'items-end' : 'items-start'
-                  )}
-                >
-                  <div className={cn(
-                    "max-w-[80%] p-3 rounded-lg",
-                    message.sender === 'user' 
-                      ? 'bg-gold/30 text-white'
-                      : 'bg-white/10 text-white'
-                  )}>
-                    <p className="text-sm">{message.text}</p>
-                  </div>
-                  
-                  {message.options && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {message.options.map((option, index) => (
-                        <button
-                          key={index}
-                          onClick={option.action}
-                          className="py-1 px-3 bg-gold/20 hover:bg-gold/40 rounded text-sm text-gold transition-colors flex items-center gap-1"
-                        >
-                          {option.text}
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
-                      ))}
+
+            {/* Messages area */}
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] px-4 py-2 rounded-lg ${
+                        message.sender === 'user'
+                          ? 'bg-gradient-to-r from-gold/80 to-gold/90 text-black'
+                          : 'bg-zinc-900 border border-zinc-700 text-white'
+                      }`}
+                    >
+                      <p className="text-sm">{message.text}</p>
+                      
+                      {/* Action buttons for assistant responses */}
+                      {message.sender === 'assistant' && (
+                        <div className="mt-2 space-x-2">
+                          {/* Reservation CTA */}
+                          {message.text.includes('reservation') && message.text.toLowerCase().includes('would you like') && (
+                            <button
+                              onClick={() => handleActionClick('makeReservation')}
+                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
+                            >
+                              Make Reservation
+                            </button>
+                          )}
+                          
+                          {/* View menu CTA */}
+                          {message.text.includes('view the') && message.text.includes('menu') && (
+                            <button
+                              onClick={() => {
+                                const cuisineMatch = message.text.match(/view the (\w+) menu/i);
+                                if (cuisineMatch && cuisineMatch[1]) {
+                                  handleActionClick('viewMenu', cuisineMatch[1].toLowerCase());
+                                } else {
+                                  handleActionClick('viewMenu');
+                                }
+                              }}
+                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
+                            >
+                              View Menu
+                            </button>
+                          )}
+                          
+                          {/* Gallery CTA */}
+                          {message.text.includes('gallery') && (
+                            <button
+                              onClick={() => handleActionClick('viewGallery')}
+                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
+                            >
+                              View Gallery
+                            </button>
+                          )}
+                          
+                          {/* Contact CTA */}
+                          {message.text.includes('contact@savoria.com') && (
+                            <button
+                              onClick={() => handleActionClick('contact')}
+                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
+                            >
+                              Contact Us
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </motion.div>
-              ))}
-              
-              {isTyping && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-center space-x-2 text-white/50"
-                >
-                  <div className="w-2 h-2 bg-gold/70 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-gold/70 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-gold/70 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                </motion.div>
-              )}
-              
-              <div ref={chatEndRef} />
-            </div>
-            
-            {/* Input */}
-            <div className="p-4 border-t border-gold/20">
-              <form 
+                  </div>
+                ))}
+                {isProcessing && (
+                  <div className="flex justify-start">
+                    <div className="max-w-[80%] px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white">
+                      <div className="flex items-center space-x-2">
+                        <Loader2 size={16} className="animate-spin text-gold" />
+                        <p className="text-sm text-gray-400">Thinking...</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
+
+            {/* Input area */}
+            <div className="p-3 border-t border-gold/20 bg-black">
+              <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  handleUserInput();
+                  handleSendMessage();
                 }}
-                className="flex items-center gap-2"
+                className="flex space-x-2"
               >
                 <input
+                  ref={inputRef}
                   type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Type your message..."
-                  className="flex-1 bg-white/10 rounded-lg px-4 py-2 text-white placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-gold/50"
+                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-gold/50"
                 />
-                <button 
+                <button
                   type="submit"
-                  className="p-2 bg-gold/30 hover:bg-gold/40 rounded-lg transition-colors"
-                  disabled={!input.trim()}
+                  disabled={isProcessing || !inputValue.trim()}
+                  className="bg-gold hover:bg-gold/90 text-black p-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Send message"
                 >
-                  <Send className="w-5 h-5 text-gold" />
+                  <Send size={18} />
                 </button>
               </form>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                How can I help with your dining experience today?
+              </p>
             </div>
           </motion.div>
         )}

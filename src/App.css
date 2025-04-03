@@ -265,3 +265,49 @@ section {
   transition: background-image 0.7s ease-in-out, opacity 0.7s ease-in-out;
   will-change: background-image, opacity;
 }
+
+/* Custom enhanced scrollbar with gold accents and focusing effect */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, rgba(212, 175, 55, 0.5), rgba(153, 101, 21, 0.5));
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, rgba(212, 175, 55, 0.8), rgba(153, 101, 21, 0.8));
+  width: 16px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(to bottom, rgba(212, 175, 55, 1), rgba(153, 101, 21, 1));
+  width: 16px;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #D4AF37 #222222;
+}
+
+/* Handle edge cases */
+html {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #D4AF37 #222222;
+}
+
+body.modal-open {
+  overflow: hidden;
+}

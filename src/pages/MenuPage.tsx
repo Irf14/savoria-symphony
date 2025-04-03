@@ -1,10 +1,10 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Types for menu data
 type MenuItem = {
@@ -500,8 +500,17 @@ const MenuPage = () => {
   const [activeSection, setActiveSection] = useState<string>('');
   const [loadingImages, setLoadingImages] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   
-  // Preload critical images
+  // Scroll to top when changing sections
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeSection]);
+  
+  // Preload critical images with enhanced loading
   useEffect(() => {
     // Find the cuisine from the URL parameter or default to Thai
     const selectedCuisine = cuisineParam 
@@ -521,9 +530,22 @@ const MenuPage = () => {
       let loadedCount = 0;
       const newImagesLoaded = {...imagesLoaded};
       
-      imagesToLoad.forEach(src => {
+      const preloadImage = (src: string, index: number) => {
         const img = new Image();
+        
+        // Set a timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          console.warn(`Image load timeout: ${src}`);
+          newImagesLoaded[src] = true;
+          loadedCount++;
+          if (loadedCount === imagesToLoad.length) {
+            setLoadingImages(false);
+            setImagesLoaded(newImagesLoaded);
+          }
+        }, 3000);
+        
         img.onload = () => {
+          clearTimeout(timeout);
           newImagesLoaded[src] = true;
           loadedCount++;
           if (loadedCount === imagesToLoad.length) {
@@ -531,91 +553,116 @@ const MenuPage = () => {
             setImagesLoaded(newImagesLoaded);
           }
         };
+        
         img.onerror = () => {
+          clearTimeout(timeout);
           console.error(`Failed to load image: ${src}`);
-          newImagesLoaded[src] = true; // Mark as "loaded" to avoid blocking UI
-          loadedCount++;
-          if (loadedCount === imagesToLoad.length) {
-            setLoadingImages(false);
-            setImagesLoaded(newImagesLoaded);
+          // Use fallback images
+          const fallbacks = [
+            'https://images.unsplash.com/photo-1414235077428-338989a2e8c0',
+            'https://images.unsplash.com/photo-1505253758473-96b7015fcd40',
+            'https://images.unsplash.com/photo-1585032226651-759b368d7246'
+          ];
+          
+          // Try a fallback image
+          if (index < fallbacks.length) {
+            console.log(`Trying fallback image for: ${src}`);
+            preloadImage(fallbacks[index], index);
+          } else {
+            newImagesLoaded[src] = true;
+            loadedCount++;
+            if (loadedCount === imagesToLoad.length) {
+              setLoadingImages(false);
+              setImagesLoaded(newImagesLoaded);
+            }
           }
         };
+        
         img.src = src;
-      });
+      };
+      
+      imagesToLoad.forEach((src, index) => preloadImage(src, index));
     }
   }, [cuisineParam]);
 
-  // Handle cuisine changes - fallback images for Bengali cuisine
+  // Handle cuisine changes with improved transitions
   const handleCuisineChange = (newCuisineId: string) => {
-    // Only change if it's different
-    if (activeCuisine?.id !== newCuisineId) {
-      setLoadingImages(true);
-      const newCuisine = cuisines.find(c => c.id === newCuisineId);
+    if (activeCuisine?.id === newCuisineId || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setLoadingImages(true);
+    
+    const newCuisine = cuisines.find(c => c.id === newCuisineId);
+    
+    if (newCuisine) {
+      // Set a timeout to ensure we don't wait too long
+      const transitionTimeout = setTimeout(() => {
+        setActiveCuisine(newCuisine);
+        setActiveSection(newCuisine.sections[0].name);
+        setLoadingImages(false);
+        setIsTransitioning(false);
+      }, 1500);
       
-      // Fix for Bengali cuisine
-      if (newCuisineId === 'bengali') {
-        // Use fallback images for Bengali cuisine
-        const fallbackImage = 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?q=80&w=2574&auto=format&fit=crop';
-        const fallbackSectionImage = 'https://images.unsplash.com/photo-1631452180775-4e277a5b3f3d?q=80&w=2574&auto=format&fit=crop';
-        
-        if (newCuisine) {
-          newCuisine.backgroundImage = fallbackImage;
-          newCuisine.sections.forEach(section => {
-            section.backgroundImage = fallbackSectionImage;
-          });
-        }
-      }
+      // Preload critical images before showing cuisine
+      const imagesToLoad = [
+        newCuisine.backgroundImage,
+        ...newCuisine.sections.map(section => section.backgroundImage)
+      ];
       
-      if (newCuisine) {
-        // Preload critical images before showing cuisine
-        const imagesToLoad = [
-          newCuisine.backgroundImage,
-          ...newCuisine.sections.map(section => section.backgroundImage)
-        ];
-        
-        let loadedCount = 0;
-        const newImagesLoaded = {...imagesLoaded};
-        
-        imagesToLoad.forEach(src => {
-          // If already cached, consider it loaded
-          if (imagesLoaded[src]) {
-            loadedCount++;
-            if (loadedCount === imagesToLoad.length) {
-              setActiveCuisine(newCuisine);
-              setActiveSection(newCuisine.sections[0].name);
-              setLoadingImages(false);
-            }
-            return;
+      let loadedCount = 0;
+      const newImagesLoaded = {...imagesLoaded};
+      
+      const preloadImage = (src: string) => {
+        // If already cached, consider it loaded
+        if (imagesLoaded[src]) {
+          loadedCount++;
+          if (loadedCount === imagesToLoad.length) {
+            clearTimeout(transitionTimeout);
+            setActiveCuisine(newCuisine);
+            setActiveSection(newCuisine.sections[0].name);
+            setLoadingImages(false);
+            setIsTransitioning(false);
           }
-          
-          const img = new Image();
-          img.onload = () => {
-            newImagesLoaded[src] = true;
-            loadedCount++;
-            if (loadedCount === imagesToLoad.length) {
-              setActiveCuisine(newCuisine);
-              setActiveSection(newCuisine.sections[0].name);
-              setLoadingImages(false);
-              setImagesLoaded(newImagesLoaded);
-            }
-          };
-          img.onerror = () => {
-            console.error(`Failed to load image: ${src}`);
-            newImagesLoaded[src] = true;
-            loadedCount++;
-            if (loadedCount === imagesToLoad.length) {
-              setActiveCuisine(newCuisine);
-              setActiveSection(newCuisine.sections[0].name);
-              setLoadingImages(false);
-              setImagesLoaded(newImagesLoaded);
-            }
-          };
-          img.src = src;
-        });
+          return;
+        }
         
-        // Update URL without page reload
-        window.history.pushState({}, '', `/menu/${newCuisineId}`);
-      }
+        const img = new Image();
+        
+        img.onload = () => {
+          newImagesLoaded[src] = true;
+          loadedCount++;
+          if (loadedCount === imagesToLoad.length) {
+            clearTimeout(transitionTimeout);
+            setActiveCuisine(newCuisine);
+            setActiveSection(newCuisine.sections[0].name);
+            setLoadingImages(false);
+            setIsTransitioning(false);
+            setImagesLoaded(newImagesLoaded);
+          }
+        };
+        
+        img.onerror = () => {
+          console.error(`Failed to load image: ${src}`);
+          newImagesLoaded[src] = true;
+          loadedCount++;
+          if (loadedCount === imagesToLoad.length) {
+            clearTimeout(transitionTimeout);
+            setActiveCuisine(newCuisine);
+            setActiveSection(newCuisine.sections[0].name);
+            setLoadingImages(false);
+            setIsTransitioning(false);
+            setImagesLoaded(newImagesLoaded);
+          }
+        };
+        
+        img.src = src;
+      };
+      
+      // Start preloading all images
+      imagesToLoad.forEach(preloadImage);
+      
+      // Update URL without page reload
+      window.history.pushState({}, '', `/menu/${newCuisineId}`);
     }
   };
 
@@ -664,11 +711,11 @@ const MenuPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-savoria-black text-white overflow-x-hidden">
+    <div className="min-h-screen bg-savoria-black text-white overflow-hidden">
       <Navbar />
       
       <main className="relative pt-16">
-        {/* Loading overlay */}
+        {/* Loading overlay with improved animation */}
         {loadingImages && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
             <div className="loader"></div>
@@ -695,6 +742,7 @@ const MenuPage = () => {
             className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 p-2 rounded-full 
                       backdrop-blur-md border border-white/10 hover:bg-black/50 transition-all z-10"
             onClick={() => {
+              if (isTransitioning) return;
               const currentIndex = cuisines.findIndex(c => c.id === activeCuisine.id);
               const prevIndex = (currentIndex - 1 + cuisines.length) % cuisines.length;
               handleCuisineChange(cuisines[prevIndex].id);
@@ -707,6 +755,7 @@ const MenuPage = () => {
             className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 p-2 rounded-full 
                       backdrop-blur-md border border-white/10 hover:bg-black/50 transition-all z-10"
             onClick={() => {
+              if (isTransitioning) return;
               const currentIndex = cuisines.findIndex(c => c.id === activeCuisine.id);
               const nextIndex = (currentIndex + 1) % cuisines.length;
               handleCuisineChange(cuisines[nextIndex].id);
@@ -739,133 +788,56 @@ const MenuPage = () => {
         {/* Cuisine navigation tabs */}
         <div className="sticky top-0 z-30 bg-black/40 backdrop-blur-lg shadow-lg py-2 border-t border-b border-gold/20">
           <div className="container mx-auto px-4">
-            <div className="flex overflow-x-auto scrollbar-none justify-center py-2">
-              {cuisines.map((cuisine) => (
-                <motion.button
-                  key={cuisine.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={`mx-2 px-5 py-2 font-cormorant text-lg rounded-sm transition-all duration-300
-                    ${activeCuisine.id === cuisine.id 
-                      ? 'bg-gold text-savoria-black font-semibold' 
-                      : 'text-white hover:bg-white/10'
-                    }`}
-                  onClick={() => handleCuisineChange(cuisine.id)}
-                >
-                  {cuisine.name}
-                </motion.button>
-              ))}
-            </div>
+            <ScrollArea className="w-full">
+              <div className="flex py-2 px-2">
+                {cuisines.map((cuisine) => (
+                  <motion.button
+                    key={cuisine.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className={`mx-2 px-5 py-2 font-cormorant text-lg rounded-sm transition-all duration-300 whitespace-nowrap
+                      ${activeCuisine.id === cuisine.id 
+                        ? 'bg-gold text-savoria-black font-semibold' 
+                        : 'text-white hover:bg-white/10'
+                      }`}
+                    onClick={() => {
+                      if (isTransitioning) return;
+                      handleCuisineChange(cuisine.id);
+                    }}
+                  >
+                    {cuisine.name}
+                  </motion.button>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </div>
         
         {/* Menu section navigation */}
         <div className="bg-black/30 border-b border-gold/10 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6">
-            <div className="flex justify-center space-x-6">
-              {activeCuisine.sections.map((section) => (
-                <motion.button
-                  key={section.name}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`px-8 py-3 rounded transition-all duration-300 font-cormorant text-xl
-                    ${activeSection === section.name 
-                      ? 'bg-gold text-savoria-black font-semibold' 
-                      : 'bg-black/20 backdrop-blur-sm border border-gold/20 text-white hover:bg-black/40'
-                    }`}
-                  onClick={() => setActiveSection(section.name)}
-                >
-                  {section.name}
-                </motion.button>
-              ))}
-            </div>
+            <ScrollArea className="w-full">
+              <div className="flex justify-center space-x-6 px-2">
+                {activeCuisine.sections.map((section) => (
+                  <motion.button
+                    key={section.name}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`px-8 py-3 rounded transition-all duration-300 font-cormorant text-xl whitespace-nowrap
+                      ${activeSection === section.name 
+                        ? 'bg-gold text-savoria-black font-semibold' 
+                        : 'bg-black/20 backdrop-blur-sm border border-gold/20 text-white hover:bg-black/40'
+                      }`}
+                    onClick={() => setActiveSection(section.name)}
+                  >
+                    {section.name}
+                  </motion.button>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </div>
         
         {/* Menu section content */}
-        <AnimatePresence mode="wait">
-          {currentSection && (
-            <motion.div 
-              key={`${activeCuisine.id}-${currentSection.name}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative min-h-[60vh] py-16"
-            >
-              {/* Section background with improved brightness */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center opacity-30 transition-opacity duration-700"
-                style={{ backgroundImage: `url(${currentSection.backgroundImage})` }}
-              >
-                <div className="absolute inset-0 bg-black/30"></div>
-              </div>
-              
-              <div className="container mx-auto px-4 relative z-10">
-                <div className="max-w-5xl mx-auto">
-                  {/* Menu items */}
-                  <div className="space-y-8">
-                    {currentSection.items.map((item) => (
-                      <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className={`relative overflow-hidden rounded-md transition-all duration-500 
-                          ${hoveredItemId === item.id 
-                            ? 'bg-white/20 backdrop-blur-lg shadow-xl transform scale-[1.02] border border-gold/30' 
-                            : 'bg-black/20 backdrop-blur-sm shadow-md border border-white/10'
-                          }`}
-                        onMouseEnter={() => setHoveredItemId(item.id)}
-                        onMouseLeave={() => setHoveredItemId(null)}
-                      >
-                        <div className="p-6">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <h3 className="font-playfair text-2xl font-semibold text-gold">
-                                {item.name}
-                                {item.chefsChoice && (
-                                  <span className="ml-2 text-sm bg-gold/20 text-gold px-2 py-1 rounded font-cormorant">
-                                    Chef's Choice
-                                  </span>
-                                )}
-                              </h3>
-                              <p className="font-cormorant text-lg mt-2 text-white/90">{item.description}</p>
-                              
-                              {/* Show rating on hover */}
-                              {hoveredItemId === item.id && item.rating && (
-                                <motion.div 
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="mt-3"
-                                >
-                                  <div className="flex items-center space-x-1">
-                                    <span className="text-white/80 font-cormorant text-sm">Rating:</span>
-                                    {renderStarRating(item.rating)}
-                                    <span className="text-gold font-semibold ml-1">{item.rating}/5</span>
-                                  </div>
-                                </motion.div>
-                              )}
-                            </div>
-                            <div className="text-gold font-playfair text-2xl font-bold">
-                              ${item.price}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default MenuPage;
+        <div ref={
