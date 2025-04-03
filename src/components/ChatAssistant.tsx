@@ -2,28 +2,45 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, X, Send, Loader2, MessageSquare } from 'lucide-react';
+import { Bot, X, Send, Loader2, MessageSquare, Calendar, Home, PhoneCall, Menu } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
 
-// Menu data for recommendations
-const venueOptions = [
-  { name: "Savoria Hall", capacity: 50, description: "Intimate dining hall for small to medium gatherings" },
-  { name: "Ambrosia Hall", capacity: 150, description: "Grand dining hall for large events and celebrations" },
-  { name: "Symphony Room", capacity: 30, description: "Private dining room for intimate gatherings" },
-  { name: "Culinary Garden", capacity: 80, description: "Beautiful outdoor dining space (weather permitting)" }
-];
-
-// Simple NLP matching rules for basic intent recognition
-const intentRules = [
-  { keywords: ['reserve', 'book', 'reservation'], intent: 'reservation' },
-  { keywords: ['menu', 'food', 'dish', 'cuisine'], intent: 'menu' },
-  { keywords: ['contact', 'call', 'email', 'phone'], intent: 'contact' },
-  { keywords: ['hall', 'venue', 'event', 'space', 'room', 'ambrosia', 'savoria', 'symphony', 'garden'], intent: 'venue' },
-  { keywords: ['people', 'guests', 'persons', 'capacity'], intent: 'capacity' },
-  { keywords: ['gallery', 'photos', 'images', 'pictures'], intent: 'gallery' },
-  { keywords: ['time', 'open', 'closed', 'when', 'hour'], intent: 'hours' }
-];
+// Restaurant data to provide context to the AI
+const RESTAURANT_INFO = {
+  name: "SAVORIA Symphony",
+  description: "An exclusive fine dining restaurant offering five distinct cuisines: Thai, Chinese, Indian, Bengali, and Continental.",
+  address: "123 Gourmet Avenue, Culinary District, Foodie City 12345",
+  phone: "+1 (555) 123-4567",
+  email: "contact@savoria.com",
+  openingHours: "Monday to Sunday: 11 AM - 11 PM",
+  reservationHours: "9 AM - 9 PM",
+  cuisines: [
+    { name: "Thai", description: "Authentic Thai cuisine with aromatic herbs and spices" },
+    { name: "Chinese", description: "Traditional Chinese dishes with perfect harmony of flavors" },
+    { name: "Indian", description: "Rich and flavorful Indian cuisine with diverse regional specialties" },
+    { name: "Bengali", description: "Subtle and artistic Bengali cuisine featuring seafood and regional delicacies" },
+    { name: "Continental", description: "Sophisticated European flavors from across the continent" }
+  ],
+  venues: [
+    { name: "Ambrosia Hall", capacity: 150, description: "Our grand dining hall for large gatherings, conferences, and celebrations" },
+    { name: "Symphony Room", capacity: 30, description: "An intimate private dining room for smaller gatherings" },
+    { name: "Savoria Hall", capacity: 50, description: "A versatile space for medium-sized events and business meetings" },
+    { name: "Culinary Garden", capacity: 80, description: "Beautiful outdoor dining space (weather permitting)" }
+  ],
+  specialOffers: [
+    { name: "Weekend Special", description: "Four-course menu for two with complimentary wine pairing (Friday-Saturday)" },
+    { name: "Chef's Table Experience", description: "Exclusive dining with personalized service from our executive chef" },
+    { name: "Seasonal Tasting Menu", description: "Limited-time menu featuring the freshest seasonal ingredients" }
+  ],
+  popularDishes: [
+    { name: "Butter Chicken", cuisine: "Indian", price: "$26" },
+    { name: "Pad Thai", cuisine: "Thai", price: "$22" },
+    { name: "Peking Duck", cuisine: "Chinese", price: "$38" },
+    { name: "Beef Wellington", cuisine: "Continental", price: "$42" },
+    { name: "Ilish Bhapa", cuisine: "Bengali", price: "$32" }
+  ]
+};
 
 interface Message {
   id: string;
@@ -32,19 +49,126 @@ interface Message {
   timestamp: Date;
 }
 
+async function processWithAI(userMessage: string, messageHistory: Message[]): Promise<string> {
+  try {
+    // Format the conversation history for the AI
+    const context = `
+You are the AI assistant for ${RESTAURANT_INFO.name} restaurant. 
+Here's important information about the restaurant:
+- Description: ${RESTAURANT_INFO.description}
+- Address: ${RESTAURANT_INFO.address}
+- Contact: ${RESTAURANT_INFO.phone}, ${RESTAURANT_INFO.email}
+- Hours: ${RESTAURANT_INFO.openingHours}
+- Reservation Hours: ${RESTAURANT_INFO.reservationHours}
+- Cuisines: ${RESTAURANT_INFO.cuisines.map(c => `${c.name} (${c.description})`).join(', ')}
+- Special Venues: ${RESTAURANT_INFO.venues.map(v => `${v.name} (capacity: ${v.capacity}, ${v.description})`).join(', ')}
+- Special Offers: ${RESTAURANT_INFO.specialOffers.map(o => `${o.name}: ${o.description}`).join(', ')}
+- Popular Dishes: ${RESTAURANT_INFO.popularDishes.map(d => `${d.name} (${d.cuisine}, ${d.price})`).join(', ')}
+
+You should always be helpful, polite, and professional. For reservations, you should collect: date, time, number of guests, and customer contact information. For menu inquiries, you can recommend dishes based on cuisine preferences.
+
+Keep responses concise but informative. If you need to help with specific tasks like making a reservation, viewing the menu, or contacting the restaurant, mention that you can help navigate to the appropriate section of the website.
+`;
+
+    // Convert conversation history
+    const conversationHistory = messageHistory.slice(-6).map(msg => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.text
+    }));
+
+    // Use the OpenAI-compatible interface for flexibility
+    // In a real application, this would call an actual OpenAI endpoint
+    // For this demo, we'll simulate an AI response based on pattern matching
+    // In production, this would be replaced with a real API call
+    
+    // Simulate thinking time
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Basic pattern matching to simulate AI responses
+    let response = "";
+    const lowerMessage = userMessage.toLowerCase();
+    
+    if (lowerMessage.includes('reservation') || lowerMessage.includes('book') || lowerMessage.includes('reserve')) {
+      response = "I'd be happy to help you make a reservation. Could you please provide your preferred date, time, and the number of guests? Once you share these details, I can guide you through completing your reservation.";
+    } 
+    else if (lowerMessage.includes('menu') || lowerMessage.includes('food') || lowerMessage.includes('dish')) {
+      if (lowerMessage.includes('thai')) {
+        response = "Our Thai menu features favorites like Pad Thai, Tom Yum Soup, and Green Curry. Would you like me to help you navigate to our Thai menu section?";
+      } else if (lowerMessage.includes('indian')) {
+        response = "Our Indian menu includes delicious dishes like Butter Chicken, Lamb Biryani, and Paneer Tikka. Would you like me to show you our complete Indian menu?";
+      } else if (lowerMessage.includes('chinese')) {
+        response = "Our Chinese menu features dishes like Peking Duck, Kung Pao Chicken, and Dim Sum platters. Would you like to explore our Chinese menu section?";
+      } else if (lowerMessage.includes('bengali')) {
+        response = "Our Bengali menu includes specialties like Ilish Bhapa, Kosha Mangsho, and Chingri Malaikari. I can show you our full Bengali menu if you'd like.";
+      } else if (lowerMessage.includes('continental')) {
+        response = "Our Continental menu features European classics like Beef Wellington, Coq au Vin, and Risotto ai Funghi. Would you like to see our complete Continental offerings?";
+      } else {
+        response = "We offer five distinct cuisines: Thai, Chinese, Indian, Bengali, and Continental. Which cuisine would you like to explore, or would you prefer to see our most popular dishes across all cuisines?";
+      }
+    }
+    else if (lowerMessage.includes('hour') || lowerMessage.includes('open') || lowerMessage.includes('time')) {
+      response = `${RESTAURANT_INFO.name} is open ${RESTAURANT_INFO.openingHours}. Our reservation desk is available from ${RESTAURANT_INFO.reservationHours}. Is there a specific day you're planning to visit?`;
+    }
+    else if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('email')) {
+      response = `You can reach us at ${RESTAURANT_INFO.phone} or via email at ${RESTAURANT_INFO.email}. Would you like me to help you navigate to our contact page for more information?`;
+    }
+    else if (lowerMessage.includes('address') || lowerMessage.includes('location') || lowerMessage.includes('where')) {
+      response = `We're located at ${RESTAURANT_INFO.address}. Would you like directions or help with transportation options?`;
+    }
+    else if (lowerMessage.includes('venue') || lowerMessage.includes('event') || lowerMessage.includes('party') || lowerMessage.includes('space')) {
+      response = `We have several special venues available: ${RESTAURANT_INFO.venues.map(v => `${v.name} (capacity: ${v.capacity})`).join(', ')}. For larger events, our Ambrosia Hall can accommodate up to 150 guests. Would you like more information about any of these venues?`;
+    }
+    else if (lowerMessage.includes('special') || lowerMessage.includes('offer') || lowerMessage.includes('deal')) {
+      response = `We currently have several special offers: ${RESTAURANT_INFO.specialOffers.map(o => o.name).join(', ')}. Our Weekend Special is particularly popular, offering a four-course menu for two with complimentary wine pairing. Would you like details about any of these offers?`;
+    }
+    else if (lowerMessage.includes('recommend') || lowerMessage.includes('suggestion') || lowerMessage.includes('popular')) {
+      response = `Some of our most popular dishes include ${RESTAURANT_INFO.popularDishes.map(d => `${d.name} (${d.cuisine})`).join(', ')}. Our chef particularly recommends the Butter Chicken from our Indian menu and the Beef Wellington from our Continental offerings. Would you like recommendations for a specific cuisine?`;
+    }
+    else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+      response = `Hello! Welcome to ${RESTAURANT_INFO.name}. I'm your virtual assistant and can help with reservations, menu information, special venues, or any questions about our restaurant. How may I assist you today?`;
+    }
+    else if (lowerMessage.includes('thank')) {
+      response = "You're welcome! Is there anything else I can help you with regarding our restaurant, menu, or reservations?";
+    }
+    else if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
+      response = `Thank you for chatting with me! We hope to welcome you to ${RESTAURANT_INFO.name} soon. Have a wonderful day!`;
+    }
+    else {
+      response = `Welcome to ${RESTAURANT_INFO.name}! I can help you with reservations, menu information, special venue bookings, or answer questions about our restaurant. What would you like to know about our five cuisines (Thai, Chinese, Indian, Bengali, and Continental) or our dining experience?`;
+    }
+    
+    return response;
+  } catch (error) {
+    console.error("AI processing error:", error);
+    return "I'm sorry, I'm having trouble processing your request at the moment. Please try again or contact the restaurant directly at " + RESTAURANT_INFO.phone;
+  }
+}
+
+// Define action types for better organization
+type ActionType = 'viewMenu' | 'makeReservation' | 'viewGallery' | 'contact' | 'viewVenues';
+
+interface ActionButton {
+  type: ActionType;
+  label: string;
+  parameter?: string;
+}
+
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       sender: 'assistant',
-      text: "Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.",
+      text: `Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.`,
       timestamp: new Date()
     }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [lastUserIntent, setLastUserIntent] = useState('');
+  const [suggestedActions, setSuggestedActions] = useState<ActionButton[]>([
+    { type: 'viewMenu', label: 'View Menu' },
+    { type: 'makeReservation', label: 'Make Reservation' }
+  ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -65,13 +189,74 @@ const ChatAssistant = () => {
     }
   }, [isOpen]);
 
+  // Extract actions from message
+  const getActionsFromMessage = (text: string): ActionButton[] => {
+    const actions: ActionButton[] = [];
+    
+    if (text.toLowerCase().includes('menu')) {
+      // Check if a specific cuisine is mentioned
+      const cuisines = ['thai', 'chinese', 'indian', 'bengali', 'continental'];
+      const mentionedCuisine = cuisines.find(cuisine => 
+        text.toLowerCase().includes(cuisine)
+      );
+      
+      actions.push({ 
+        type: 'viewMenu', 
+        label: mentionedCuisine 
+          ? `View ${mentionedCuisine.charAt(0).toUpperCase() + mentionedCuisine.slice(1)} Menu` 
+          : 'View Menu',
+        parameter: mentionedCuisine
+      });
+    }
+    
+    if (text.toLowerCase().includes('reservation') || 
+        text.toLowerCase().includes('book') || 
+        text.toLowerCase().includes('reserve')) {
+      actions.push({ type: 'makeReservation', label: 'Make Reservation' });
+    }
+    
+    if (text.toLowerCase().includes('contact') || 
+        text.toLowerCase().includes('call') || 
+        text.toLowerCase().includes('email') ||
+        text.toLowerCase().includes('phone')) {
+      actions.push({ type: 'contact', label: 'Contact Us' });
+    }
+    
+    if (text.toLowerCase().includes('gallery') || 
+        text.toLowerCase().includes('photo') || 
+        text.toLowerCase().includes('image') ||
+        text.toLowerCase().includes('picture')) {
+      actions.push({ type: 'viewGallery', label: 'View Gallery' });
+    }
+    
+    if (text.toLowerCase().includes('venue') || 
+        text.toLowerCase().includes('hall') || 
+        text.toLowerCase().includes('event space') ||
+        text.toLowerCase().includes('ambrosia') ||
+        text.toLowerCase().includes('symphony')) {
+      actions.push({ type: 'viewVenues', label: 'Explore Venues' });
+    }
+    
+    return actions;
+  };
+
   // Helper to handle menu navigation
   const navigateToMenu = (cuisine?: string) => {
     setIsOpen(false);
     if (cuisine) {
       navigate(`/menu/${cuisine.toLowerCase()}`);
+      toast({
+        title: `Viewing ${cuisine} Menu`,
+        description: `You're now exploring our ${cuisine} cuisine options.`,
+        duration: 3000
+      });
     } else {
       navigate('/menu');
+      toast({
+        title: "Viewing Menu",
+        description: "You're now browsing our complete menu offerings.",
+        duration: 3000
+      });
     }
   };
 
@@ -80,152 +265,43 @@ const ChatAssistant = () => {
     setIsOpen(false);
     navigate('/reservation');
     toast({
-      title: "Redirecting to Reservations",
+      title: "Make a Reservation",
       description: "You're being taken to our reservation page.",
       duration: 3000
     });
   };
 
-  // Extract intent from user message using simple NLP rules
-  const extractIntent = (message: string): { intent: string; confidence: number; entities: Record<string, any> } => {
-    const lowercaseMsg = message.toLowerCase();
-    const entities: Record<string, any> = {};
-    
-    // Extract capacity numbers
-    const capacityMatch = lowercaseMsg.match(/(\d+)\s*(people|person|guests|capacity)/i);
-    if (capacityMatch) {
-      entities.capacity = parseInt(capacityMatch[1], 10);
-    }
-    
-    // Extract cuisine types
-    const cuisineTypes = ['thai', 'chinese', 'indian', 'bengali', 'continental'];
-    for (const cuisine of cuisineTypes) {
-      if (lowercaseMsg.includes(cuisine)) {
-        entities.cuisine = cuisine;
-        break;
-      }
-    }
-    
-    // Check for venue mentions
-    const venueNames = ['ambrosia', 'savoria hall', 'symphony', 'garden'];
-    for (const venue of venueNames) {
-      if (lowercaseMsg.includes(venue)) {
-        entities.venue = venue;
-        break;
-      }
-    }
-    
-    // Match against our intent rules
-    let highestScore = 0;
-    let matchedIntent = 'unknown';
-    
-    for (const rule of intentRules) {
-      const matchedKeywords = rule.keywords.filter(keyword => lowercaseMsg.includes(keyword));
-      const score = matchedKeywords.length / rule.keywords.length;
-      
-      if (score > highestScore) {
-        highestScore = score;
-        matchedIntent = rule.intent;
-      }
-    }
-    
-    // If we have capacity entities but no clear intent, likely venue-related
-    if (entities.capacity && matchedIntent === 'unknown') {
-      matchedIntent = 'venue';
-    }
-    
-    // Transform short questions into intents
-    if (lowercaseMsg.startsWith('how') && lowercaseMsg.includes('reserve')) matchedIntent = 'reservation';
-    if (lowercaseMsg.startsWith('where') && lowercaseMsg.includes('find')) matchedIntent = 'navigation';
-    if (lowercaseMsg.startsWith('what') && (lowercaseMsg.includes('menu') || lowercaseMsg.includes('food'))) matchedIntent = 'menu';
-    
-    return { 
-      intent: matchedIntent, 
-      confidence: highestScore,
-      entities 
-    };
+  // Helper to handle venue navigation
+  const navigateToVenues = () => {
+    setIsOpen(false);
+    navigate('/special-services');
+    toast({
+      title: "Explore Venues",
+      description: "Discover our special venues for events and celebrations.",
+      duration: 3000
+    });
   };
 
-  // Generate an AI response based on intent and entities
-  const generateResponse = async (userMessage: string, intent: string, entities: Record<string, any>): Promise<string> => {
-    // For demo, we're simulating API call with a delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Store the user's intent for context in conversation
-    setLastUserIntent(intent);
-    
-    // Handle based on intent
-    switch (intent) {
-      case 'reservation':
-        if (entities.capacity) {
-          const people = entities.capacity;
-          
-          if (people > 100) {
-            return `For a party of ${people} people, I recommend our Ambrosia Hall which can accommodate up to 150 guests. Would you like to make a reservation? Click here to proceed to our reservation page.`;
-          } else if (people > 50) {
-            return `For a party of ${people} people, I recommend our Culinary Garden (weather permitting) which can accommodate up to 80 guests, or Ambrosia Hall for indoor events. Would you like to make a reservation?`;
-          } else {
-            return `For a party of ${people} people, both our Savoria Hall (50 guests) and Symphony Room (30 guests) would be suitable. Would you like to proceed with a reservation?`;
-          }
-        }
-        return "I'd be happy to help you make a reservation. How many people will be dining with us, and what date and time are you considering?";
-        
-      case 'menu':
-        if (entities.cuisine) {
-          return `Our ${entities.cuisine.charAt(0).toUpperCase() + entities.cuisine.slice(1)} menu features delicious authentic dishes. Would you like to view the ${entities.cuisine} menu?`;
-        }
-        return "We offer various cuisines including Thai, Chinese, Indian, Bengali and Continental. Which cuisine would you like to explore?";
-        
-      case 'venue':
-        if (entities.capacity) {
-          const people = entities.capacity;
-          let recommendedVenues = venueOptions.filter(v => v.capacity >= people);
-          
-          if (recommendedVenues.length === 0) {
-            if (people > 150) {
-              return "For groups larger than 150 people, we recommend our Ambrosia Hall which can accommodate up to 150 guests. For larger events, please contact us directly to discuss custom arrangements.";
-            }
-            recommendedVenues = venueOptions;
-          }
-          
-          const venueList = recommendedVenues.map(v => `${v.name} (up to ${v.capacity} guests)`).join(', ');
-          return `For a party of ${people} people, we recommend: ${venueList}. Would you like more information or to book a venue?`;
-        }
-        
-        if (entities.venue) {
-          const venue = venueOptions.find(v => v.name.toLowerCase().includes(entities.venue));
-          if (venue) {
-            return `${venue.name} can accommodate up to ${venue.capacity} guests. ${venue.description}. Would you like to make a reservation?`;
-          }
-        }
-        
-        return "We have several venues: Savoria Hall (50 guests), Ambrosia Hall (150 guests), Symphony Room (30 guests), and Culinary Garden (80 guests, outdoor). Which one interests you?";
-        
-      case 'contact':
-        return "You can reach us at contact@savoria.com or call us at (555) 123-4567. Our operating hours are 11 AM to 11 PM every day. How else can I assist you?";
-        
-      case 'gallery':
-        return "Would you like to view our gallery showcasing our cuisine, venues, and past events? I can take you to our gallery page.";
-        
-      case 'hours':
-        return "Savoria is open daily from 11 AM to 11 PM. Last orders are taken at 10:30 PM. Our reservation desk is available from 9 AM to 9 PM daily.";
-        
-      default:
-        // Try to make sense of common questions
-        if (userMessage.toLowerCase().includes('hello') || userMessage.toLowerCase().includes('hi')) {
-          return "Hello! Welcome to Savoria. How can I assist you today?";
-        }
-        
-        if (userMessage.toLowerCase().includes('thank')) {
-          return "You're welcome! Is there anything else I can help you with?";
-        }
-        
-        if (userMessage.toLowerCase().includes('bye') || userMessage.toLowerCase().includes('goodbye')) {
-          return "Thank you for chatting with me! Have a wonderful day, and we hope to see you at Savoria soon.";
-        }
-        
-        return "I'm not sure I understand. Would you like to know about our menu, make a reservation, or learn about our special venues?";
-    }
+  // Helper to handle contact
+  const navigateToContact = () => {
+    setIsOpen(false);
+    navigate('/contact');
+    toast({
+      title: "Contact Information",
+      description: "You can find all our contact details here.",
+      duration: 3000
+    });
+  };
+
+  // Helper to handle gallery
+  const navigateToGallery = () => {
+    setIsOpen(false);
+    navigate('/gallery');
+    toast({
+      title: "Photo Gallery",
+      description: "Explore images of our restaurant, food, and events.",
+      duration: 3000
+    });
   };
 
   // Handle sending messages
@@ -244,56 +320,35 @@ const ChatAssistant = () => {
     setInputValue('');
     setIsProcessing(true);
     
-    // Process the message to determine intent
-    const { intent, confidence, entities } = extractIntent(inputValue);
-    console.log('Detected intent:', intent, 'with confidence:', confidence, 'entities:', entities);
-    
-    // If we have low confidence but specific entities, we can still help
-    let finalIntent = intent;
-    if (confidence < 0.3 && Object.keys(entities).length > 0) {
-      if (entities.cuisine) finalIntent = 'menu';
-      if (entities.capacity) finalIntent = 'venue';
-      if (entities.venue) finalIntent = 'venue';
-    }
-    
     try {
-      // Get AI response
-      const responseText = await generateResponse(inputValue, finalIntent, entities);
+      // Process with AI
+      const aiResponse = await processWithAI(inputValue, messages);
+      
+      // Extract potential actions
+      const actions = getActionsFromMessage(aiResponse);
+      setSuggestedActions(actions.length > 0 ? actions : [
+        { type: 'viewMenu', label: 'View Menu' },
+        { type: 'makeReservation', label: 'Make Reservation' }
+      ]);
       
       // Add response with a slight delay to seem more natural
       setTimeout(() => {
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           sender: 'assistant',
-          text: responseText,
+          text: aiResponse,
           timestamp: new Date()
         };
         
         setMessages(prev => [...prev, assistantMessage]);
         setIsProcessing(false);
-        
-        // Handle automatic actions based on conversation flow
-        if (finalIntent === 'menu' && responseText.includes('Would you like to view the')) {
-          const actionButton = document.createElement('button');
-          actionButton.textContent = 'View Menu';
-          actionButton.onclick = () => navigateToMenu(entities.cuisine);
-          // In a real implementation, we'd render this button in the UI
-        }
-        
-        if (responseText.includes('proceed with a reservation') || 
-            responseText.includes('make a reservation')) {
-          const actionButton = document.createElement('button');
-          actionButton.textContent = 'Make Reservation';
-          actionButton.onclick = () => navigateToReservation();
-          // In a real implementation, we'd render this button in the UI
-        }
       }, 800);
     } catch (error) {
       console.error('Error generating response:', error);
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         sender: 'assistant',
-        text: "I'm sorry, I'm having trouble processing your request right now. Please try again later.",
+        text: "I'm sorry, I'm having trouble processing your request right now. Please try again or contact the restaurant directly at " + RESTAURANT_INFO.phone,
         timestamp: new Date()
       }]);
       setIsProcessing(false);
@@ -301,7 +356,7 @@ const ChatAssistant = () => {
   };
 
   // Handle action buttons in responses
-  const handleActionClick = (action: string, param?: string) => {
+  const handleActionClick = (action: ActionType, param?: string) => {
     switch (action) {
       case 'viewMenu':
         navigateToMenu(param);
@@ -310,12 +365,13 @@ const ChatAssistant = () => {
         navigateToReservation();
         break;
       case 'viewGallery':
-        setIsOpen(false);
-        navigate('/gallery');
+        navigateToGallery();
         break;
       case 'contact':
-        setIsOpen(false);
-        navigate('/contact');
+        navigateToContact();
+        break;
+      case 'viewVenues':
+        navigateToVenues();
         break;
       default:
         console.log('Unknown action:', action);
@@ -376,61 +432,10 @@ const ChatAssistant = () => {
                       }`}
                     >
                       <p className="text-sm">{message.text}</p>
-                      
-                      {/* Action buttons for assistant responses */}
-                      {message.sender === 'assistant' && (
-                        <div className="mt-2 space-x-2">
-                          {/* Reservation CTA */}
-                          {message.text.includes('reservation') && message.text.toLowerCase().includes('would you like') && (
-                            <button
-                              onClick={() => handleActionClick('makeReservation')}
-                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
-                            >
-                              Make Reservation
-                            </button>
-                          )}
-                          
-                          {/* View menu CTA */}
-                          {message.text.includes('view the') && message.text.includes('menu') && (
-                            <button
-                              onClick={() => {
-                                const cuisineMatch = message.text.match(/view the (\w+) menu/i);
-                                if (cuisineMatch && cuisineMatch[1]) {
-                                  handleActionClick('viewMenu', cuisineMatch[1].toLowerCase());
-                                } else {
-                                  handleActionClick('viewMenu');
-                                }
-                              }}
-                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
-                            >
-                              View Menu
-                            </button>
-                          )}
-                          
-                          {/* Gallery CTA */}
-                          {message.text.includes('gallery') && (
-                            <button
-                              onClick={() => handleActionClick('viewGallery')}
-                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
-                            >
-                              View Gallery
-                            </button>
-                          )}
-                          
-                          {/* Contact CTA */}
-                          {message.text.includes('contact@savoria.com') && (
-                            <button
-                              onClick={() => handleActionClick('contact')}
-                              className="text-xs bg-gold/30 hover:bg-gold/50 text-white px-2 py-1 rounded transition-colors"
-                            >
-                              Contact Us
-                            </button>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
+                
                 {isProcessing && (
                   <div className="flex justify-start">
                     <div className="max-w-[80%] px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white">
@@ -441,9 +446,30 @@ const ChatAssistant = () => {
                     </div>
                   </div>
                 )}
+                
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
+
+            {/* Quick action buttons */}
+            {!isProcessing && suggestedActions.length > 0 && (
+              <div className="px-4 py-2 border-t border-zinc-800 flex gap-2 overflow-x-auto">
+                {suggestedActions.map((action, index) => (
+                  <button
+                    key={`${action.type}-${index}`}
+                    onClick={() => handleActionClick(action.type, action.parameter)}
+                    className="flex items-center space-x-1 px-3 py-1.5 bg-gold/20 hover:bg-gold/30 text-white text-sm rounded whitespace-nowrap transition-colors"
+                  >
+                    {action.type === 'viewMenu' && <Menu className="w-4 h-4 mr-1" />}
+                    {action.type === 'makeReservation' && <Calendar className="w-4 h-4 mr-1" />}
+                    {action.type === 'contact' && <PhoneCall className="w-4 h-4 mr-1" />}
+                    {action.type === 'viewGallery' && <Calendar className="w-4 h-4 mr-1" />}
+                    {action.type === 'viewVenues' && <Home className="w-4 h-4 mr-1" />}
+                    <span>{action.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Input area */}
             <div className="p-3 border-t border-gold/20 bg-black">

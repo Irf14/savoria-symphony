@@ -12,7 +12,7 @@ import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
 import ChatAssistant from "@/components/ChatAssistant";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -26,19 +26,19 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const [state] = useState("");
-  
   // Add preloading for key images
   useEffect(() => {
     // Preload important images for faster initial loading
     const preloadImages = [
       // Add critical images to preload here
-      'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1',
-      'https://images.unsplash.com/photo-1559314809-0d155014e29e',
-      'https://images.unsplash.com/photo-1563245372-f21724e3856d',
-      'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2',
-      'https://images.unsplash.com/photo-1616299915952-04c803388e5f',
-      'https://images.unsplash.com/photo-1544025162-d76694265947'
+      'https://images.unsplash.com/photo-1511018556340-d16986a1c194',
+      'https://images.unsplash.com/photo-1600314731229-d6149d4e5f9e',
+      'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8',
+      'https://images.unsplash.com/photo-1563379926898-05f4575a45d8',
+      'https://images.unsplash.com/photo-1585937421612-70a008356c36',
+      'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6',
+      'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327',
+      'https://images.unsplash.com/photo-1495195134817-aeb325a55b65'
     ];
     
     preloadImages.forEach(src => {

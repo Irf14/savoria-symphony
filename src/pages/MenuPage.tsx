@@ -840,4 +840,4 @@ const MenuPage = () => {
         </div>
         
         {/* Menu section content */}
-        <div ref={
+        <div

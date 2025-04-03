@@ -115,51 +115,51 @@ const CuisineShowcase = () => {
       name: 'Thai',
       shortDescription: 'Aromatic herbs and spices',
       description: 'Experience the aromatic herbs and spices of Thailand in every bite, crafted with authentic techniques.',
-      image: 'https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?q=80&w=2064&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1511018556340-d16986a1c194?q=80&w=2064&auto=format&fit=crop',
       color: 'bg-savoria-thai',
       gradient: 'bg-thai-gradient',
       path: '/menu/thai',
-      background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?q=80&w=2070&auto=format&fit=crop'
+      background: 'https://images.unsplash.com/photo-1600314731229-d6149d4e5f9e?q=80&w=2070&auto=format&fit=crop'
     },
     {
       name: 'Chinese',
       shortDescription: 'Perfect harmony of flavors',
       description: 'Savor the perfect harmony of flavors in our authentic Chinese dishes, prepared with traditional methods.',
-      image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?q=80&w=2070&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?q=80&w=2070&auto=format&fit=crop',
       color: 'bg-savoria-chinese',
       gradient: 'bg-chinese-gradient',
       path: '/menu/chinese',
-      background: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=2060&auto=format&fit=crop'
+      background: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=2060&auto=format&fit=crop'
     },
     {
       name: 'Indian',
       shortDescription: 'Rich tapestry of spices',
       description: 'Discover the rich tapestry of spices that define Indian culinary tradition, creating bold and memorable flavors.',
-      image: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?q=80&w=2080&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1585937421612-70a008356c36?q=80&w=2080&auto=format&fit=crop',
       color: 'bg-savoria-indian',
       gradient: 'bg-indian-gradient',
       path: '/menu/indian',
-      background: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?q=80&w=2000&auto=format&fit=crop'
+      background: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?q=80&w=2000&auto=format&fit=crop'
     },
     {
       name: 'Bengali',
       shortDescription: 'Subtle flavors and artistry',
       description: 'Enjoy the subtle flavors and artistic preparations of traditional Bengali food, highlighting regional specialties.',
-      image: 'https://images.unsplash.com/photo-1616299915952-04c803388e5f?q=80&w=2069&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1589647363585-f4a7d3877b10?q=80&w=2069&auto=format&fit=crop',
       color: 'bg-savoria-bengali',
       gradient: 'bg-bengali-gradient',
       path: '/menu/bengali',
-      background: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?q=80&w=2070&auto=format&fit=crop'
+      background: 'https://images.unsplash.com/photo-1623689043525-316dd234d0a5?q=80&w=2070&auto=format&fit=crop'
     },
     {
       name: 'Continental',
       shortDescription: 'Sophisticated European flavors',
       description: 'Experience the sophisticated flavors of European culinary excellence with our refined continental offerings.',
-      image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?q=80&w=2069&auto=format&fit=crop',
       color: 'bg-savoria-continental',
       gradient: 'bg-continental-gradient',
       path: '/menu/continental',
-      background: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop'
+      background: 'https://images.unsplash.com/photo-1600891964599-f61f4d5e5965?q=80&w=2070&auto=format&fit=crop'
     },
   ];
 
@@ -201,7 +201,7 @@ const CuisineShowcase = () => {
       }
       
       // Also preload default background
-      const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop';
+      const defaultBackground = 'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?q=80&w=2074&auto=format&fit=crop';
       imagePromises.push(
         new Promise<void>((resolve) => {
           const img = new Image();
@@ -241,7 +241,7 @@ const CuisineShowcase = () => {
   }, []);
 
   // Default food-related background 
-  const defaultBackground = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop';
+  const defaultBackground = 'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?q=80&w=2074&auto=format&fit=crop';
 
   // Set the current background based on activeBackground
   const currentBackground = activeIndex >= 0 ? cuisines[activeIndex].background : defaultBackground;
