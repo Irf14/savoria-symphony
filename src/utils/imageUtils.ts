@@ -35,6 +35,69 @@ export const preloadCriticalImages = (imageUrls: string[]) => {
 };
 
 /**
+ * Preloads images for UI components and tracks loading status
+ * @param imageUrls Array of image URLs to preload
+ * @param imagesLoaded Current status of loaded images
+ * @param onComplete Callback function when all images are loaded
+ */
+export const preloadImages = (
+  imageUrls: string[],
+  imagesLoaded: Record<string, boolean>,
+  onComplete: (newImagesLoaded: Record<string, boolean>) => void
+) => {
+  console.log(`Preloading ${imageUrls.length} component images...`);
+  
+  const newImagesLoaded = { ...imagesLoaded };
+  let loadedCount = 0;
+  
+  // Handle case of empty image array
+  if (imageUrls.length === 0) {
+    onComplete(newImagesLoaded);
+    return;
+  }
+  
+  imageUrls.forEach(src => {
+    // Skip already loaded images
+    if (newImagesLoaded[src]) {
+      loadedCount++;
+      
+      // If all images are already loaded, call the callback
+      if (loadedCount === imageUrls.length) {
+        console.log(`All ${loadedCount} images already loaded`);
+        onComplete(newImagesLoaded);
+      }
+      return;
+    }
+    
+    const img = new Image();
+    img.src = src;
+    
+    img.onload = () => {
+      loadedCount++;
+      newImagesLoaded[src] = true;
+      console.log(`Component image loaded (${loadedCount}/${imageUrls.length}): ${src.substring(0, 50)}...`);
+      
+      if (loadedCount === imageUrls.length) {
+        console.log(`All ${loadedCount} component images loaded successfully`);
+        onComplete(newImagesLoaded);
+      }
+    };
+    
+    img.onerror = () => {
+      loadedCount++;
+      console.error(`Failed to load component image: ${src.substring(0, 50)}...`);
+      
+      // Mark as loaded even on error to prevent blocking
+      newImagesLoaded[src] = true;
+      
+      if (loadedCount === imageUrls.length) {
+        onComplete(newImagesLoaded);
+      }
+    };
+  });
+};
+
+/**
  * Adds optimization parameters to image URLs
  * @param url Original image URL
  * @param width Target width
