@@ -24,7 +24,8 @@ const MenuSectionContent = ({ section, onItemHover, contentRef }: MenuSectionCon
     exit: { opacity: 0 }
   };
   
-  const item = {
+  // Fix the type issue by defining a proper variant object
+  const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
@@ -39,10 +40,10 @@ const MenuSectionContent = ({ section, onItemHover, contentRef }: MenuSectionCon
         exit="exit"
         className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
       >
-        {section.items.map((item: MenuItem) => (
-          <motion.div key={item.id} variants={item}>
+        {section.items.map((menuItem: MenuItem) => (
+          <motion.div key={menuItem.id} variants={itemVariants}>
             <MenuItemCard
-              item={item}
+              item={menuItem}
               onHover={onItemHover}
             />
           </motion.div>

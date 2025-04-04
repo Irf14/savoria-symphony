@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { preloadCriticalImages } from "@/utils/imageUtils";
 import "./App.css";
 
+// Ensure the queryClient is configured properly
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -52,6 +53,9 @@ const App = () => {
     preloadCriticalImages(criticalImages);
   }, []);
   
+  // Use console.log to verify App component is rendering
+  console.log("App component rendering");
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -69,6 +73,7 @@ const App = () => {
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          {/* Make sure ChatAssistant is placed outside of Routes so it's always rendered */}
           <ChatAssistant />
         </BrowserRouter>
       </TooltipProvider>

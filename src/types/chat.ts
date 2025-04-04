@@ -13,3 +13,6 @@ export interface ActionButton {
   label: string;
   parameter?: string;
 }
+
+// Add CuisineMenu type import to fix error
+export type { CuisineMenu } from '@/types/menu';

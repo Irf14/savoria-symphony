@@ -82,11 +82,11 @@ const ChatAssistantInner = () => {
 
   return (
     <>
-      {/* Chat toggle button - Always rendered and fixed positioned */}
+      {/* Chat toggle button - Always rendered with fixed position */}
       <ChatToggleButton onClick={handleToggleChat} />
 
       {/* Chat dialog */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
@@ -128,6 +128,9 @@ const ChatAssistantInner = () => {
 };
 
 const ChatAssistant = () => {
+  // Add console log to verify the component is rendering
+  console.log('Rendering ChatAssistant component');
+  
   return (
     <ChatProvider>
       <ChatAssistantInner />
