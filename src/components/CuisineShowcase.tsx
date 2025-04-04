@@ -59,14 +59,14 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
         }}
       />
       
-      {/* Darker overlay with reduced blur for better visibility */}
+      {/* Improved overlay with more transparency for better image visibility */}
       <div className={cn(
         "absolute inset-0 transition-opacity duration-300 z-10",
-        "bg-black/80"
+        isCardHovered ? "bg-black/60" : "bg-black/70"
       )} />
       
       <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
-        <h3 className="font-playfair text-2xl font-bold gold-gradient-text mb-2">{cuisine.name}</h3>
+        <h3 className="font-playfair text-3xl font-bold gold-gradient-text mb-2">{cuisine.name}</h3>
         
         <motion.div
           initial={{ height: "0px", opacity: 0 }}
@@ -93,7 +93,7 @@ const CuisineCard = ({ cuisine, onHover, isHovered }: CuisineCardProps) => {
         )}
         
         <motion.div 
-          className="w-12 h-0.5 bg-gold"
+          className="w-12 h-1 bg-gold"
           animate={{ width: isCardHovered ? "5rem" : "3rem" }}
           transition={{ duration: 0.3 }}
         />
@@ -163,10 +163,11 @@ const CuisineShowcase = () => {
     },
   ];
 
-  // More aggressive image preloading to ensure images are available
+  // Enhanced image preloading to ensure images are available 
   useEffect(() => {
     const preloadAllImages = async () => {
       setImagesLoaded(false);
+      console.log("Starting preloading all cuisine images...");
       
       // Create an array of promises for all images
       const imagePromises = [];
@@ -176,9 +177,13 @@ const CuisineShowcase = () => {
         // Main image
         imagePromises.push(
           new Promise<void>((resolve) => {
+            console.log(`Preloading cuisine image: ${cuisine.image}`);
             const img = new Image();
             img.src = cuisine.image;
-            img.onload = () => resolve();
+            img.onload = () => {
+              console.log(`Successfully loaded cuisine image: ${cuisine.image}`);
+              resolve();
+            };
             img.onerror = () => {
               console.error(`Failed to load cuisine image: ${cuisine.image}`);
               resolve(); // Still resolve to prevent blocking
@@ -189,9 +194,13 @@ const CuisineShowcase = () => {
         // Background image
         imagePromises.push(
           new Promise<void>((resolve) => {
+            console.log(`Preloading background image: ${cuisine.background}`);
             const img = new Image();
             img.src = cuisine.background;
-            img.onload = () => resolve();
+            img.onload = () => {
+              console.log(`Successfully loaded background image: ${cuisine.background}`);
+              resolve();
+            };
             img.onerror = () => {
               console.error(`Failed to load background image: ${cuisine.background}`);
               resolve(); // Still resolve to prevent blocking
@@ -204,9 +213,13 @@ const CuisineShowcase = () => {
       const defaultBackground = 'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?q=80&w=2074&auto=format&fit=crop';
       imagePromises.push(
         new Promise<void>((resolve) => {
+          console.log(`Preloading default background: ${defaultBackground}`);
           const img = new Image();
           img.src = defaultBackground;
-          img.onload = () => resolve();
+          img.onload = () => {
+            console.log(`Successfully loaded default background: ${defaultBackground}`);
+            resolve();
+          };
           img.onerror = () => {
             console.error(`Failed to load default background: ${defaultBackground}`);
             resolve();
@@ -222,7 +235,7 @@ const CuisineShowcase = () => {
       } catch (error) {
         console.error("Error preloading images:", error);
         // Set loaded anyway to prevent blocking the UI
-        setImagesLoaded(true);
+        setTimeout(() => setImagesLoaded(true), 1000);
       }
     };
     
@@ -268,6 +281,7 @@ const CuisineShowcase = () => {
     img.onload = () => {
       clearTimeout(loadTimeout);
       setBackgroundIsLoading(false);
+      console.log(`Successfully loaded background for cuisine hover: ${cuisines[index].name}`);
     };
     
     img.onerror = () => {
@@ -291,8 +305,8 @@ const CuisineShowcase = () => {
         }}
       />
       
-      {/* Enhanced overlay for better section flow - removed blur for cleaner look */}
-      <div className="absolute inset-0 bg-black/70 z-1"></div>
+      {/* Improved overlay for better visibility - reduced opacity */}
+      <div className="absolute inset-0 bg-black/60 z-1"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -302,11 +316,11 @@ const CuisineShowcase = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h2 className="font-playfair text-5xl font-bold mb-4">
+          <h2 className="font-playfair text-5xl lg:text-6xl font-bold mb-4">
             Our <span className="gold-gradient-text">Culinary</span> Journey
           </h2>
           <div className="w-24 h-1 bg-gold mx-auto mt-2 mb-6"></div>
-          <p className="text-gray-300 max-w-3xl mx-auto font-cormorant text-xl mt-4">
+          <p className="text-gray-300 max-w-3xl mx-auto font-cormorant text-xl lg:text-2xl mt-4">
             Discover our diverse culinary heritage spanning five distinct cuisines, each prepared with passion and precision.
           </p>
         </motion.div>
@@ -332,7 +346,7 @@ const CuisineShowcase = () => {
           </div>
         ) : (
           <div className="flex justify-center items-center h-60">
-            <div className="w-10 h-10 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
+            <div className="loader"></div>
           </div>
         )}
       </div>

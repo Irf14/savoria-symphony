@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  // Add preloading for key images with more reliable URLs
+  // Enhanced preloading for key images with improved reliability
   useEffect(() => {
     // Preload important images for faster initial loading
     const preloadImages = [
@@ -49,12 +49,32 @@ const App = () => {
     
     console.log("Preloading critical images for faster experience...");
     
-    preloadImages.forEach(src => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => console.log(`Successfully preloaded: ${src.substring(0, 50)}...`);
-      img.onerror = () => console.error(`Failed to preload: ${src.substring(0, 50)}...`);
+    // Concurrent image loading with better error handling
+    let loadedCount = 0;
+    const totalImages = preloadImages.length;
+    
+    const preloadPromises = preloadImages.map((src, index) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.src = src + "&_t=" + new Date().getTime(); // Add cache buster
+        
+        img.onload = () => {
+          loadedCount++;
+          console.log(`Image preloaded (${loadedCount}/${totalImages}): ${src.substring(0, 50)}...`);
+          resolve();
+        };
+        
+        img.onerror = () => {
+          console.error(`Failed to preload image: ${src.substring(0, 50)}...`);
+          resolve(); // Still resolve to not block others
+        };
+      });
     });
+    
+    // Track overall loading progress
+    Promise.all(preloadPromises)
+      .then(() => console.log(`Preloaded ${loadedCount}/${totalImages} critical images`))
+      .catch(err => console.error("Image preloading encountered an error:", err));
   }, []);
   
   return (
