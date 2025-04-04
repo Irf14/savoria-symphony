@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, X, Send, Loader2, MessageSquare } from 'lucide-react';
+import { Bot, X, Send, Loader2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
 import { ChatProvider, useChatContext } from '@/context/ChatContext';
@@ -26,6 +26,13 @@ const ChatAssistantInner = () => {
   } = useChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Auto-scroll to bottom when new messages come in
   useEffect(() => {
@@ -38,7 +45,9 @@ const ChatAssistantInner = () => {
   useEffect(() => {
     if (isOpen && inputRef.current) {
       setTimeout(() => {
-        inputRef.current?.focus();
+        if (inputRef.current && isMountedRef.current) {
+          inputRef.current.focus();
+        }
       }, 300);
     }
   }, [isOpen]);
@@ -46,12 +55,14 @@ const ChatAssistantInner = () => {
   // Show the chat button when the component mounts
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Show a welcome toast to make users aware of the assistant
-      toast({
-        title: "Chat Assistant Available",
-        description: "Ask about our menu, make reservations, or get information about special offers.",
-        duration: 5000,
-      });
+      if (isMountedRef.current) {
+        // Show a welcome toast to make users aware of the assistant
+        toast({
+          title: "Chat Assistant Available",
+          description: "Ask about our menu, make reservations, or get information about special offers.",
+          duration: 5000,
+        });
+      }
     }, 3000);
     
     return () => clearTimeout(timer);
@@ -64,20 +75,25 @@ const ChatAssistantInner = () => {
     setInputValue('');
   };
 
+  const handleToggleChat = () => {
+    setIsOpen(true);
+    console.log("Chat toggled, isOpen set to:", true);
+  };
+
   return (
     <>
-      {/* Chat toggle button */}
-      <ChatToggleButton onClick={() => setIsOpen(true)} />
+      {/* Chat toggle button - Always rendered and fixed positioned */}
+      <ChatToggleButton onClick={handleToggleChat} />
 
       {/* Chat dialog */}
-      <AnimatePresence mode="sync">
+      <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-20 right-6 z-50 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-black border border-gold/20 rounded-lg shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-20 right-6 z-50 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-black/95 border border-gold/30 rounded-lg shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Chat header */}
             <ChatHeader onClose={() => setIsOpen(false)} />
