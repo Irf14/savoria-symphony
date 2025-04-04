@@ -1,0 +1,15 @@
+
+/* Mobile-specific styles */
+
+/* Mobile touch enhancements */
+@media (max-width: 768px) {
+  .cuisine-card:active .cuisine-card-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .cuisine-card-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

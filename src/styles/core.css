@@ -1,0 +1,131 @@
+
+/* Core styling for the SAVORIA Symphony app */
+
+/* Gold gradient text effect */
+.gold-gradient-text {
+  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #996515);
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldenFlow 3s infinite linear;
+}
+
+@keyframes goldenFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Handle image loading with progressive enhancement */
+img {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: opacity, transform;
+}
+
+img[loading] {
+  opacity: 0.6;
+}
+
+/* Performance optimizations for smoother animations */
+.bg-image-transition {
+  transition: background-image 0.7s ease, opacity 0.7s ease;
+  will-change: background-image, opacity;
+}
+
+/* Theme transitions - dark mode optimized */
+body {
+  transition: background-color 0.5s ease;
+  background-color: #0a0a0a !important; /* Force dark background */
+  color-scheme: dark; /* Ensures native UI elements are dark */
+}
+
+/* Add hardware acceleration for smoother scrolling */
+html, body {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Add opacity transition to all components for smoother page transitions */
+.min-h-screen {
+  transition: opacity 0.7s ease;
+  will-change: opacity;
+}
+
+/* Better visibility for heading text */
+.section-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+/* Optimized animations */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+}
+
+.gold-pulse {
+  animation: pulse-gold 2s infinite;
+  will-change: box-shadow;
+}
+
+/* Common animation for background shimmer */
+@keyframes gold-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.animate-gold-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
+  background-size: 200% 100%;
+  animation: gold-shimmer 3s infinite linear;
+  will-change: background-position;
+}
+
+/* Force dark mode for the entire site with hardware acceleration */
+@media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
+  html, body {
+    background-color: #0a0a0a !important;
+    color: #ffffff;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion) {
+  .gold-gradient-text, 
+  .gold-pulse, 
+  .animate-gold-shimmer {
+    animation: none;
+  }
+  
+  * {
+    transition-duration: 0.1s !important;
+    animation-duration: 0.1s !important;
+  }
+}
+
+/* Handle edge cases */
+html {
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #D4AF37 #222222 !important;
+}
+
+body.modal-open {
+  overflow: hidden;
+}

@@ -1,5 +1,6 @@
 
 import React from 'react';
+// The loader styles are now in menu.css, which is imported in App.css
 
 type LoadingOverlayProps = {
   isLoading: boolean;

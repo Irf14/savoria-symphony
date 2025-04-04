@@ -1,0 +1,102 @@
+
+/* Menu-specific styling for SAVORIA Symphony */
+
+/* Menu item card frosted effect */
+.menu-item-card {
+  background: rgba(30, 30, 30, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform, background, border-color;
+}
+
+.menu-item-card:hover {
+  background: rgba(50, 50, 50, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Enhanced glass card styling for menu items */
+.glass-card {
+  background: rgba(30, 30, 30, 0.4);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.5s ease;
+  will-change: transform, background, border-color;
+}
+
+.glass-card:hover {
+  background: rgba(40, 40, 40, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+/* Section divider with glass effect */
+.section-divider {
+  position: relative;
+  height: 3rem;
+  background: rgba(10, 10, 10, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  overflow: hidden;
+}
+
+.section-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+}
+
+/* Loading animation for menu page */
+.loader {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.loader:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  box-sizing: border-box;
+  border: 32px solid #D4AF37;
+  border-color: #D4AF37 transparent #D4AF37 transparent;
+  animation: loader 1.2s infinite;
+  will-change: transform;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(180deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced transitions for background changes */
+.cuisine-background-transition {
+  transition: background-image 0.7s ease-in-out, opacity 0.7s ease-in-out;
+  will-change: background-image, opacity;
+}
