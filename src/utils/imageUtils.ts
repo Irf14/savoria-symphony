@@ -1,78 +1,59 @@
 
 /**
- * Preloads a list of images and calls back when all are loaded or when timeout occurs
+ * Preloads critical images for faster initial experience
+ * @param imageUrls Array of image URLs to preload
  */
-export const preloadImages = (
-  imagesToLoad: string[],
-  existingCache: Record<string, boolean> = {},
-  onComplete: (loadedImages: Record<string, boolean>) => void,
-  timeoutDuration = 3000
-) => {
+export const preloadCriticalImages = (imageUrls: string[]) => {
+  console.log("Preloading critical images for faster experience...");
+  
+  // Concurrent image loading with better error handling
   let loadedCount = 0;
-  const newImagesLoaded = { ...existingCache };
+  const totalImages = imageUrls.length;
   
-  // If no images to load, complete immediately
-  if (imagesToLoad.length === 0) {
-    onComplete(newImagesLoaded);
-    return;
-  }
-
-  const preloadImage = (src: string, index: number) => {
-    // If already cached, consider it loaded
-    if (existingCache[src]) {
-      loadedCount++;
-      if (loadedCount === imagesToLoad.length) {
-        onComplete(newImagesLoaded);
-      }
-      return;
-    }
-    
-    const img = new Image();
-    
-    // Set a timeout to prevent hanging
-    const timeout = setTimeout(() => {
-      console.warn(`Image load timeout: ${src}`);
-      newImagesLoaded[src] = true;
-      loadedCount++;
-      if (loadedCount === imagesToLoad.length) {
-        onComplete(newImagesLoaded);
-      }
-    }, timeoutDuration);
-    
-    img.onload = () => {
-      clearTimeout(timeout);
-      newImagesLoaded[src] = true;
-      loadedCount++;
-      if (loadedCount === imagesToLoad.length) {
-        onComplete(newImagesLoaded);
-      }
-    };
-    
-    img.onerror = () => {
-      clearTimeout(timeout);
-      console.error(`Failed to load image: ${src}`);
-      // Use fallback images
-      const fallbacks = [
-        'https://images.unsplash.com/photo-1414235077428-338989a2e8c0',
-        'https://images.unsplash.com/photo-1505253758473-96b7015fcd40',
-        'https://images.unsplash.com/photo-1585032226651-759b368d7246'
-      ];
+  const preloadPromises = imageUrls.map((src) => {
+    return new Promise<void>((resolve) => {
+      const img = new Image();
+      img.src = src + "&_t=" + new Date().getTime(); // Add cache buster
       
-      // Try a fallback image
-      if (index < fallbacks.length) {
-        console.log(`Trying fallback image for: ${src}`);
-        preloadImage(fallbacks[index], index);
-      } else {
-        newImagesLoaded[src] = true;
+      img.onload = () => {
         loadedCount++;
-        if (loadedCount === imagesToLoad.length) {
-          onComplete(newImagesLoaded);
-        }
-      }
-    };
-    
-    img.src = src;
-  };
+        console.log(`Image preloaded (${loadedCount}/${totalImages}): ${src.substring(0, 50)}...`);
+        resolve();
+      };
+      
+      img.onerror = () => {
+        console.error(`Failed to preload image: ${src.substring(0, 50)}...`);
+        resolve(); // Still resolve to not block others
+      };
+    });
+  });
   
-  imagesToLoad.forEach((src, index) => preloadImage(src, index));
+  // Track overall loading progress
+  Promise.all(preloadPromises)
+    .then(() => console.log(`Preloaded ${loadedCount}/${totalImages} critical images`))
+    .catch(err => console.error("Image preloading encountered an error:", err));
+};
+
+/**
+ * Adds optimization parameters to image URLs
+ * @param url Original image URL
+ * @param width Target width
+ * @param quality Image quality (0-100)
+ * @returns Optimized image URL
+ */
+export const optimizeImage = (url: string, width: number = 800, quality: number = 80): string => {
+  if (!url) return '';
+  
+  // If URL is already from an image CDN or service with optimization parameters
+  if (url.includes('?auto=format') || url.includes('&auto=format')) {
+    return url;
+  }
+  
+  // If it's an Unsplash image, add optimization parameters
+  if (url.includes('unsplash.com')) {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}auto=format&fit=crop&w=${width}&q=${quality}`;
+  }
+  
+  return url;
 };
