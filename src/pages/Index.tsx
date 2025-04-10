@@ -1,5 +1,6 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import HeroSection from '@/components/HeroSection';
 import CuisineShowcase from '@/components/CuisineShowcase';
 import GalleryPreview from '@/components/GalleryPreview';
@@ -15,22 +16,44 @@ import WelcomeAnimation from '@/components/WelcomeAnimation';
 import ExcellenceSection from '@/components/ExcellenceSection';
 import AmbientVideo from '@/components/AmbientVideo';
 
-// Transitional divider component
-const SectionDivider = ({ light = false }: { light?: boolean }) => (
-  <div className={`relative w-full ${light ? 'bg-savoria-black/50' : 'bg-savoria-dark/70'} py-8 overflow-hidden`}>
-    <div className="container mx-auto px-4">
-      <div className="flex justify-center">
-        <div className="w-24 h-0.5 bg-gold/30"></div>
-      </div>
-    </div>
-    <div className={`absolute inset-0 backdrop-blur-sm -z-10 ${light ? 'bg-black/10' : 'bg-black/30'}`}></div>
-  </div>
-);
+// Enhanced transitional divider component with parallax effect
+const SectionDivider = ({ light = false }: { light?: boolean }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.5, 1], [50, 0, -50]);
+  
+  return (
+    <motion.div 
+      ref={ref}
+      style={{ opacity }}
+      className={`relative w-full ${light ? 'bg-savoria-black/50' : 'bg-savoria-dark/70'} py-8 overflow-hidden`}
+    >
+      <motion.div 
+        style={{ y }}
+        className="container mx-auto px-4"
+      >
+        <div className="flex justify-center">
+          <div className="w-24 h-0.5 bg-gold/30"></div>
+        </div>
+      </motion.div>
+      <div className={`absolute inset-0 backdrop-blur-sm -z-10 ${light ? 'bg-black/10' : 'bg-black/30'}`}></div>
+    </motion.div>
+  );
+};
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  
+  // Smooth scroll handling for section reveals
+  const { scrollYProgress } = useScroll();
   
   useEffect(() => {
     // Scroll to top when component mounts
@@ -38,6 +61,8 @@ const Index = () => {
     
     // Check if this is the first visit in this session
     const isFirstVisitInSession = sessionStorage.getItem('visited') !== 'true';
+    
+    console.log("First visit check:", isFirstVisitInSession);
     
     if (isFirstVisitInSession) {
       // First visit in this session, show loading screen and welcome animation
@@ -67,6 +92,13 @@ const Index = () => {
     console.log("Welcome complete, showing main content");
     setShowWelcome(false);
     setInitialized(true);
+    
+    // Force chat assistant button to appear
+    const chatButton = document.getElementById('chat-toggle-button');
+    if (chatButton) {
+      chatButton.classList.add('opacity-100');
+      chatButton.classList.remove('opacity-0', 'translate-y-10');
+    }
   };
 
   // Safeguard to ensure the page doesn't get stuck
@@ -101,41 +133,113 @@ const Index = () => {
       
       {showWelcome && <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />}
       
-      <div className={`min-h-screen transition-opacity duration-700 ${initialized ? 'opacity-100' : 'opacity-0'}`}>
+      <motion.div 
+        ref={mainContentRef}
+        initial={{ opacity: 0 }}
+        animate={{ 
+          opacity: initialized ? 1 : 0,
+          transition: { duration: 0.7, ease: "easeInOut" }
+        }}
+        className="min-h-screen"
+      >
         <Navbar />
         <HeroSection />
         
         <div className="relative">
+          {/* Apply scroll reveal animations to each section */}
           <SectionDivider light />
-          <PopularDishesSection />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <PopularDishesSection />
+          </motion.div>
           
           <SectionDivider />
-          <CuisineShowcase />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <CuisineShowcase />
+          </motion.div>
           
           <SectionDivider light />
-          <ExcellenceSection />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <ExcellenceSection />
+          </motion.div>
           
           <SectionDivider />
-          <AmbientVideo />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 1.2 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <AmbientVideo />
+          </motion.div>
           
           <SectionDivider light />
-          <SpecialServicesSection />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <SpecialServicesSection />
+          </motion.div>
           
           <SectionDivider />
-          <TrendingOffersSection />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <TrendingOffersSection />
+          </motion.div>
           
           <SectionDivider light />
-          <LatestMemoriesSection />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <LatestMemoriesSection />
+          </motion.div>
           
           <SectionDivider />
-          <GalleryPreview />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <GalleryPreview />
+          </motion.div>
           
           <SectionDivider light />
-          <TestimonialSection />
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <TestimonialSection />
+          </motion.div>
         </div>
         
         <Footer />
-      </div>
+      </motion.div>
     </>
   );
 };

@@ -1,13 +1,23 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   const [loaded, setLoaded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
 
   const slides = [
     {
@@ -64,7 +74,7 @@ const HeroSection = () => {
     }
   };
 
-  const renderTitleWithGoldGradient = (title) => {
+  const renderTitleWithGoldGradient = (title: string) => {
     if (!title.includes('SAVORIA')) return title;
     
     const parts = title.split('SAVORIA');
@@ -78,7 +88,11 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden">
+    <motion.section 
+      ref={sectionRef}
+      style={{ opacity, y, scale }}
+      className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden"
+    >
       {/* Background slideshow */}
       {slides.map((slide, index) => (
         <motion.div 
@@ -96,8 +110,8 @@ const HeroSection = () => {
             backgroundPosition: 'center',
           }}
         >
-          {/* Overlay for text readability with more modern gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/40"></div>
+          {/* Enhanced overlay with more dynamic gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-black/50"></div>
         </motion.div>
       ))}
       
@@ -110,36 +124,50 @@ const HeroSection = () => {
           transition={{ duration: 0.8 }}
           className="flex flex-col items-center"
         >
-          {/* Subtitle label for context */}
+          {/* Floating label with glass effect */}
           <motion.span 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="bg-gold/20 backdrop-blur-sm px-4 py-1 rounded-sm text-white/90 font-cormorant text-lg mb-4 inline-block"
+            className="bg-gold/20 backdrop-blur-md px-6 py-2 rounded-full shadow-lg mb-6 inline-block border border-gold/30"
           >
             {currentSlide === 0 ? "Fine Dining Experience" : 
              currentSlide === 1 ? "Private Event Spaces" :
              currentSlide === 2 ? "Culinary Diversity" : "Service Excellence"}
           </motion.span>
           
-          <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
+          <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg">
             {renderTitleWithGoldGradient(slides[currentSlide].title)}
           </h1>
           
-          <p className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10"
+          >
             {slides[currentSlide].subtitle}
-          </p>
+          </motion.p>
           
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
+            className="flex flex-col sm:flex-row gap-4 items-center justify-center"
           >
             <Link 
               to={slides[currentSlide].buttonLink}
-              className="px-8 py-3 bg-gold/90 text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold transition-colors shadow-lg"
+              className="px-8 py-3 bg-gold/90 text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold transition-colors shadow-lg group relative overflow-hidden"
             >
-              {slides[currentSlide].buttonText}
+              <span className="relative z-10">{slides[currentSlide].buttonText}</span>
+              <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+            </Link>
+            
+            <Link
+              to="/reservation"
+              className="px-8 py-3 bg-transparent border border-gold/70 text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors shadow-lg"
+            >
+              Book Your Table
             </Link>
           </motion.div>
         </motion.div>
@@ -161,13 +189,15 @@ const HeroSection = () => {
         ))}
       </div>
       
-      <button 
+      <motion.button 
         onClick={handleScroll}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white hover:text-gold transition-colors animate-bounce"
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white hover:text-gold transition-colors"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
       >
         <ChevronDown size={32} />
-      </button>
-    </section>
+      </motion.button>
+    </motion.section>
   );
 };
 

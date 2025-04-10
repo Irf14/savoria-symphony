@@ -129,3 +129,47 @@ html {
 body.modal-open {
   overflow: hidden;
 }
+
+/* Ensure chat button is always visible */
+#chat-toggle-button {
+  position: fixed !important;
+  bottom: 1.5rem !important;
+  right: 1.5rem !important;
+  z-index: 9999 !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  visibility: visible !important;
+  display: flex !important;
+  pointer-events: auto !important;
+}
+
+/* Modern reveal animations for scroll effects */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Parallax effects */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  will-change: transform;
+}
+
+/* Enhanced hover effects */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+  transform: translateY(-5px);
+}

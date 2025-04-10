@@ -56,25 +56,44 @@ const App = () => {
   // Use console.log to verify App component is rendering
   console.log("App component rendering");
   
+  // Add additional check for chat button visibility
+  useEffect(() => {
+    // Try to force the chat button to show after a delay
+    const checkInterval = setInterval(() => {
+      const chatButton = document.getElementById('chat-toggle-button');
+      if (chatButton) {
+        console.log("Ensuring chat button visibility from App.tsx");
+        chatButton.style.opacity = "1";
+        chatButton.style.transform = "translateY(0)";
+        chatButton.style.zIndex = "9999";
+        clearInterval(checkInterval);
+      }
+    }, 1000);
+    
+    // Clean up interval
+    return () => clearInterval(checkInterval);
+  }, []);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          {/* IMPORTANT: Render ChatAssistant here outside of Routes to make sure 
+              it's always present and visible on EVERY page */}
+          <ChatAssistant />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/menu/:cuisine" element={<MenuPage />} />
-            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/gallery" element={<GalleryPreview />} />
             <Route path="/reservation" element={<ReservationPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/special-services" element={<SpecialServicesPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          {/* Make sure ChatAssistant is placed outside of Routes so it's always rendered */}
-          <ChatAssistant />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
