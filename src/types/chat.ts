@@ -22,7 +22,6 @@ export interface SuggestedAction {
   action: () => void;
 }
 
-// Add missing ActionButton and ActionType types
 export type ActionType = 'viewMenu' | 'makeReservation' | 'contact' | 'viewGallery' | 'viewVenues';
 
 export interface ActionButton {
@@ -30,43 +29,3 @@ export interface ActionButton {
   label: string;
   parameter?: string;
 }
-
-export type CuisineMenu = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  sections: MenuSection[];
-};
-
-export type MenuSection = {
-  id: string;
-  name: string;
-  description: string;
-  backgroundImage: string;
-  items: MenuItem[];
-};
-
-export type MenuItem = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image?: string;
-  isSignature?: boolean;
-  isVegetarian?: boolean;
-  isSpicy?: boolean;
-  isRecommended?: boolean;
-  ingredients?: string[];
-  allergens?: string[];
-};
-
-export type Variants = {
-  [key: string]: {
-    [key: string]: any;
-  }
-};
-
-export type Variant = {
-  [key: string]: any;
-};

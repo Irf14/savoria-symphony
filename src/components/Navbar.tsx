@@ -33,10 +33,7 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { 
-      name: 'Home', 
-      path: '/' 
-    },
+    { name: 'Home', path: '/' },
     { 
       name: 'Menu',
       path: '/menu',
@@ -49,10 +46,7 @@ const Navbar = () => {
         { name: 'Continental Cuisine', path: '/menu/continental' },
       ]
     },
-    { 
-      name: 'Gallery', 
-      path: '/gallery' 
-    },
+    { name: 'Gallery', path: '/gallery' },
     { 
       name: 'Special Venues', 
       path: '/special-services',
@@ -63,14 +57,8 @@ const Navbar = () => {
         { name: 'Majestic Room', path: '/special-services#majestic' },
       ]
     },
-    { 
-      name: 'Reservation', 
-      path: '/reservation' 
-    },
-    { 
-      name: 'Contact', 
-      path: '/contact' 
-    },
+    { name: 'Reservation', path: '/reservation' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   const handleDropdownToggle = (name: string) => {
@@ -94,24 +82,30 @@ const Navbar = () => {
         'fixed w-full top-0 z-50 transition-all duration-500',
         isScrolled 
           ? 'bg-black/40 backdrop-blur-lg border-b border-gold/10 py-3' 
-          : 'bg-transparent py-6'
+          : 'bg-transparent py-5'
       )}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="text-gold font-playfair text-3xl font-bold tracking-wider relative z-10">
+        {/* Enhanced logo with better visibility */}
+        <Link to="/" className="flex items-center relative z-10">
           <motion.span 
-            className="gold-gradient-text"
-            whileHover={{ 
-              scale: 1.05,
-              transition: { duration: 0.2 }
+            className="font-playfair text-3xl font-bold tracking-wider"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              color: '#D4AF37',
+              textShadow: '0 0 15px rgba(212, 175, 55, 0.5), 0 0 5px rgba(0, 0, 0, 0.5)',
+              filter: 'brightness(1.2) contrast(1.1)'
             }}
           >
             SAVORIA
           </motion.span>
         </Link>
         
-        {/* Desktop Navigation with Dropdowns */}
-        <div className="hidden md:flex space-x-1 lg:space-x-2">
+        {/* Desktop Navigation - Fixed alignment */}
+        <div className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <div key={link.name} className="relative group">
               {link.dropdown ? (
@@ -124,8 +118,8 @@ const Navbar = () => {
                   onMouseEnter={() => setActiveDropdown(link.name)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
-                  {link.name}
-                  <ChevronDown size={16} className="ml-1 transition-transform duration-300 ease-in-out" style={{
+                  <span className="font-cormorant text-lg tracking-wide">{link.name}</span>
+                  <ChevronDown size={16} className="ml-1 transition-transform duration-300" style={{
                     transform: activeDropdown === link.name ? 'rotate(180deg)' : 'rotate(0deg)'
                   }} />
                 </button>
@@ -133,7 +127,7 @@ const Navbar = () => {
                 <Link
                   to={link.path}
                   className={cn(
-                    'nav-link px-3 py-2',
+                    'nav-link px-3 py-2 font-cormorant text-lg tracking-wide',
                     isActive(link.path) ? 'text-gold' : 'text-white'
                   )}
                 >
@@ -144,7 +138,7 @@ const Navbar = () => {
               {/* Dropdown menu */}
               {link.dropdown && (
                 <div 
-                  className="absolute left-0 mt-1 w-48 rounded-md overflow-hidden glass-morphism origin-top-right"
+                  className="absolute left-0 mt-1 w-48 rounded-md shadow-lg bg-zinc-900/95 border border-gold/10 overflow-hidden"
                   onMouseEnter={() => setActiveDropdown(link.name)}
                   onMouseLeave={() => setActiveDropdown(null)}
                   style={{
@@ -170,13 +164,10 @@ const Navbar = () => {
             </div>
           ))}
 
-          {/* Reservation CTA button */}
+          {/* Book a Table button */}
           <Link
             to="/reservation"
-            className={cn(
-              'hidden lg:flex btn-elegant items-center text-black px-4 py-2 ml-2 text-sm font-medium',
-              location.pathname === '/reservation' && 'bg-gold'
-            )}
+            className="bg-gold hover:bg-gold/90 text-black px-5 py-2 rounded text-sm font-medium transition-colors duration-300"
           >
             Book a Table
           </Link>
@@ -192,7 +183,7 @@ const Navbar = () => {
         </button>
       </div>
       
-      {/* Mobile Menu - Fixed position with overflow handling and animations */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -268,7 +259,7 @@ const Navbar = () => {
             {/* Mobile reservation button */}
             <Link
               to="/reservation"
-              className="mt-6 btn-elegant text-black px-10 py-3 text-lg font-medium"
+              className="mt-6 bg-gold hover:bg-gold/90 text-black px-10 py-3 text-lg font-medium rounded"
               onClick={() => setIsOpen(false)}
             >
               Reserve Now
