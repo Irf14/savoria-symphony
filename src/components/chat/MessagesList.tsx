@@ -14,6 +14,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ messages, isProcessing }) =
       {messages.map((message) => {
         // Use role or sender to determine message type
         const isUserMessage = (message.role === 'user' || message.sender === 'user');
+        // Use content or text to get message content
         const messageContent = message.content || message.text || '';
         
         return (

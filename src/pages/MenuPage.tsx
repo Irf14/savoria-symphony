@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Search, ChevronDown, Filter, Star } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useMenuCuisine } from '@/hooks/useMenuCuisine';
+import useMenuCuisine from '@/hooks/useMenuCuisine'; // Fixed: Changed from named import to default import
 import CuisineHero from '@/components/menu/CuisineHero';
 import CuisineNavTabs from '@/components/menu/CuisineNavTabs';
 import MenuSectionNav from '@/components/menu/MenuSectionNav';

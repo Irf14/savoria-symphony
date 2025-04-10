@@ -64,7 +64,7 @@ export type MenuItem = {
   id: number;
   name: string;
   description: string;
-  price: number;
+  price: number | string; // Updated to accept both number and string for price
   image?: string;
   isSignature?: boolean;
   isVegetarian?: boolean;
