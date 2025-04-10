@@ -12,6 +12,7 @@ import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
 import ChatAssistant from "@/components/ChatAssistant";
+import GalleryPreview from "@/components/GalleryPreview";
 import { useEffect } from "react";
 import { preloadCriticalImages } from "@/utils/imageUtils";
 import "./App.css";
@@ -87,7 +88,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/menu/:cuisine" element={<MenuPage />} />
-            <Route path="/gallery" element={<GalleryPreview />} />
+            <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/reservation" element={<ReservationPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/special-services" element={<SpecialServicesPage />} />
