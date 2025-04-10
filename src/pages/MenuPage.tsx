@@ -52,6 +52,8 @@ const MenuPage = () => {
   const handleCuisineSelect = (cuisineId: string) => {
     setIsSearchOpen(false);
     navigate(`/menu/${cuisineId}`);
+    // Using the function from useMenuCuisine
+    handleCuisineChange(cuisineId);
   };
 
   if (!activeCuisine) {
@@ -119,7 +121,7 @@ const MenuPage = () => {
               </SheetContent>
             </Sheet>
 
-            {/* Enhanced cuisine tabs nav */}
+            {/* Enhanced cuisine tabs nav - now with proper types */}
             <div className="flex-1">
               <CuisineNavTabs 
                 cuisines={cuisines}

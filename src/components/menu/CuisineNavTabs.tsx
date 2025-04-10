@@ -2,23 +2,23 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Cuisine } from '@/types/menu';
+import { CuisineMenu } from '@/types/menu';
 
 interface CuisineNavTabsProps {
-  cuisines: Cuisine[];
-  activeCuisine: Cuisine;
+  cuisines: CuisineMenu[];
+  activeCuisine: CuisineMenu;
   isTransitioning: boolean;
-  onCuisineChange: (cuisine: Cuisine) => void;
+  onCuisineChange: (cuisineId: string) => void;
 }
 
 const CuisineNavTabs = ({ cuisines, activeCuisine, isTransitioning, onCuisineChange }: CuisineNavTabsProps) => {
   const navigate = useNavigate();
 
-  const handleTabClick = (cuisine: Cuisine) => {
+  const handleTabClick = (cuisine: CuisineMenu) => {
     if (isTransitioning || cuisine.id === activeCuisine.id) return;
     
     navigate(`/menu/${cuisine.id}`);
-    onCuisineChange(cuisine);
+    onCuisineChange(cuisine.id);
   };
 
   return (
@@ -28,7 +28,7 @@ const CuisineNavTabs = ({ cuisines, activeCuisine, isTransitioning, onCuisineCha
           <button
             key={cuisine.id}
             className={cn(
-              'px-3 py-2 rounded-md text-sm relative whitespace-nowrap transition-all duration-300',
+              'px-3 py-2 rounded-md text-sm relative whitespace-nowrap transition-all duration-300 font-medium',
               cuisine.id === activeCuisine.id
                 ? 'text-gold font-medium'
                 : 'text-white/70 hover:text-white'

@@ -1,3 +1,4 @@
+
 export interface Message {
   id?: string;
   role: 'user' | 'assistant';
@@ -35,6 +36,8 @@ export type CuisineMenu = {
   name: string;
   description: string;
   image: string;
+  background: string; // Added to match Cuisine interface
+  backgroundImage: string; // Added for CuisineHero component
   sections: MenuSection[];
 }
 
@@ -44,6 +47,7 @@ export interface Cuisine {
   description: string;
   image: string;
   background: string;
+  backgroundImage?: string; // Make optional for compatibility
   logoIcon?: string;
   sections: MenuSection[];
 }
@@ -68,6 +72,8 @@ export type MenuItem = {
   isRecommended?: boolean;
   ingredients?: string[];
   allergens?: string[];
+  rating?: number; // Added for MenuItemCard
+  chefsChoice?: boolean; // Added for MenuItemCard
 };
 
 export type Variants = {

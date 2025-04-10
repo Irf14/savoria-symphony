@@ -14,7 +14,7 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
   if (!section) {
     return (
       <div className="container mx-auto px-4 py-16 min-h-[500px] flex items-center justify-center">
-        <p className="text-gray-500 text-lg">Please select a section</p>
+        <p className="text-gray-500 text-lg font-medium">Please select a section</p>
       </div>
     );
   }
@@ -69,9 +69,7 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
           <motion.div key={item.id} variants={itemVariants}>
             <MenuItemCard
               item={item}
-              onHover={() => onItemHover(item.id)}
-              // Using custom prop for leave functionality
-              onMouseLeave={() => onItemHover(null)}
+              onHover={onItemHover}
             />
           </motion.div>
         ))}

@@ -10,30 +10,36 @@ interface MessagesListProps {
 
 const MessagesList: React.FC<MessagesListProps> = ({ messages, isProcessing }) => {
   return (
-    <div className="space-y-4">
-      {messages.map((message) => (
-        <div
-          key={message.id}
-          className={`flex ${(message.sender || message.role) === 'user' ? 'justify-end' : 'justify-start'}`}
-        >
+    <div className="space-y-4 font-lato">
+      {messages.map((message) => {
+        // Use role or sender to determine message type
+        const isUserMessage = (message.role === 'user' || message.sender === 'user');
+        const messageContent = message.content || message.text || '';
+        
+        return (
           <div
-            className={`max-w-[80%] px-4 py-2 rounded-lg ${
-              (message.sender || message.role) === 'user'
-                ? 'bg-gradient-to-r from-gold/80 to-gold/90 text-black'
-                : 'bg-zinc-900 border border-zinc-700 text-white'
-            }`}
+            key={message.id || `msg-${Math.random()}`}
+            className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'}`}
           >
-            <p className="text-sm">{message.text || message.content}</p>
+            <div
+              className={`max-w-[80%] px-4 py-3 rounded-lg ${
+                isUserMessage
+                  ? 'bg-gradient-to-r from-gold/80 to-gold/90 text-black font-medium'
+                  : 'bg-zinc-900 border border-zinc-700 text-white'
+              }`}
+            >
+              <p className="text-sm">{messageContent}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       
       {isProcessing && (
         <div className="flex justify-start">
-          <div className="max-w-[80%] px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white">
+          <div className="max-w-[80%] px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-700 text-white">
             <div className="flex items-center space-x-2">
               <Loader2 size={16} className="animate-spin text-gold" />
-              <p className="text-sm text-gray-400">Thinking...</p>
+              <p className="text-sm text-gray-400 font-medium">Thinking...</p>
             </div>
           </div>
         </div>

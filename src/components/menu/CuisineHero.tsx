@@ -26,7 +26,7 @@ const CuisineHero = ({
       transition={{ duration: 0.8 }}
       className="relative min-h-[50vh] flex items-center justify-center bg-cover bg-center"
       style={{ 
-        backgroundImage: `url(${activeCuisine.backgroundImage})`,
+        backgroundImage: `url(${activeCuisine.backgroundImage || activeCuisine.background})`,
       }}
     >
       {/* Overlay for text readability */}

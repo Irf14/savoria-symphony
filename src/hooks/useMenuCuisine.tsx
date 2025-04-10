@@ -1,109 +1,112 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CuisineMenu, MenuSection } from '@/types/menu';
 import { cuisines } from '@/data/cuisineData';
-import { preloadImages } from '@/utils/imageUtils';
 
-export function useMenuCuisine(cuisineParam: string | undefined) {
+const useMenuCuisine = (cuisineParam?: string) => {
+  const navigate = useNavigate();
+  
+  // Store cuisines as state for easier updates
+  const [allCuisines] = useState<CuisineMenu[]>(cuisines);
+  
+  // Active cuisine and section state
   const [activeCuisine, setActiveCuisine] = useState<CuisineMenu | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
-  const [loadingImages, setLoadingImages] = useState(true);
-  const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [loadingImages, setLoadingImages] = useState<boolean>(true);
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
-
-  // Initialize with the selected cuisine
+  
+  // Preload images
   useEffect(() => {
-    // Find the cuisine from the URL parameter or default to Thai
-    const selectedCuisine = cuisineParam 
-      ? cuisines.find(c => c.id === cuisineParam) 
-      : cuisines[0];
+    if (!activeCuisine) return;
     
-    if (selectedCuisine) {
-      setActiveCuisine(selectedCuisine);
-      setActiveSection(selectedCuisine.sections[0].name);
-      
-      // Preload background image and section images
-      const imagesToLoad = [
-        selectedCuisine.backgroundImage,
-        ...selectedCuisine.sections.map(section => section.backgroundImage)
-      ];
-      
-      preloadImages(
-        imagesToLoad, 
-        imagesLoaded, 
-        (newImagesLoaded) => {
-          setLoadingImages(false);
-          setImagesLoaded(newImagesLoaded);
-        }
-      );
+    setLoadingImages(true);
+    
+    // Preload cuisine background
+    const backgroundImage = new Image();
+    backgroundImage.src = activeCuisine.backgroundImage || activeCuisine.background || '';
+    
+    // Preload section images
+    const sectionImages = activeCuisine.sections.map(section => {
+      const img = new Image();
+      img.src = section.backgroundImage;
+      return img;
+    });
+    
+    // Wait for all images to load
+    Promise.all([
+      new Promise(resolve => {
+        backgroundImage.onload = resolve;
+        backgroundImage.onerror = resolve; // Handle error case
+      }),
+      ...sectionImages.map(img => new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve; // Handle error case
+      }))
+    ]).then(() => {
+      setLoadingImages(false);
+    });
+  }, [activeCuisine]);
+  
+  // Initialize active cuisine from URL param
+  useEffect(() => {
+    const initialCuisineId = cuisineParam || allCuisines[0]?.id;
+    const foundCuisine = allCuisines.find(cuisine => cuisine.id === initialCuisineId);
+    
+    if (foundCuisine) {
+      setActiveCuisine(foundCuisine);
+      if (foundCuisine.sections.length > 0) {
+        setActiveSection(foundCuisine.sections[0].id);
+      }
+    } else if (allCuisines.length > 0) {
+      setActiveCuisine(allCuisines[0]);
+      if (allCuisines[0].sections.length > 0) {
+        setActiveSection(allCuisines[0].sections[0].id);
+      }
+      navigate(`/menu/${allCuisines[0].id}`);
     }
-  }, [cuisineParam]);
-
-  // Handle cuisine changes with improved transitions
+  }, [cuisineParam, allCuisines, navigate]);
+  
+  // Handle cuisine change
   const handleCuisineChange = (newCuisineId: string) => {
-    if (activeCuisine?.id === newCuisineId || isTransitioning) return;
+    const newCuisine = allCuisines.find(cuisine => cuisine.id === newCuisineId);
+    if (!newCuisine || newCuisine.id === activeCuisine?.id) return;
     
     setIsTransitioning(true);
     setLoadingImages(true);
     
-    const newCuisine = cuisines.find(c => c.id === newCuisineId);
+    setTimeout(() => {
+      setActiveCuisine(newCuisine);
+      if (newCuisine.sections.length > 0) {
+        setActiveSection(newCuisine.sections[0].id);
+      }
+      setIsTransitioning(false);
+    }, 300);
     
-    if (newCuisine) {
-      // Set a timeout to ensure we don't wait too long
-      const transitionTimeout = setTimeout(() => {
-        setActiveCuisine(newCuisine);
-        setActiveSection(newCuisine.sections[0].name);
-        setLoadingImages(false);
-        setIsTransitioning(false);
-      }, 1500);
-      
-      // Preload critical images before showing cuisine
-      const imagesToLoad = [
-        newCuisine.backgroundImage,
-        ...newCuisine.sections.map(section => section.backgroundImage)
-      ];
-      
-      preloadImages(
-        imagesToLoad, 
-        imagesLoaded, 
-        (newImagesLoaded) => {
-          clearTimeout(transitionTimeout);
-          setActiveCuisine(newCuisine);
-          setActiveSection(newCuisine.sections[0].name);
-          setLoadingImages(false);
-          setIsTransitioning(false);
-          setImagesLoaded(newImagesLoaded);
-        }
-      );
-      
-      // Update URL without page reload
-      window.history.pushState({}, '', `/menu/${newCuisineId}`);
-    }
+    navigate(`/menu/${newCuisineId}`);
   };
-
-  // Navigate to previous cuisine
+  
+  // Navigation to previous cuisine
   const handlePrevCuisine = () => {
-    if (!activeCuisine || isTransitioning) return;
-    const currentIndex = cuisines.findIndex(c => c.id === activeCuisine.id);
-    const prevIndex = (currentIndex - 1 + cuisines.length) % cuisines.length;
-    handleCuisineChange(cuisines[prevIndex].id);
+    const currentIndex = allCuisines.findIndex(cuisine => cuisine.id === activeCuisine?.id);
+    const prevIndex = currentIndex === 0 ? allCuisines.length - 1 : currentIndex - 1;
+    handleCuisineChange(allCuisines[prevIndex].id);
   };
-
-  // Navigate to next cuisine
+  
+  // Navigation to next cuisine
   const handleNextCuisine = () => {
-    if (!activeCuisine || isTransitioning) return;
-    const currentIndex = cuisines.findIndex(c => c.id === activeCuisine.id);
-    const nextIndex = (currentIndex + 1) % cuisines.length;
-    handleCuisineChange(cuisines[nextIndex].id);
+    const currentIndex = allCuisines.findIndex(cuisine => cuisine.id === activeCuisine?.id);
+    const nextIndex = currentIndex === allCuisines.length - 1 ? 0 : currentIndex + 1;
+    handleCuisineChange(allCuisines[nextIndex].id);
   };
-
-  // Get the current section
+  
+  // Get current active section
   const getCurrentSection = (): MenuSection | null => {
     if (!activeCuisine) return null;
-    return activeCuisine.sections.find(section => section.name === activeSection) || null;
+    return activeCuisine.sections.find(section => section.id === activeSection) || null;
   };
-
+  
   return {
     activeCuisine,
     activeSection,
@@ -117,4 +120,6 @@ export function useMenuCuisine(cuisineParam: string | undefined) {
     getCurrentSection,
     setHoveredItemId
   };
-}
+};
+
+export default useMenuCuisine;

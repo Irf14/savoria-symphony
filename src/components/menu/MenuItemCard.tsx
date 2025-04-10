@@ -36,14 +36,23 @@ const MenuItemCard = ({ item, onHover }: MenuItemCardProps) => {
           {item.description}
         </p>
         
-        {/* Bottom section with rating and chef's choice */}
+        {/* Bottom section with optional elements */}
         <div className="flex justify-between items-center">
-          <StarRating rating={item.rating || 0} />
+          {/* Show rating if available */}
+          {item.rating !== undefined && <StarRating rating={item.rating} />}
           
+          {/* Show chef's choice badge if available */}
           {item.chefsChoice && (
             <div className="flex items-center gap-1 bg-gold/20 text-gold px-2 py-1 rounded-md text-xs font-semibold">
               <ChefHat size={14} />
               <span>CHEF'S CHOICE</span>
+            </div>
+          )}
+          
+          {/* Show signature dish indicator if neither rating nor chef's choice is available */}
+          {!item.rating && !item.chefsChoice && item.isSignature && (
+            <div className="flex items-center gap-1 bg-gold/10 text-gold px-2 py-1 rounded-md text-xs font-semibold">
+              <span>SIGNATURE DISH</span>
             </div>
           )}
         </div>
