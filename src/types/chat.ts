@@ -4,6 +4,10 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp?: Date;
+  
+  // Maintaining backwards compatibility with old code using sender/text
+  sender?: 'user' | 'assistant';
+  text?: string;
 }
 
 export interface ChatState {
@@ -16,6 +20,15 @@ export interface ChatState {
 export interface SuggestedAction {
   text: string;
   action: () => void;
+}
+
+// Add missing ActionButton and ActionType types
+export type ActionType = 'viewMenu' | 'makeReservation' | 'contact' | 'viewGallery' | 'viewVenues';
+
+export interface ActionButton {
+  type: ActionType;
+  label: string;
+  parameter?: string;
 }
 
 export type CuisineMenu = {

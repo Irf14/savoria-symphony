@@ -14,16 +14,16 @@ const MessagesList: React.FC<MessagesListProps> = ({ messages, isProcessing }) =
       {messages.map((message) => (
         <div
           key={message.id}
-          className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+          className={`flex ${(message.sender || message.role) === 'user' ? 'justify-end' : 'justify-start'}`}
         >
           <div
             className={`max-w-[80%] px-4 py-2 rounded-lg ${
-              message.sender === 'user'
+              (message.sender || message.role) === 'user'
                 ? 'bg-gradient-to-r from-gold/80 to-gold/90 text-black'
                 : 'bg-zinc-900 border border-zinc-700 text-white'
             }`}
           >
-            <p className="text-sm">{message.text}</p>
+            <p className="text-sm">{message.text || message.content}</p>
           </div>
         </div>
       ))}

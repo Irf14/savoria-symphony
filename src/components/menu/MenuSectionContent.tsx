@@ -70,7 +70,8 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
             <MenuItemCard
               item={item}
               onHover={() => onItemHover(item.id)}
-              onLeave={() => onItemHover(null)}
+              // Using custom prop for leave functionality
+              onMouseLeave={() => onItemHover(null)}
             />
           </motion.div>
         ))}
