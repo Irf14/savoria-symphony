@@ -1,50 +1,76 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, RefObject } from 'react';
 import { MenuSection, MenuItem } from '@/types/menu';
+import { motion, Variants } from 'framer-motion';
 import MenuItemCard from './MenuItemCard';
 
-type MenuSectionContentProps = {
+interface MenuSectionContentProps {
   section: MenuSection | null;
   onItemHover: (id: number | null) => void;
-  contentRef: React.RefObject<HTMLDivElement>;
-};
+  contentRef: RefObject<HTMLDivElement>;
+}
 
-const MenuSectionContent = ({ section, onItemHover, contentRef }: MenuSectionContentProps) => {
-  if (!section) return null;
-  
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
+const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItemHover, contentRef }) => {
+  if (!section) {
+    return (
+      <div className="container mx-auto px-4 py-16 min-h-[500px] flex items-center justify-center">
+        <p className="text-gray-500 text-lg">Please select a section</p>
+      </div>
+    );
+  }
+
+  // Fixed variants types for TypeScript
+  const containerVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
       opacity: 1,
+      y: 0,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+        when: "beforeChildren"
       }
     },
-    exit: { opacity: 0 }
+    exit: { opacity: 0, y: -20 }
   };
-  
-  // Fix the type issue by defining a proper variant object
-  const itemVariants = {
+
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
   };
-  
+
   return (
-    <div ref={contentRef} className="container mx-auto px-4 py-10 relative z-10">
+    <div ref={contentRef} className="container mx-auto px-4 py-16 relative z-10 overflow-y-auto">
       <motion.div
-        key={section.name}
-        variants={container}
+        variants={containerVariants}
         initial="hidden"
-        animate="show"
+        animate="visible"
         exit="exit"
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+        className="mb-12 text-center"
       >
-        {section.items.map((menuItem: MenuItem) => (
-          <motion.div key={menuItem.id} variants={itemVariants}>
+        <motion.h2 variants={itemVariants} className="text-3xl font-playfair font-bold text-gold mb-4">
+          {section.name}
+        </motion.h2>
+        <motion.div variants={itemVariants} className="w-24 h-0.5 bg-gold/50 mx-auto mb-6" />
+        <motion.p variants={itemVariants} className="text-gray-300 max-w-2xl mx-auto font-cormorant text-lg">
+          {section.description}
+        </motion.p>
+      </motion.div>
+
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        {section.items.map((item: MenuItem) => (
+          <motion.div key={item.id} variants={itemVariants}>
             <MenuItemCard
-              item={menuItem}
-              onHover={onItemHover}
+              item={item}
+              onHover={() => onItemHover(item.id)}
+              onLeave={() => onItemHover(null)}
             />
           </motion.div>
         ))}

@@ -1,55 +1,57 @@
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { CuisineMenu } from '@/types/menu';  // Updated import source
+import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { Cuisine } from '@/types/menu';
 
-type CuisineNavTabsProps = {
-  cuisines: CuisineMenu[];
-  activeCuisine: CuisineMenu;
+interface CuisineNavTabsProps {
+  cuisines: Cuisine[];
+  activeCuisine: Cuisine;
   isTransitioning: boolean;
-  onCuisineChange: (cuisineId: string) => void;
-};
+  onCuisineChange: (cuisine: Cuisine) => void;
+}
 
-const CuisineNavTabs = ({ 
-  cuisines, 
-  activeCuisine, 
-  isTransitioning, 
-  onCuisineChange 
-}: CuisineNavTabsProps) => {
+const CuisineNavTabs = ({ cuisines, activeCuisine, isTransitioning, onCuisineChange }: CuisineNavTabsProps) => {
+  const navigate = useNavigate();
+
+  const handleTabClick = (cuisine: Cuisine) => {
+    if (isTransitioning || cuisine.id === activeCuisine.id) return;
+    
+    navigate(`/menu/${cuisine.id}`);
+    onCuisineChange(cuisine);
+  };
+
   return (
-    <ScrollArea className="w-full">
-      <div className="flex py-2 px-2">
-        {cuisines.map((cuisine, index) => (
-          <motion.button
+    <div className="overflow-x-auto scrollbar-none">
+      <div className="flex space-x-1 min-w-max">
+        {cuisines.map((cuisine) => (
+          <button
             key={cuisine.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            className={`relative mx-2 px-5 py-2 font-cormorant text-lg rounded-md transition-all duration-300 whitespace-nowrap
-              ${activeCuisine.id === cuisine.id 
-                ? 'text-gold font-semibold' 
-                : 'text-white/80 hover:text-white'
-              }`}
-            onClick={() => {
-              if (isTransitioning) return;
-              onCuisineChange(cuisine.id);
-            }}
+            className={cn(
+              'px-3 py-2 rounded-md text-sm relative whitespace-nowrap transition-all duration-300',
+              cuisine.id === activeCuisine.id
+                ? 'text-gold font-medium'
+                : 'text-white/70 hover:text-white'
+            )}
+            disabled={isTransitioning}
+            onClick={() => handleTabClick(cuisine)}
           >
             {cuisine.name}
-            {activeCuisine.id === cuisine.id && (
-              <motion.div 
+            {cuisine.id === activeCuisine.id && (
+              <motion.div
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold"
-                layoutId="activeTab"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                layoutId="cuisine-indicator"
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                }}
               />
             )}
-          </motion.button>
+          </button>
         ))}
       </div>
-    </ScrollArea>
+    </div>
   );
 };
 

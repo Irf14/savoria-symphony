@@ -1,14 +1,15 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
-  const [loaded, setLoaded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -51,15 +52,15 @@ const HeroSection = () => {
   ];
 
   useEffect(() => {
-    setLoaded(true);
-    
     // Auto-advance slideshow with longer duration
     const slideInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      if (!isHovering) {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }
     }, 8000); // 8 seconds per slide
     
     return () => clearInterval(slideInterval);
-  }, [slides.length]);
+  }, [slides.length, isHovering]);
 
   const handleScroll = () => {
     const aboutSection = document.getElementById('about');
@@ -92,85 +93,147 @@ const HeroSection = () => {
       ref={sectionRef}
       style={{ opacity, y, scale }}
       className="hero-section relative flex items-center justify-center min-h-screen overflow-hidden"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
     >
-      {/* Background slideshow */}
-      {slides.map((slide, index) => (
-        <motion.div 
-          key={`slide-bg-${index}`}
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: currentSlide === index ? 1 : 0,
-            zIndex: currentSlide === index ? 1 : 0
-          }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-          style={{
-            backgroundImage: `url(${slide.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          {/* Enhanced overlay with more dynamic gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-black/50"></div>
-        </motion.div>
-      ))}
-      
-      <div className="container mx-auto px-4 z-10 text-center relative">
-        <motion.div
-          key={`slide-content-${currentSlide}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-col items-center"
-        >
-          {/* Floating label with glass effect */}
-          <motion.span 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="bg-gold/20 backdrop-blur-md px-6 py-2 rounded-full shadow-lg mb-6 inline-block border border-gold/30"
+      {/* Background parallax effect */}
+      <div className="absolute inset-0 z-0">
+        {/* Background slideshow */}
+        {slides.map((slide, index) => (
+          <motion.div 
+            key={`slide-bg-${index}`}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: currentSlide === index ? 1 : 0,
+              zIndex: currentSlide === index ? 1 : 0,
+              scale: currentSlide === index ? [1, 1.05] : 1,
+            }}
+            transition={{ 
+              opacity: { duration: 1.5, ease: "easeInOut" },
+              scale: { 
+                duration: 8, 
+                ease: "easeInOut",
+                times: [0, 1],
+              }
+            }}
+            style={{
+              backgroundImage: `url(${slide.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
           >
-            {currentSlide === 0 ? "Fine Dining Experience" : 
-             currentSlide === 1 ? "Private Event Spaces" :
-             currentSlide === 2 ? "Culinary Diversity" : "Service Excellence"}
-          </motion.span>
-          
-          <h1 className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg">
-            {renderTitleWithGoldGradient(slides[currentSlide].title)}
-          </h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10"
-          >
-            {slides[currentSlide].subtitle}
-          </motion.p>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 items-center justify-center"
-          >
-            <Link 
-              to={slides[currentSlide].buttonLink}
-              className="px-8 py-3 bg-gold/90 text-savoria-black font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold transition-colors shadow-lg group relative overflow-hidden"
-            >
-              <span className="relative z-10">{slides[currentSlide].buttonText}</span>
-              <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
-            </Link>
+            {/* Enhanced overlay with more dynamic gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-black/50"></div>
             
-            <Link
-              to="/reservation"
-              className="px-8 py-3 bg-transparent border border-gold/70 text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors shadow-lg"
-            >
-              Book Your Table
-            </Link>
+            {/* Subtle pattern overlay */}
+            <div className="absolute inset-0 bg-black/20" 
+              style={{ 
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            ></div>
           </motion.div>
-        </motion.div>
+        ))}
+      </div>
+      
+      <div 
+        ref={containerRef}
+        className="container mx-auto px-4 z-10 text-center relative"
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`slide-content-${currentSlide}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-col items-center"
+          >
+            {/* Floating label with glass effect */}
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="glass-morphism px-6 py-2 rounded-full mb-6 inline-block"
+            >
+              <motion.div
+                animate={{ 
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: "easeInOut" 
+                }}
+              >
+                {currentSlide === 0 ? "Fine Dining Experience" : 
+                 currentSlide === 1 ? "Private Event Spaces" :
+                 currentSlide === 2 ? "Culinary Diversity" : "Service Excellence"}
+              </motion.div>
+            </motion.span>
+            
+            <div className="overflow-hidden">
+              <motion.h1 
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg text-elegant-shadow"
+              >
+                {renderTitleWithGoldGradient(slides[currentSlide].title)}
+              </motion.h1>
+            </div>
+            
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: "100px" }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="h-px bg-gradient-to-r from-transparent via-gold to-transparent mb-6"
+            />
+            
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="font-cormorant text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10"
+            >
+              {slides[currentSlide].subtitle}
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="flex flex-col sm:flex-row gap-4 items-center justify-center"
+            >
+              <Link 
+                to={slides[currentSlide].buttonLink}
+                className="btn-elegant group relative overflow-hidden"
+              >
+                <motion.span 
+                  className="relative z-10 flex items-center"
+                  whileHover={{ x: -4 }}
+                >
+                  {slides[currentSlide].buttonText}
+                  <motion.span 
+                    initial={{ x: -10, opacity: 0 }}
+                    whileHover={{ x: 5, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ArrowRight size={18} className="ml-2" />
+                  </motion.span>
+                </motion.span>
+              </Link>
+              
+              <Link
+                to="/reservation"
+                className="px-8 py-3 bg-transparent border border-gold/70 text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors shadow-lg relative overflow-hidden group"
+              >
+                <span className="relative z-10">Book Your Table</span>
+                <span className="absolute inset-0 bg-gold/10 transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </div>
       
       {/* Modern slide indicators with pulse animation */}
@@ -179,11 +242,12 @@ const HeroSection = () => {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
+            className={cn(
+              'w-3 h-3 rounded-full transition-all duration-300',
               currentSlide === index 
                 ? 'bg-gold w-10 gold-pulse' 
                 : 'bg-white/30 hover:bg-white/50'
-            }`}
+            )}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
@@ -194,6 +258,7 @@ const HeroSection = () => {
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white hover:text-gold transition-colors"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
+        whileHover={{ scale: 1.2 }}
       >
         <ChevronDown size={32} />
       </motion.button>

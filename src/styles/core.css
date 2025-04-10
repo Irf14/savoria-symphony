@@ -17,10 +17,20 @@
   100% { background-position: 0% 50%; }
 }
 
+/* Enhanced image handling with lazy loading and blur-up technique */
+.image-blur-loading {
+  filter: blur(20px);
+  transition: filter 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+}
+
+.image-loaded {
+  filter: blur(0);
+}
+
 /* Handle image loading with progressive enhancement */
 img {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  will-change: opacity, transform;
+  transition: opacity 0.5s ease, transform 0.5s ease, filter 0.8s ease;
+  will-change: opacity, transform, filter;
 }
 
 img[loading] {
@@ -65,6 +75,27 @@ html, body {
   color: white;
 }
 
+/* Perspective hover effects for cards */
+.hover-card {
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.hover-card:hover {
+  transform: translateY(-10px) rotateX(5deg);
+}
+
+/* 3D transform effects for depth */
+.transform-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.depth-effect {
+  transform: translateZ(20px);
+}
+
 /* Optimized animations */
 @keyframes shimmer {
   0% { background-position: 0% 50%; }
@@ -82,6 +113,24 @@ html, body {
   will-change: box-shadow;
 }
 
+/* Glass morphism effect - modern UI element */
+.glass-morphism {
+  background: rgba(10, 10, 10, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+}
+
+/* Neuomorphic effect for subtle depth */
+.neomorphic {
+  background: #0a0a0a;
+  box-shadow: 
+    5px 5px 10px rgba(0, 0, 0, 0.8),
+    -5px -5px 10px rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+}
+
 /* Common animation for background shimmer */
 @keyframes gold-shimmer {
   0% { background-position: 0% 50%; }
@@ -93,6 +142,27 @@ html, body {
   background-size: 200% 100%;
   animation: gold-shimmer 3s infinite linear;
   will-change: background-position;
+}
+
+/* Advanced text shadow for elegant text */
+.text-elegant-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Text reveal animation for headings */
+.text-reveal {
+  overflow: hidden;
+  position: relative;
+}
+
+.text-reveal-content {
+  animation: text-reveal-animation 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  transform: translateY(100%);
+  display: inline-block;
+}
+
+@keyframes text-reveal-animation {
+  to { transform: translateY(0); }
 }
 
 /* Force dark mode for the entire site with hardware acceleration */
@@ -130,7 +200,7 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Ensure chat button is always visible */
+/* Ensure chat button is always visible with enhanced styling */
 #chat-toggle-button {
   position: fixed !important;
   bottom: 1.5rem !important;
@@ -141,6 +211,14 @@ body.modal-open {
   visibility: visible !important;
   display: flex !important;
   pointer-events: auto !important;
+  background: linear-gradient(135deg, #D4AF37, #996515) !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3) !important;
+}
+
+#chat-toggle-button:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
 }
 
 /* Modern reveal animations for scroll effects */
@@ -172,4 +250,76 @@ body.modal-open {
 .hover-glow:hover {
   box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
   transform: translateY(-5px);
+}
+
+/* Advanced button styles */
+.btn-elegant {
+  background: linear-gradient(135deg, #D4AF37, #996515);
+  color: #0a0a0a;
+  padding: 12px 28px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-elegant::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: width 0.4s ease;
+  z-index: -1;
+}
+
+.btn-elegant:hover::before {
+  width: 100%;
+}
+
+.btn-elegant:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Decorative elements */
+.gold-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  margin: 2rem auto;
+  width: 80%;
+}
+
+/* Magnetic hover effect */
+.magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Advanced glassmorphism cards */
+.card-glass-gold {
+  background: rgba(10, 10, 10, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(212, 175, 55, 0.1) inset;
+}
+
+/* Interactive image zoom */
+.zoom-container {
+  overflow: hidden;
+}
+
+.zoom-image {
+  transition: transform 0.8s ease;
+}
+
+.zoom-container:hover .zoom-image {
+  transform: scale(1.08);
 }

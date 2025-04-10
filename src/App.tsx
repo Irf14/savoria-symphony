@@ -59,27 +59,39 @@ const App = () => {
   
   // Add additional check for chat button visibility
   useEffect(() => {
-    // Try to force the chat button to show after a delay
-    const checkInterval = setInterval(() => {
+    // Make sure the chat button is visible after mounting
+    const initialCheck = setTimeout(() => {
       const chatButton = document.getElementById('chat-toggle-button');
       if (chatButton) {
         console.log("Ensuring chat button visibility from App.tsx");
         chatButton.style.opacity = "1";
         chatButton.style.transform = "translateY(0)";
         chatButton.style.zIndex = "9999";
-        clearInterval(checkInterval);
       }
-    }, 1000);
+    }, 500);
     
-    // Clean up interval
-    return () => clearInterval(checkInterval);
+    // Continue checking periodically
+    const checkInterval = setInterval(() => {
+      const chatButton = document.getElementById('chat-toggle-button');
+      if (chatButton) {
+        chatButton.style.opacity = "1";
+        chatButton.style.transform = "translateY(0)";
+        chatButton.style.zIndex = "9999";
+      }
+    }, 3000);
+    
+    // Clean up
+    return () => {
+      clearTimeout(initialCheck);
+      clearInterval(checkInterval);
+    };
   }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        <Sonner position="bottom-center" closeButton />
         <BrowserRouter>
           {/* IMPORTANT: Render ChatAssistant here outside of Routes to make sure 
               it's always present and visible on EVERY page */}
