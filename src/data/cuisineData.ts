@@ -1,4 +1,3 @@
-
 import { CuisineMenu, MenuSection } from '@/types/menu';
 
 // Thai Cuisine
@@ -6,7 +5,6 @@ const thaiCuisine: CuisineMenu = {
   id: 'thai',
   name: 'Thai Cuisine',
   description: 'Experience authentic Thai flavors with our carefully crafted dishes blending sweet, sour, salty, and spicy elements.',
-  image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=2070&q=80',
   background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=2070&q=80',
   backgroundImage: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=2070&q=80',
   sections: [
@@ -106,7 +104,6 @@ const indianCuisine: CuisineMenu = {
   id: 'indian',
   name: 'Indian Cuisine',
   description: 'Discover the rich tapestry of flavors from across the Indian subcontinent, featuring aromatic spices and diverse cooking techniques.',
-  image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=2070&q=80',
   background: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=2070&q=80',
   backgroundImage: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=2070&q=80',
   sections: [
@@ -206,7 +203,6 @@ const chineseCuisine: CuisineMenu = {
   id: 'chinese',
   name: 'Chinese Cuisine',
   description: 'Savor the balance of flavors and textures in our authentic Chinese dishes, prepared with traditional techniques.',
-  image: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=2070&q=80',
   background: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=2070&q=80',
   backgroundImage: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=2070&q=80',
   sections: [
@@ -306,7 +302,6 @@ const bengaliCuisine: CuisineMenu = {
   id: 'bengali',
   name: 'Bengali Cuisine',
   description: 'Experience the subtle flavors and delicate spices of traditional Bengali cooking, highlighting fish, rice, and mustard.',
-  image: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=2070&q=80',
   background: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=2070&q=80',
   backgroundImage: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=2070&q=80',
   sections: [
@@ -406,7 +401,6 @@ const continentalCuisine: CuisineMenu = {
   id: 'continental',
   name: 'Continental Cuisine',
   description: 'Enjoy classic European dishes with modern interpretations, featuring premium ingredients and refined techniques.',
-  image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&w=2070&q=80',
   background: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&w=2070&q=80',
   backgroundImage: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&w=2070&q=80',
   sections: [
