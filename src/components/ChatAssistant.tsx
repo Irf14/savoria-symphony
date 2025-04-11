@@ -2,38 +2,43 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, X, Send, Loader2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
-import { ChatProvider, useChatContext } from '@/context/ChatContext';
+import { ActionType, Message } from '@/types/chat';
+import { getActionsFromMessage } from '@/utils/chatActionUtils';
 import { processWithAI } from '@/utils/chatUtils';
-import { ActionButton, ActionType, Message } from '@/types/chat';
 import ChatHeader from '@/components/chat/ChatHeader';
 import MessagesList from '@/components/chat/MessagesList';
 import ChatInput from '@/components/chat/ChatInput';
 import SuggestedActions from '@/components/chat/SuggestedActions';
 import ChatToggleButton from '@/components/chat/ChatToggleButton';
 
-const ChatAssistantInner = () => {
+// Default welcome message
+const welcomeMessage: Message = {
+  id: '1',
+  role: 'assistant',
+  content: `Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.`,
+  sender: 'assistant', // For backwards compatibility
+  text: `Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.`, // For backwards compatibility
+  timestamp: new Date()
+};
+
+// Default suggested actions
+const defaultActions = [
+  { type: 'viewMenu' as ActionType, label: 'View Menu' },
+  { type: 'makeReservation' as ActionType, label: 'Make Reservation' }
+];
+
+const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
+  const [suggestedActions, setSuggestedActions] = useState(defaultActions);
   const [inputValue, setInputValue] = useState('');
-  const { 
-    messages, 
-    isProcessing, 
-    suggestedActions, 
-    sendMessage, 
-    handleActionClick 
-  } = useChatContext();
+  const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
+  const navigate = useNavigate();
+  
   // Auto-scroll to bottom when new messages come in
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -45,48 +50,128 @@ const ChatAssistantInner = () => {
   useEffect(() => {
     if (isOpen && inputRef.current) {
       setTimeout(() => {
-        if (inputRef.current && isMountedRef.current) {
+        if (inputRef.current) {
           inputRef.current.focus();
         }
       }, 300);
     }
   }, [isOpen]);
 
-  // Show the chat button when the component mounts
-  useEffect(() => {
-    console.log("ChatAssistant mounted, setting up visibility timeout");
-    // Show a welcome toast sooner to make users aware of the assistant
-    const timer = setTimeout(() => {
-      if (isMountedRef.current) {
-        toast({
-          title: "Chat Assistant Available",
-          description: "Ask about our menu, make reservations, or get information about special offers.",
-          duration: 5000,
-        });
-        
-        console.log("Displayed chat assistant toast notification");
-      }
-    }, 2000); // Reduced from 3000ms to 2000ms
-    
-    return () => clearTimeout(timer);
-  }, []);
-
   // Handle sending messages
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isProcessing) return;
-    sendMessage(inputValue);
+    
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: inputValue,
+      sender: 'user', // For backwards compatibility
+      text: inputValue, // For backwards compatibility
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
     setInputValue('');
+    setIsProcessing(true);
+    
+    try {
+      // Process with AI
+      const aiResponse = await processWithAI(inputValue, messages);
+      
+      // Extract potential actions
+      const actions = getActionsFromMessage(aiResponse);
+      setSuggestedActions(actions.length > 0 ? actions : defaultActions);
+      
+      // Add response with a slight delay to seem more natural
+      setTimeout(() => {
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: aiResponse,
+          sender: 'assistant', // For backwards compatibility
+          text: aiResponse, // For backwards compatibility
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        setIsProcessing(false);
+      }, 800);
+    } catch (error) {
+      console.error('Error generating response:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "I'm sorry, I'm having trouble processing your request right now. Please try again or contact the restaurant directly.",
+        sender: 'assistant', // For backwards compatibility
+        text: "I'm sorry, I'm having trouble processing your request right now. Please try again or contact the restaurant directly.", // For backwards compatibility
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+      setIsProcessing(false);
+    }
   };
 
-  const handleToggleChat = () => {
-    setIsOpen(true);
-    console.log("Chat toggled, isOpen set to:", true);
+  // Handle action clicks
+  const handleActionClick = (action: ActionType, param?: string) => {
+    switch (action) {
+      case 'viewMenu':
+        navigate(param ? `/menu/${param.toLowerCase()}` : '/menu');
+        toast({
+          title: param ? `Viewing ${param} Menu` : "Viewing Menu",
+          description: param 
+            ? `You're now exploring our ${param} cuisine options.`
+            : "You're now browsing our complete menu offerings.",
+          duration: 3000
+        });
+        break;
+        
+      case 'makeReservation':
+        navigate('/reservation');
+        toast({
+          title: "Make a Reservation",
+          description: "You're being taken to our reservation page.",
+          duration: 3000
+        });
+        break;
+        
+      case 'viewGallery':
+        navigate('/gallery');
+        toast({
+          title: "Photo Gallery",
+          description: "Explore images of our restaurant, food, and events.",
+          duration: 3000
+        });
+        break;
+        
+      case 'contact':
+        navigate('/contact');
+        toast({
+          title: "Contact Information",
+          description: "You can find all our contact details here.",
+          duration: 3000
+        });
+        break;
+        
+      case 'viewVenues':
+        navigate('/special-services');
+        toast({
+          title: "Explore Venues",
+          description: "Discover our special venues for events and celebrations.",
+          duration: 3000
+        });
+        break;
+        
+      default:
+        console.log('Unknown action:', action);
+    }
   };
 
   return (
     <>
-      {/* Chat toggle button - Always rendered with fixed position and high z-index */}
-      <ChatToggleButton onClick={handleToggleChat} />
+      {/* Chat toggle button */}
+      <ChatToggleButton onClick={() => setIsOpen(true)} />
 
       {/* Chat dialog */}
       <AnimatePresence mode="wait">
@@ -127,34 +212,6 @@ const ChatAssistantInner = () => {
         )}
       </AnimatePresence>
     </>
-  );
-};
-
-const ChatAssistant = () => {
-  // Add console log to verify the component is rendering
-  console.log('Rendering ChatAssistant component');
-  
-  // Force the chat button to be visible regardless of CSS
-  useEffect(() => {
-    // Short delay to ensure DOM is ready
-    setTimeout(() => {
-      const chatButton = document.getElementById('chat-toggle-button');
-      if (chatButton) {
-        console.log("Found chat button by ID, ensuring visibility");
-        chatButton.style.opacity = "1";
-        chatButton.style.transform = "translateY(0)";
-        chatButton.classList.add("opacity-100");
-        chatButton.classList.remove("opacity-0", "translate-y-10");
-      } else {
-        console.warn("Chat button not found in DOM");
-      }
-    }, 1500);
-  }, []);
-  
-  return (
-    <ChatProvider>
-      <ChatAssistantInner />
-    </ChatProvider>
   );
 };
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Menu, Calendar, PhoneCall, Home } from 'lucide-react';
+import { Menu, Calendar, PhoneCall, Image, Home } from 'lucide-react';
 import { ActionButton, ActionType } from '@/types/chat';
 
 interface SuggestedActionsProps {
@@ -23,7 +23,7 @@ const SuggestedActions: React.FC<SuggestedActionsProps> = ({
           {action.type === 'viewMenu' && <Menu className="w-4 h-4 mr-1" />}
           {action.type === 'makeReservation' && <Calendar className="w-4 h-4 mr-1" />}
           {action.type === 'contact' && <PhoneCall className="w-4 h-4 mr-1" />}
-          {action.type === 'viewGallery' && <Calendar className="w-4 h-4 mr-1" />}
+          {action.type === 'viewGallery' && <Image className="w-4 h-4 mr-1" />}
           {action.type === 'viewVenues' && <Home className="w-4 h-4 mr-1" />}
           <span>{action.label}</span>
         </button>

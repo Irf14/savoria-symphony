@@ -5,3 +5,36 @@
 @import './styles/menu.css';
 @import './styles/backgrounds.css';
 @import './styles/mobile.css';
+
+/* Performance optimizations to reduce jitter */
+* {
+  box-sizing: border-box;
+  will-change: auto;
+}
+
+html, body {
+  overscroll-behavior-y: none; /* Prevents bouncing on iOS */
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Force hardware acceleration for smooth animations */
+.hw-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Prevent FOUT (Flash of Unstyled Text) */
+html {
+  font-display: swap;
+}
+
+/* Optimize render performance for fixed elements */
+.fixed, .sticky {
+  will-change: transform;
+}
