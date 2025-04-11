@@ -1,8 +1,9 @@
+
 /* Core styling for the SAVORIA Symphony app */
 
 /* Gold gradient text effect - softer, more elegant */
 .gold-gradient-text {
-  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #D4AF37);
+  background: linear-gradient(90deg, #F7DF8C, #D4AF37, #F7DF8C);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
