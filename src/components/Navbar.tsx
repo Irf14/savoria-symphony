@@ -95,16 +95,16 @@ const Navbar = () => {
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
             style={{
-              color: '#D4AF37',
-              textShadow: '0 0 15px rgba(212, 175, 55, 0.5), 0 0 5px rgba(0, 0, 0, 0.5)',
-              filter: 'brightness(1.2) contrast(1.1)'
+              color: '#F7DF8C',
+              textShadow: '0 0 5px rgba(212, 175, 55, 0.3)',
+              filter: 'brightness(1.1) contrast(1.1)'
             }}
           >
             SAVORIA
           </motion.span>
         </Link>
         
-        {/* Desktop Navigation - Fixed alignment */}
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <div key={link.name} className="relative group">
