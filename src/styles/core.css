@@ -1,8 +1,9 @@
+
 /* Core styling for the SAVORIA Symphony app */
 
 /* Gold gradient text effect - softer, more elegant */
 .gold-gradient-text {
-  background: linear-gradient(90deg, #F7DF8C, #D4AF37, #F7DF8C);
+  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #D4AF37);
   background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
@@ -200,13 +201,14 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Ensure chat button is always visible with enhanced styling - fixed position at top section */
+/* Ensure chat button is always visible with enhanced styling */
 #chat-toggle-button {
   position: fixed !important;
-  top: 200px !important; /* Fixed distance from top, before popular dishes */
-  right: 2rem !important;
+  bottom: 1.5rem !important;
+  right: 1.5rem !important;
   z-index: 9999 !important;
   opacity: 1 !important;
+  transform: translateY(0) !important;
   visibility: visible !important;
   display: flex !important;
   pointer-events: auto !important;
@@ -216,7 +218,7 @@ body.modal-open {
 }
 
 #chat-toggle-button:hover {
-  transform: scale(1.1) !important;
+  transform: translateY(-3px) !important;
   box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
 }
 
