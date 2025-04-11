@@ -15,10 +15,11 @@ const ChatToggleButton: React.FC<ChatToggleButtonProps> = ({ onClick }) => {
       className="fixed bottom-6 right-6 z-[9999] bg-gold hover:bg-gold/90 text-black p-4 rounded-full shadow-xl"
       style={{
         position: 'fixed',
-        bottom: '1.5rem',
-        right: '1.5rem',
+        bottom: '50%', // Center vertically in the viewport
+        right: '2rem',
         zIndex: 9999, 
-        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
+        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
+        transform: 'translateY(50%)' // Adjust to true center
       }}
       aria-label="Open chat assistant"
       initial={{ scale: 0.8, opacity: 0 }}
