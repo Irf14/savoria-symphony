@@ -1,15 +1,14 @@
 
 /* Core styling for the SAVORIA Symphony app */
 
-/* Gold gradient text effect - softer, more elegant */
+/* Gold gradient text effect */
 .gold-gradient-text {
-  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #D4AF37);
-  background-size: 200% auto;
+  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #996515);
+  background-size: 300% 300%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: goldenFlow 6s ease infinite;
-  display: inline-block;
+  animation: goldenFlow 3s infinite linear;
 }
 
 @keyframes goldenFlow {
@@ -147,7 +146,7 @@ html, body {
 
 /* Advanced text shadow for elegant text */
 .text-elegant-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Text reveal animation for headings */

@@ -20,8 +20,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      role: 'assistant',
-      content: `Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.`,
       sender: 'assistant',
       text: `Hello! I'm Savoria's virtual assistant. How can I help you today? You can ask about our menu, make a reservation, or inquire about our special venues.`,
       timestamp: new Date()
@@ -122,8 +120,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     const userMessageId = Date.now().toString();
     const userMessage: Message = {
       id: userMessageId,
-      role: 'user',
-      content: text,
       sender: 'user',
       text,
       timestamp: new Date()
@@ -147,8 +143,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       setTimeout(() => {
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: aiResponse,
           sender: 'assistant',
           text: aiResponse,
           timestamp: new Date()
@@ -161,8 +155,6 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error generating response:', error);
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: "I'm sorry, I'm having trouble processing your request right now. Please try again or contact the restaurant directly.",
         sender: 'assistant',
         text: "I'm sorry, I'm having trouble processing your request right now. Please try again or contact the restaurant directly.",
         timestamp: new Date()

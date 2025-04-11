@@ -38,24 +38,3 @@ html {
 .fixed, .sticky {
   will-change: transform;
 }
-
-/* Strict positioning for chat button to override all other styles */
-#chat-toggle-button {
-  position: fixed !important;
-  bottom: 1.5rem !important;
-  right: 1.5rem !important;
-  z-index: 9999 !important;
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  visibility: visible !important;
-  display: flex !important;
-  pointer-events: auto !important;
-  background: linear-gradient(135deg, #D4AF37, #996515) !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3) !important;
-}
-
-#chat-toggle-button:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
-}

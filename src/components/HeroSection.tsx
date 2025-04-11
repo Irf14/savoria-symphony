@@ -75,7 +75,6 @@ const HeroSection = () => {
     }
   };
 
-  // Modified function to render SAVORIA with proper gold gradient without excessive glow
   const renderTitleWithGoldGradient = (title: string) => {
     if (!title.includes('SAVORIA')) return title;
     
@@ -83,10 +82,7 @@ const HeroSection = () => {
     return (
       <>
         {parts[0]}
-        <span className="gold-gradient-text" style={{ 
-          textShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-          filter: 'brightness(1.05) contrast(1.05)'
-        }}>SAVORIA</span>
+        <span className="gold-gradient-text">SAVORIA</span>
         {parts[1]}
       </>
     );
@@ -181,7 +177,7 @@ const HeroSection = () => {
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white"
+                className="font-playfair text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-lg text-elegant-shadow"
               >
                 {renderTitleWithGoldGradient(slides[currentSlide].title)}
               </motion.h1>
@@ -203,7 +199,6 @@ const HeroSection = () => {
               {slides[currentSlide].subtitle}
             </motion.p>
             
-            {/* Fixed button size and alignment */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -212,10 +207,10 @@ const HeroSection = () => {
             >
               <Link 
                 to={slides[currentSlide].buttonLink}
-                className="inline-flex items-center justify-center w-48 px-6 py-2.5 bg-gold hover:bg-gold/90 text-black font-medium text-base tracking-wider rounded transition-colors shadow-lg"
+                className="btn-elegant group relative overflow-hidden"
               >
                 <motion.span 
-                  className="flex items-center justify-center w-full"
+                  className="relative z-10 flex items-center"
                   whileHover={{ x: -4 }}
                 >
                   {slides[currentSlide].buttonText}
@@ -224,16 +219,17 @@ const HeroSection = () => {
                     whileHover={{ x: 5, opacity: 1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ArrowRight size={16} className="ml-2" />
+                    <ArrowRight size={18} className="ml-2" />
                   </motion.span>
                 </motion.span>
               </Link>
               
               <Link
                 to="/reservation"
-                className="w-48 px-6 py-2.5 bg-transparent border border-gold/70 text-gold font-medium text-base tracking-wider rounded hover:bg-gold/10 transition-colors shadow-lg flex items-center justify-center"
+                className="px-8 py-3 bg-transparent border border-gold/70 text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors shadow-lg relative overflow-hidden group"
               >
                 <span className="relative z-10">Book Your Table</span>
+                <span className="absolute inset-0 bg-gold/10 transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </motion.div>
           </motion.div>
