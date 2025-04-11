@@ -82,7 +82,10 @@ const HeroSection = () => {
     return (
       <>
         {parts[0]}
-        <span className="gold-gradient-text">SAVORIA</span>
+        <span className="text-[#F7DF8C] drop-shadow-md" style={{ 
+          textShadow: '0 0 10px rgba(247, 223, 140, 0.5)',
+          filter: 'brightness(1.2) contrast(1.1)'
+        }}>SAVORIA</span>
         {parts[1]}
       </>
     );
@@ -207,10 +210,10 @@ const HeroSection = () => {
             >
               <Link 
                 to={slides[currentSlide].buttonLink}
-                className="btn-elegant group relative overflow-hidden"
+                className="inline-flex items-center justify-center px-6 py-2.5 bg-gold hover:bg-gold/90 text-black font-medium text-base tracking-wider rounded transition-colors shadow-lg"
               >
                 <motion.span 
-                  className="relative z-10 flex items-center"
+                  className="flex items-center"
                   whileHover={{ x: -4 }}
                 >
                   {slides[currentSlide].buttonText}
@@ -219,17 +222,16 @@ const HeroSection = () => {
                     whileHover={{ x: 5, opacity: 1 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ArrowRight size={18} className="ml-2" />
+                    <ArrowRight size={16} className="ml-2" />
                   </motion.span>
                 </motion.span>
               </Link>
               
               <Link
                 to="/reservation"
-                className="px-8 py-3 bg-transparent border border-gold/70 text-gold font-cormorant font-semibold text-lg tracking-wider rounded-sm hover:bg-gold/10 transition-colors shadow-lg relative overflow-hidden group"
+                className="px-6 py-2.5 bg-transparent border border-gold/70 text-gold font-medium text-base tracking-wider rounded hover:bg-gold/10 transition-colors shadow-lg"
               >
                 <span className="relative z-10">Book Your Table</span>
-                <span className="absolute inset-0 bg-gold/10 transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"></span>
               </Link>
             </motion.div>
           </motion.div>
