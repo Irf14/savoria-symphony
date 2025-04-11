@@ -26,7 +26,7 @@ const ChatToggleButton: React.FC<ChatToggleButtonProps> = ({ onClick }) => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      <MessageSquare size={28} />
+      <MessageSquare size={24} />
       <motion.span 
         className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
         animate={{ scale: [1, 1.2, 1] }}
