@@ -29,8 +29,8 @@ const CuisineHero = ({
         backgroundImage: `url(${activeCuisine.backgroundImage || activeCuisine.background})`,
       }}
     >
-      {/* Overlay for text readability */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      {/* Enhanced overlay for better text visibility */}
+      <div className="absolute inset-0 bg-black/50"></div>
       
       {/* Cuisine navigation arrows */}
       <button 
