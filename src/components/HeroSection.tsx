@@ -82,10 +82,7 @@ const HeroSection = () => {
     return (
       <>
         {parts[0]}
-        <span className="gold-gradient-text" style={{ 
-          textShadow: 'none', // Remove text shadow completely
-          filter: 'none' // Remove filter effects
-        }}>SAVORIA</span>
+        <span className="gold-gradient-text">SAVORIA</span>
         {parts[1]}
       </>
     );
