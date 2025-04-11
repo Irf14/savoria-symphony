@@ -11,7 +11,7 @@ interface MessagesListProps {
 const MessagesList: React.FC<MessagesListProps> = ({ messages, isProcessing }) => {
   return (
     <div className="space-y-4 font-lato">
-      {messages.map((message, index) => {
+      {messages.map((message) => {
         // Use role or sender to determine message type
         const isUserMessage = (message.role === 'user' || message.sender === 'user');
         // Use content or text to get message content
@@ -19,7 +19,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ messages, isProcessing }) =
         
         return (
           <div
-            key={message.id || `msg-${index}`}
+            key={message.id || `msg-${Math.random()}`}
             className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'}`}
           >
             <div

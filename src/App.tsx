@@ -12,71 +12,90 @@ import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
 import ChatAssistant from "@/components/ChatAssistant";
+import GalleryPreview from "@/components/GalleryPreview";
 import { useEffect } from "react";
 import { preloadCriticalImages } from "@/utils/imageUtils";
 import "./App.css";
 
-// Configure the queryClient with improved caching for better performance
+// Ensure the queryClient is configured properly
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 10 * 60 * 1000, // 10 minutes
-      cacheTime: 15 * 60 * 1000, // 15 minutes
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
 
-// Important images for preloading - preload more images to reduce jitter
+// Important images for preloading
 const criticalImages = [
-  // Home page hero images
-  'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-  'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-  'https://images.unsplash.com/photo-1515669097368-22e68427d265?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-  'https://images.unsplash.com/photo-1528605248644-14dd04022da1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-  
+  // Home page images
+  'https://images.unsplash.com/photo-1511018556340-d16986a1c194?auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1600314731229-d6149d4e5f9e?auto=format&fit=crop&q=80',
   // Menu page images
   'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&q=80',
-  
   // Gallery images
   'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1585937421612-70a008356c36?auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&q=80',
-  
   // Food images
   'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?auto=format&fit=crop&q=80'
 ];
 
 const App = () => {
   // Enhanced preloading for key images with improved reliability
   useEffect(() => {
-    // Preload critical images immediately
     preloadCriticalImages(criticalImages);
+  }, []);
+  
+  // Use console.log to verify App component is rendering
+  console.log("App component rendering");
+  
+  // Add additional check for chat button visibility
+  useEffect(() => {
+    // Make sure the chat button is visible after mounting
+    const initialCheck = setTimeout(() => {
+      const chatButton = document.getElementById('chat-toggle-button');
+      if (chatButton) {
+        console.log("Ensuring chat button visibility from App.tsx");
+        chatButton.style.opacity = "1";
+        chatButton.style.transform = "translateY(0)";
+        chatButton.style.zIndex = "9999";
+      }
+    }, 500);
     
-    // Add performance optimizations
-    document.addEventListener('DOMContentLoaded', () => {
-      // Optimize paint and layout operations
-      requestAnimationFrame(() => {
-        // Force browser to calculate layout once images are loaded
-        document.body.style.visibility = 'visible';
-      });
-    });
+    // Continue checking periodically
+    const checkInterval = setInterval(() => {
+      const chatButton = document.getElementById('chat-toggle-button');
+      if (chatButton) {
+        chatButton.style.opacity = "1";
+        chatButton.style.transform = "translateY(0)";
+        chatButton.style.zIndex = "9999";
+      }
+    }, 3000);
     
+    // Clean up
     return () => {
-      document.removeEventListener('DOMContentLoaded', () => {});
+      clearTimeout(initialCheck);
+      clearInterval(checkInterval);
     };
   }, []);
   
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <Toaster />
+        <Sonner position="bottom-center" closeButton />
         <BrowserRouter>
+          {/* IMPORTANT: Render ChatAssistant here outside of Routes to make sure 
+              it's always present and visible on EVERY page */}
+          <ChatAssistant />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/menu" element={<MenuPage />} />
@@ -85,14 +104,9 @@ const App = () => {
             <Route path="/reservation" element={<ReservationPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/special-services" element={<SpecialServicesPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          
-          {/* Render ChatAssistant outside Routes for consistent visibility */}
-          <ChatAssistant />
-          
-          <Toaster />
-          <Sonner position="bottom-center" closeButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
