@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -53,21 +54,12 @@ const MenuPage = () => {
   const handleCuisineSelect = (cuisineId: string) => {
     setIsSearchOpen(false);
     navigate(`/menu/${cuisineId}`);
-    // Using the function from useMenuCuisine
   };
 
-  if (!activeCuisine) {
-    return (
-      <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
-        <div className="loader"></div>
-      </div>
-    );
-  }
-
-  const currentSection = getCurrentSection();
-  
-  // Determine cuisine-specific background class
+  // Define the cuisine-specific background class function outside of the render logic
   const getCuisineBackgroundClass = () => {
+    if (!activeCuisine) return '';
+    
     switch (activeCuisine.id) {
       case 'thai':
         return 'cuisine-thai-bg';
@@ -84,12 +76,15 @@ const MenuPage = () => {
     }
   };
 
+  // Always define handleCuisineChange with useCallback regardless of component state
   const handleCuisineChange = useCallback((newCuisineId: string) => {
+    if (!activeCuisine) return;
+    
     // Remove any leading/trailing slashes and clean the ID
     const cleanCuisineId = newCuisineId.replace(/^\/+|\/+$/g, '');
     
     const newCuisine = cuisines.find(c => c.id === cleanCuisineId);
-    if (!newCuisine || newCuisine.id === activeCuisine?.id) return;
+    if (!newCuisine || newCuisine.id === activeCuisine.id) return;
     
     setIsTransitioning(true);
     setLoadingImages(true);
@@ -105,6 +100,17 @@ const MenuPage = () => {
       setIsTransitioning(false);
     }, 300);
   }, [activeCuisine, navigate, setActiveCuisine, setActiveSection, setLoadingImages, setIsTransitioning]);
+
+  // Early return for loading state - but ensure all hooks are defined before any conditionals
+  if (!activeCuisine) {
+    return (
+      <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
+        <div className="loader"></div>
+      </div>
+    );
+  }
+
+  const currentSection = getCurrentSection();
 
   return (
     <div className="min-h-screen bg-savoria-black text-white overflow-hidden">
