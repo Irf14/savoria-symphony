@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
@@ -115,22 +114,16 @@ const Navbar = () => {
       )}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Enhanced logo with better visibility */}
         <Link to="/" className="flex items-center relative z-10">
-          <motion.span 
-            className="font-playfair text-3xl font-bold tracking-wider"
+          <motion.img 
+            src="/lovable-uploads/427f2b82-317d-4386-bc6f-dfbcaa56860b.png"
+            alt="SAVORIA"
+            className="h-12 object-contain"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
-            style={{
-              color: '#F7DF8C',
-              textShadow: '0 0 5px rgba(212, 175, 55, 0.3)',
-              filter: 'brightness(1.1) contrast(1.1)'
-            }}
-          >
-            SAVORIA
-          </motion.span>
+          />
         </Link>
         
         {/* Desktop Navigation */}

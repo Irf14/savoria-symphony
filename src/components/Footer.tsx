@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 
@@ -8,7 +7,11 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            <h3 className="font-playfair text-2xl text-gold">SAVORIA</h3>
+            <img 
+              src="/lovable-uploads/427f2b82-317d-4386-bc6f-dfbcaa56860b.png"
+              alt="SAVORIA"
+              className="h-16 object-contain"
+            />
             <p className="text-sm text-gray-400 max-w-xs">
               Experience the height of culinary excellence with our diverse range of authentic cuisines prepared by world-class chefs.
             </p>

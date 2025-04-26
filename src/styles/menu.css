@@ -258,10 +258,10 @@
   transform: translateY(-2px);
 }
 
-/* Menu section backgrounds with proper cuisine themes */
+/* Cuisine-specific backgrounds with artistry */
 .cuisine-thai-bg {
   background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
-              url('/backgrounds/thai-cuisine.jpg');
+              url('https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=2070');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -269,7 +269,7 @@
 
 .cuisine-chinese-bg {
   background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
-              url('/backgrounds/chinese-cuisine.jpg');
+              url('https://images.unsplash.com/photo-1583077874340-79db6564b892?q=80&w=2069');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -277,7 +277,7 @@
 
 .cuisine-indian-bg {
   background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
-              url('/backgrounds/indian-cuisine.jpg');
+              url('https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=2036');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -285,7 +285,7 @@
 
 .cuisine-bengali-bg {
   background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
-              url('/backgrounds/bengali-cuisine.jpg');
+              url('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?q=80&w=2070');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -293,7 +293,7 @@
 
 .cuisine-continental-bg {
   background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
-              url('/backgrounds/continental-cuisine.jpg');
+              url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
