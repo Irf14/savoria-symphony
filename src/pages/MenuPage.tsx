@@ -2,10 +2,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Search, ChevronDown, Filter, Star } from 'lucide-react';
+import { Search, ChevronDown, Filter } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import useMenuCuisine from '@/hooks/useMenuCuisine'; // Fixed: Changed from named import to default import
+import useMenuCuisine from '@/hooks/useMenuCuisine';
 import CuisineHero from '@/components/menu/CuisineHero';
 import CuisineNavTabs from '@/components/menu/CuisineNavTabs';
 import MenuSectionNav from '@/components/menu/MenuSectionNav';
@@ -65,6 +65,24 @@ const MenuPage = () => {
   }
 
   const currentSection = getCurrentSection();
+  
+  // Determine cuisine-specific background class
+  const getCuisineBackgroundClass = () => {
+    switch (activeCuisine.id) {
+      case 'thai':
+        return 'cuisine-thai-bg';
+      case 'chinese':
+        return 'cuisine-chinese-bg';
+      case 'indian':
+        return 'cuisine-indian-bg';
+      case 'bengali':
+        return 'cuisine-bengali-bg';
+      case 'continental':
+        return 'cuisine-continental-bg';
+      default:
+        return '';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-savoria-black text-white overflow-hidden">
@@ -95,7 +113,13 @@ const MenuPage = () => {
               </SheetTrigger>
               <SheetContent side="top" className="w-full max-w-screen-lg mx-auto bg-zinc-900 border-gold/20">
                 <div className="py-4">
-                  <h2 className="text-xl font-playfair mb-4 text-gold">Search Our Menu</h2>
+                  <div className="flex items-center justify-center mb-4">
+                    <img 
+                      src="/lovable-uploads/4299270d-c31d-4824-a46f-62d57b49b12d.png" 
+                      alt="SAVORIA" 
+                      className="h-12 object-contain"
+                    />
+                  </div>
                   <Command className="rounded-lg border border-zinc-700 bg-zinc-900">
                     <CommandInput 
                       placeholder="Search dishes or cuisines..." 
@@ -145,16 +169,9 @@ const MenuPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative min-h-[50vh] bg-gradient-to-b from-black/40 to-black/80 pb-20"
-          style={{
-            backgroundImage: currentSection ? `url(${currentSection.backgroundImage})` : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            backgroundBlendMode: 'overlay'
-          }}
+          className={`relative min-h-[50vh] pb-20 ${getCuisineBackgroundClass()}`}
         >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
           
           <AnimatePresence mode="sync">
             <MenuSectionContent 

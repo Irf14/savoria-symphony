@@ -36,8 +36,8 @@ export type CuisineMenu = {
   name: string;
   description: string;
   image: string;
-  background: string; // Added to match Cuisine interface
-  backgroundImage: string; // Added for CuisineHero component
+  background: string;
+  backgroundImage: string;
   sections: MenuSection[];
 }
 
@@ -47,7 +47,7 @@ export interface Cuisine {
   description: string;
   image: string;
   background: string;
-  backgroundImage?: string; // Make optional for compatibility
+  backgroundImage?: string;
   logoIcon?: string;
   sections: MenuSection[];
 }
@@ -64,7 +64,7 @@ export type MenuItem = {
   id: number;
   name: string;
   description: string;
-  price: number | string; // Updated to accept both number and string for price
+  price: number | string;
   image?: string;
   isSignature?: boolean;
   isVegetarian?: boolean;
@@ -72,8 +72,8 @@ export type MenuItem = {
   isRecommended?: boolean;
   ingredients?: string[];
   allergens?: string[];
-  rating?: number; // Added for MenuItemCard
-  chefsChoice?: boolean; // Added for MenuItemCard
+  rating?: number;
+  chefsChoice?: boolean;
 };
 
 export type Variants = {

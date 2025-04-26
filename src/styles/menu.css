@@ -10,6 +10,8 @@
   border-radius: 12px;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   will-change: transform, background, border-color;
+  position: relative;
+  overflow: hidden;
 }
 
 .menu-item-card:hover {
@@ -22,6 +24,39 @@
               0 0 25px -5px rgba(212, 175, 55, 0.2);
 }
 
+/* Golden reflection effect on hover */
+.menu-item-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 215, 0, 0) 0%,
+    rgba(255, 215, 0, 0.1) 50%,
+    rgba(255, 215, 0, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: all 0.8s;
+  z-index: 1;
+}
+
+.menu-item-card:hover::before {
+  left: 150%;
+  transition: 0.8s ease-in-out;
+}
+
+/* Gold outline glow effect on focus */
+.menu-item-card:focus-within {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px rgba(212, 175, 55, 0.7),
+    0 0 15px rgba(212, 175, 55, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.3);
+}
+
 /* Enhanced glass card styling for menu items */
 .glass-card {
   background: rgba(30, 30, 30, 0.6);
@@ -32,6 +67,8 @@
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.4s ease;
   will-change: transform, background, border-color, box-shadow;
+  position: relative;
+  overflow: hidden;
 }
 
 .glass-card:hover {
@@ -161,4 +198,125 @@
 
 .menu-action-button:hover::after {
   transform: translateX(100%);
+}
+
+/* Fine-dining menu card styling */
+.fine-dining-card {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.fine-dining-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(212, 175, 55, 0.1),
+    rgba(255, 255, 255, 0.05),
+    rgba(212, 175, 55, 0.1)
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.fine-dining-card:hover::before {
+  opacity: 1;
+}
+
+.fine-dining-card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(5deg);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* Price tag styling */
+.price-tag {
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 30px;
+  padding: 0.25rem 0.75rem;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: #D4AF37;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.price-tag:hover {
+  background: rgba(212, 175, 55, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Menu section backgrounds */
+.cuisine-thai-bg {
+  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
+              url('/lovable-uploads/4299270d-c31d-4824-a46f-62d57b49b12d.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.cuisine-chinese-bg {
+  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
+              url('/public/backgrounds/chinese-cuisine.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.cuisine-indian-bg {
+  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
+              url('/public/backgrounds/indian-cuisine.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.cuisine-bengali-bg {
+  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
+              url('/public/backgrounds/bengali-cuisine.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.cuisine-continental-bg {
+  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
+              url('/public/backgrounds/continental-cuisine.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Section labels */
+.section-label {
+  position: relative;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #D4AF37;
+  text-transform: uppercase;
+}
+
+.section-label::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #D4AF37, transparent);
 }

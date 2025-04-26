@@ -16,9 +16,10 @@ const MenuItemCard = ({ item, onHover }: MenuItemCardProps) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 * (item.id % 6) }}
-      className="relative bg-black/40 backdrop-blur-lg border border-zinc-800 hover:border-gold/40 rounded-xl overflow-hidden group"
+      className="menu-item-card fine-dining-card relative group"
       onMouseEnter={() => onHover(item.id)}
       onMouseLeave={() => onHover(null)}
+      tabIndex={0}
     >
       <div className="p-6 relative z-10">
         {/* Top section with name and price */}
@@ -26,7 +27,7 @@ const MenuItemCard = ({ item, onHover }: MenuItemCardProps) => {
           <h3 className="text-xl font-playfair font-bold text-white group-hover:text-gold transition-colors">
             {item.name}
           </h3>
-          <span className="text-gold text-lg font-bold bg-black/40 px-3 py-1 rounded-full">
+          <span className="price-tag text-gold text-lg">
             ${item.price}
           </span>
         </div>
@@ -58,11 +59,11 @@ const MenuItemCard = ({ item, onHover }: MenuItemCardProps) => {
         </div>
       </div>
       
-      {/* Hover effect */}
-      <div className="absolute inset-0 bg-gradient-to-t from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      {/* Golden gradient hover effect */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
       
       {/* Glow effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0 rounded-xl blur opacity-0 group-hover:opacity-50 transition-opacity duration-500 -z-10"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-gold/0 via-gold/15 to-gold/0 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
     </motion.div>
   );
 };

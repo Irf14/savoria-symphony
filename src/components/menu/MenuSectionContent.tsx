@@ -52,8 +52,8 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
         <motion.h2 variants={itemVariants} className="text-3xl font-playfair font-bold text-gold mb-4">
           {section.name}
         </motion.h2>
-        <motion.div variants={itemVariants} className="w-24 h-0.5 bg-gold/50 mx-auto mb-6" />
-        <motion.p variants={itemVariants} className="text-gray-300 max-w-2xl mx-auto font-cormorant text-lg">
+        <motion.div variants={itemVariants} className="w-40 h-0.5 bg-gradient-to-r from-transparent via-gold/80 to-transparent mx-auto mb-6" />
+        <motion.p variants={itemVariants} className="text-gray-300 max-w-2xl mx-auto font-cormorant text-lg italic">
           {section.description}
         </motion.p>
       </motion.div>
@@ -63,7 +63,7 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {section.items.map((item: MenuItem) => (
           <motion.div key={item.id} variants={itemVariants}>
