@@ -1,4 +1,3 @@
-
 /* Menu-specific styling for SAVORIA Symphony */
 
 /* Menu item card frosted effect */
@@ -259,42 +258,42 @@
   transform: translateY(-2px);
 }
 
-/* Menu section backgrounds */
+/* Menu section backgrounds with proper cuisine themes */
 .cuisine-thai-bg {
-  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
-              url('/lovable-uploads/4299270d-c31d-4824-a46f-62d57b49b12d.png');
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              url('/backgrounds/thai-cuisine.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 .cuisine-chinese-bg {
-  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
-              url('/public/backgrounds/chinese-cuisine.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              url('/backgrounds/chinese-cuisine.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 .cuisine-indian-bg {
-  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
-              url('/public/backgrounds/indian-cuisine.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              url('/backgrounds/indian-cuisine.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 .cuisine-bengali-bg {
-  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
-              url('/public/backgrounds/bengali-cuisine.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              url('/backgrounds/bengali-cuisine.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 .cuisine-continental-bg {
-  background: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
-              url('/public/backgrounds/continental-cuisine.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              url('/backgrounds/continental-cuisine.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

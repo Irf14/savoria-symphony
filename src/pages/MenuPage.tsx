@@ -1,5 +1,4 @@
-
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search, ChevronDown, Filter } from 'lucide-react';
@@ -29,7 +28,6 @@ const MenuPage = () => {
     isTransitioning,
     hoveredItemId,
     setActiveSection,
-    handleCuisineChange,
     handlePrevCuisine,
     handleNextCuisine,
     getCurrentSection,
@@ -53,7 +51,6 @@ const MenuPage = () => {
     setIsSearchOpen(false);
     navigate(`/menu/${cuisineId}`);
     // Using the function from useMenuCuisine
-    handleCuisineChange(cuisineId);
   };
 
   if (!activeCuisine) {
@@ -83,6 +80,28 @@ const MenuPage = () => {
         return '';
     }
   };
+
+  const handleCuisineChange = useCallback((newCuisineId: string) => {
+    // Remove any leading/trailing slashes and clean the ID
+    const cleanCuisineId = newCuisineId.replace(/^\/+|\/+$/g, '');
+    
+    const newCuisine = cuisines.find(c => c.id === cleanCuisineId);
+    if (!newCuisine || newCuisine.id === activeCuisine?.id) return;
+    
+    setIsTransitioning(true);
+    setLoadingImages(true);
+    
+    // Update URL with new cuisine
+    navigate(`/menu/${cleanCuisineId}`);
+    
+    setTimeout(() => {
+      setActiveCuisine(newCuisine);
+      if (newCuisine.sections.length > 0) {
+        setActiveSection(newCuisine.sections[0].id);
+      }
+      setIsTransitioning(false);
+    }, 300);
+  }, [activeCuisine, navigate]);
 
   return (
     <div className="min-h-screen bg-savoria-black text-white overflow-hidden">

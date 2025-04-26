@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -10,6 +9,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   
@@ -74,6 +74,21 @@ const Navbar = () => {
       return location.pathname === '/';
     }
     return location.pathname.startsWith(path);
+  };
+
+  const handleDropdownItemClick = (path: string, hash?: string) => {
+    setIsOpen(false);
+    if (hash) {
+      navigate(path + hash);
+      setTimeout(() => {
+        const element = document.getElementById(hash.slice(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      navigate(path);
+    }
   };
 
   return (
@@ -150,13 +165,13 @@ const Navbar = () => {
                 >
                   <div className="py-1">
                     {link.dropdown.map((item) => (
-                      <Link
+                      <button
                         key={item.name}
-                        to={item.path}
-                        className="block px-4 py-2 text-sm text-white hover:bg-gold/20 transition-colors duration-200"
+                        onClick={() => handleDropdownItemClick(item.path, item.path.includes('special-services') ? item.hash : undefined)}
+                        className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gold/20 transition-colors duration-200"
                       >
                         {item.name}
-                      </Link>
+                      </button>
                     ))}
                   </div>
                 </div>
