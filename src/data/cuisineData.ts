@@ -5,9 +5,8 @@ const thaiCuisine: CuisineMenu = {
   id: 'thai',
   name: 'Thai Cuisine',
   description: 'Experience authentic Thai flavors with our carefully crafted dishes blending sweet, sour, salty, and spicy elements.',
-  image: '/backgrounds/thai-cuisine.jpg',
-  background: '/backgrounds/thai-cuisine.jpg',
-  backgroundImage: '/backgrounds/thai-cuisine.jpg',
+  background: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=2070&q=80',
+  backgroundImage: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=2070&q=80',
   sections: [
     {
       id: 'thai-appetizers',
@@ -105,9 +104,8 @@ const indianCuisine: CuisineMenu = {
   id: 'indian',
   name: 'Indian Cuisine',
   description: 'Discover the rich tapestry of flavors from across the Indian subcontinent, featuring aromatic spices and diverse cooking techniques.',
-  image: '/backgrounds/indian-cuisine.jpg',
-  background: '/backgrounds/indian-cuisine.jpg',
-  backgroundImage: '/backgrounds/indian-cuisine.jpg',
+  background: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=2070&q=80',
+  backgroundImage: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=2070&q=80',
   sections: [
     {
       id: 'indian-appetizers',
@@ -205,9 +203,8 @@ const chineseCuisine: CuisineMenu = {
   id: 'chinese',
   name: 'Chinese Cuisine',
   description: 'Savor the balance of flavors and textures in our authentic Chinese dishes, prepared with traditional techniques.',
-  image: '/backgrounds/chinese-cuisine.jpg',
-  background: '/backgrounds/chinese-cuisine.jpg',
-  backgroundImage: '/backgrounds/chinese-cuisine.jpg',
+  background: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=2070&q=80',
+  backgroundImage: 'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&w=2070&q=80',
   sections: [
     {
       id: 'chinese-appetizers',
@@ -305,9 +302,8 @@ const bengaliCuisine: CuisineMenu = {
   id: 'bengali',
   name: 'Bengali Cuisine',
   description: 'Experience the subtle flavors and delicate spices of traditional Bengali cooking, highlighting fish, rice, and mustard.',
-  image: '/backgrounds/bengali-cuisine.jpg',
-  background: '/backgrounds/bengali-cuisine.jpg',
-  backgroundImage: '/backgrounds/bengali-cuisine.jpg',
+  background: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=2070&q=80',
+  backgroundImage: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=2070&q=80',
   sections: [
     {
       id: 'bengali-appetizers',
@@ -405,9 +401,8 @@ const continentalCuisine: CuisineMenu = {
   id: 'continental',
   name: 'Continental Cuisine',
   description: 'Enjoy classic European dishes with modern interpretations, featuring premium ingredients and refined techniques.',
-  image: '/backgrounds/continental-cuisine.jpg',
-  background: '/backgrounds/continental-cuisine.jpg',
-  backgroundImage: '/backgrounds/continental-cuisine.jpg',
+  background: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&w=2070&q=80',
+  backgroundImage: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&w=2070&q=80',
   sections: [
     {
       id: 'continental-appetizers',

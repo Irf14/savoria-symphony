@@ -58,7 +58,7 @@ const MenuPage = () => {
 
   if (!activeCuisine) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-savoria-black text-white flex items-center justify-center">
         <div className="loader"></div>
       </div>
     );
@@ -70,22 +70,22 @@ const MenuPage = () => {
   const getCuisineBackgroundClass = () => {
     switch (activeCuisine.id) {
       case 'thai':
-        return 'bg-thai-cuisine';
+        return 'cuisine-thai-bg';
       case 'chinese':
-        return 'bg-chinese-cuisine';
+        return 'cuisine-chinese-bg';
       case 'indian':
-        return 'bg-indian-cuisine';
+        return 'cuisine-indian-bg';
       case 'bengali':
-        return 'bg-bengali-cuisine';
+        return 'cuisine-bengali-bg';
       case 'continental':
-        return 'bg-continental-cuisine';
+        return 'cuisine-continental-bg';
       default:
         return '';
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-savoria-black text-white overflow-hidden">
       <Navbar />
       
       <main className="relative pt-16">
@@ -115,7 +115,7 @@ const MenuPage = () => {
                 <div className="py-4">
                   <div className="flex items-center justify-center mb-4">
                     <img 
-                      src="/lovable-uploads/2f779999-3096-48c9-ba52-fac9c216bfce.png" 
+                      src="/lovable-uploads/4299270d-c31d-4824-a46f-62d57b49b12d.png" 
                       alt="SAVORIA" 
                       className="h-12 object-contain"
                     />
@@ -145,7 +145,7 @@ const MenuPage = () => {
               </SheetContent>
             </Sheet>
 
-            {/* Enhanced cuisine tabs nav */}
+            {/* Enhanced cuisine tabs nav - now with proper types */}
             <div className="flex-1">
               <CuisineNavTabs 
                 cuisines={cuisines}
@@ -171,7 +171,7 @@ const MenuPage = () => {
           transition={{ duration: 0.5 }}
           className={`relative min-h-[50vh] pb-20 ${getCuisineBackgroundClass()}`}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px]"></div>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
           
           <AnimatePresence mode="sync">
             <MenuSectionContent 
