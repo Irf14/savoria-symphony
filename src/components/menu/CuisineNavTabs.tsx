@@ -17,20 +17,21 @@ const CuisineNavTabs = ({ cuisines, activeCuisine, isTransitioning, onCuisineCha
   const handleTabClick = (cuisine: CuisineMenu) => {
     if (isTransitioning || cuisine.id === activeCuisine.id) return;
     
+    // Update the URL and trigger cuisine change
     navigate(`/menu/${cuisine.id}`);
     onCuisineChange(cuisine.id);
   };
 
   return (
-    <div className="overflow-x-auto scrollbar-none">
-      <div className="flex space-x-1 min-w-max">
+    <div className="overflow-x-auto scrollbar-none py-2">
+      <div className="flex space-x-3 min-w-max">
         {cuisines.map((cuisine) => (
           <button
             key={cuisine.id}
             className={cn(
-              'px-3 py-2 rounded-md text-sm relative whitespace-nowrap transition-all duration-300 font-medium',
+              'px-4 py-2 rounded-md text-sm relative whitespace-nowrap transition-all duration-300 font-medium',
               cuisine.id === activeCuisine.id
-                ? 'text-gold font-medium'
+                ? 'text-gold font-bold'
                 : 'text-white/70 hover:text-white'
             )}
             disabled={isTransitioning}

@@ -38,5 +38,3 @@ html {
 .fixed, .sticky {
   will-change: transform;
 }
-
-/* Chat button removed - styles no longer needed */

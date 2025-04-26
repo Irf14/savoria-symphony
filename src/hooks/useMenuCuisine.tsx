@@ -17,6 +17,25 @@ const useMenuCuisine = (cuisineParam?: string) => {
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [hoveredItemId, setHoveredItemId] = useState<number | null>(null);
   
+  // Initialize active cuisine from URL param
+  useEffect(() => {
+    const initialCuisineId = cuisineParam || allCuisines[0]?.id;
+    const foundCuisine = allCuisines.find(cuisine => cuisine.id === initialCuisineId);
+    
+    if (foundCuisine) {
+      setActiveCuisine(foundCuisine);
+      if (foundCuisine.sections.length > 0) {
+        setActiveSection(foundCuisine.sections[0].id);
+      }
+    } else if (allCuisines.length > 0) {
+      setActiveCuisine(allCuisines[0]);
+      if (allCuisines[0].sections.length > 0) {
+        setActiveSection(allCuisines[0].sections[0].id);
+      }
+      navigate(`/menu/${allCuisines[0].id}`);
+    }
+  }, [cuisineParam, allCuisines, navigate]);
+  
   // Preload images
   useEffect(() => {
     if (!activeCuisine) return;
@@ -48,25 +67,6 @@ const useMenuCuisine = (cuisineParam?: string) => {
       setLoadingImages(false);
     });
   }, [activeCuisine]);
-  
-  // Initialize active cuisine from URL param
-  useEffect(() => {
-    const initialCuisineId = cuisineParam || allCuisines[0]?.id;
-    const foundCuisine = allCuisines.find(cuisine => cuisine.id === initialCuisineId);
-    
-    if (foundCuisine) {
-      setActiveCuisine(foundCuisine);
-      if (foundCuisine.sections.length > 0) {
-        setActiveSection(foundCuisine.sections[0].id);
-      }
-    } else if (allCuisines.length > 0) {
-      setActiveCuisine(allCuisines[0]);
-      if (allCuisines[0].sections.length > 0) {
-        setActiveSection(allCuisines[0].sections[0].id);
-      }
-      navigate(`/menu/${allCuisines[0].id}`);
-    }
-  }, [cuisineParam, allCuisines, navigate]);
   
   // Handle cuisine change
   const handleCuisineChange = (newCuisineId: string) => {

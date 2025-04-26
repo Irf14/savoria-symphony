@@ -1,273 +1,163 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { 
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from '@/components/ui/navigation-menu';
+import { cuisines } from '@/data/cuisineData';
+import { venues } from '@/data/venueData';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
-
-  const toggleMenu = () => setIsOpen(!isOpen);
   
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsOpen(false);
-    setActiveDropdown(null);
-  }, [location]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { 
-      name: 'Menu',
-      path: '/menu',
-      dropdown: [
-        { name: 'All Cuisines', path: '/menu' },
-        { name: 'Thai Cuisine', path: '/menu/thai' },
-        { name: 'Indian Cuisine', path: '/menu/indian' },
-        { name: 'Chinese Cuisine', path: '/menu/chinese' },
-        { name: 'Bengali Cuisine', path: '/menu/bengali' },
-        { name: 'Continental Cuisine', path: '/menu/continental' },
-      ]
-    },
-    { name: 'Gallery', path: '/gallery' },
-    { 
-      name: 'Special Venues', 
-      path: '/special-services',
-      dropdown: [
-        { name: 'Overview', path: '/special-services' },
-        { name: 'Ambrosia Hall', path: '/special-services#ambrosia' },
-        { name: 'Euphoria Hall', path: '/special-services#euphoria' },
-        { name: 'Majestic Room', path: '/special-services#majestic' },
-      ]
-    },
-    { name: 'Reservation', path: '/reservation' },
-    { name: 'Contact', path: '/contact' },
-  ];
-
-  const handleDropdownToggle = (name: string) => {
-    if (activeDropdown === name) {
-      setActiveDropdown(null);
+  // Handle scroll effect
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      setIsScrolled(true);
     } else {
-      setActiveDropdown(name);
+      setIsScrolled(false);
     }
-  };
+  });
 
   const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    // Special case for menu pages
+    if (path.startsWith('/menu') && location.pathname.startsWith('/menu')) {
+      return true;
     }
-    return location.pathname.startsWith(path);
+    return location.pathname === path;
   };
 
   return (
-    <nav
-      className={cn(
-        'fixed w-full top-0 z-50 transition-all duration-500',
-        isScrolled 
-          ? 'bg-black/40 backdrop-blur-lg border-b border-gold/10 py-3' 
-          : 'bg-transparent py-5'
-      )}
-    >
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Enhanced logo with better visibility */}
-        <Link to="/" className="flex items-center relative z-10">
-          <motion.span 
-            className="font-playfair text-3xl font-bold tracking-wider"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.2 }}
-            style={{
-              color: '#F7DF8C',
-              textShadow: '0 0 5px rgba(212, 175, 55, 0.3)',
-              filter: 'brightness(1.1) contrast(1.1)'
-            }}
-          >
-            SAVORIA
-          </motion.span>
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      isScrolled ? "bg-black/90 backdrop-blur-md shadow-lg" : "bg-transparent"
+    )}>
+      <div className="container mx-auto px-4 flex items-center justify-between h-16">
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/lovable-uploads/2f779999-3096-48c9-ba52-fac9c216bfce.png" 
+            alt="SAVORIA" 
+            className="h-10 object-contain"
+          />
         </Link>
         
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
-          {navLinks.map((link) => (
-            <div key={link.name} className="relative group">
-              {link.dropdown ? (
-                <button 
-                  className={cn(
-                    'nav-link flex items-center px-3 py-2',
-                    isActive(link.path) ? 'text-gold' : 'text-white'
-                  )}
-                  onClick={() => handleDropdownToggle(link.name)}
-                  onMouseEnter={() => setActiveDropdown(link.name)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <span className="font-cormorant text-lg tracking-wide">{link.name}</span>
-                  <ChevronDown size={16} className="ml-1 transition-transform duration-300" style={{
-                    transform: activeDropdown === link.name ? 'rotate(180deg)' : 'rotate(0deg)'
-                  }} />
-                </button>
-              ) : (
-                <Link
-                  to={link.path}
-                  className={cn(
-                    'nav-link px-3 py-2 font-cormorant text-lg tracking-wide',
-                    isActive(link.path) ? 'text-gold' : 'text-white'
-                  )}
-                >
-                  {link.name}
-                </Link>
-              )}
-              
-              {/* Dropdown menu */}
-              {link.dropdown && (
-                <div 
-                  className="absolute left-0 mt-1 w-48 rounded-md shadow-lg bg-zinc-900/95 border border-gold/10 overflow-hidden"
-                  onMouseEnter={() => setActiveDropdown(link.name)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                  style={{
-                    opacity: activeDropdown === link.name ? 1 : 0,
-                    visibility: activeDropdown === link.name ? 'visible' : 'hidden',
-                    transform: activeDropdown === link.name ? 'translateY(0)' : 'translateY(-10px)',
-                    transition: 'opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease'
-                  }}
-                >
-                  <div className="py-1">
-                    {link.dropdown.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.path}
-                        className="block px-4 py-2 text-sm text-white hover:bg-gold/20 transition-colors duration-200"
+        <NavigationMenu>
+          <NavigationMenuList className="hidden md:flex">
+            <NavigationMenuItem>
+              <Link to="/">
+                <Button variant="ghost" className={cn(
+                  "text-white hover:text-gold hover:bg-transparent",
+                  isActive('/') && "text-gold font-medium"
+                )}>
+                  Home
+                </Button>
+              </Link>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className={cn(
+                "bg-transparent hover:bg-transparent text-white hover:text-gold",
+                isActive('/menu') && "text-gold font-medium"
+              )}>
+                Menu
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[400px] p-4 md:w-[500px] lg:w-[600px] bg-black/90 backdrop-blur-md">
+                  <div className="grid grid-cols-2 gap-3">
+                    {cuisines.map((cuisine) => (
+                      <Link 
+                        key={cuisine.id} 
+                        to={`/menu/${cuisine.id}`}
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800/50 hover:text-gold focus:bg-accent focus:text-accent-foreground"
                       >
-                        {item.name}
+                        <div className="text-base font-medium text-white">{cuisine.name}</div>
+                        <p className="line-clamp-2 text-sm text-white/70">
+                          {cuisine.description}
+                        </p>
                       </Link>
                     ))}
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
-
-          {/* Book a Table button */}
-          <Link
-            to="/reservation"
-            className="bg-gold hover:bg-gold/90 text-black px-5 py-2 rounded text-sm font-medium transition-colors duration-300"
-          >
-            Book a Table
-          </Link>
-        </div>
-        
-        {/* Mobile Navigation Button */}
-        <button 
-          className="md:hidden text-white p-2"
-          onClick={toggleMenu}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-      
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-savoria-black/95 z-40 flex flex-col items-center pt-20 pb-10 px-6 md:hidden overflow-auto"
-          >
-            {navLinks.map((link, index) => (
-              <div key={link.name} className="w-full py-3">
-                {link.dropdown ? (
-                  <div className="w-full">
-                    <button 
-                      onClick={() => handleDropdownToggle(link.name)}
-                      className={cn(
-                        "w-full flex items-center justify-between text-2xl font-cormorant tracking-wider py-2",
-                        isActive(link.path) ? 'text-gold' : 'text-white'
-                      )}
-                    >
-                      {link.name}
-                      <ChevronDown 
-                        size={20}
-                        className={cn(
-                          "transition-transform duration-300",
-                          activeDropdown === link.name && "transform rotate-180"
-                        )}
-                      />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {activeDropdown === link.name && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="pl-4 border-l border-gold/30 mt-2 overflow-hidden"
-                        >
-                          {link.dropdown.map((item) => (
-                            <Link
-                              key={item.name}
-                              to={item.path}
-                              className="block text-lg font-cormorant py-2 text-gray-300 hover:text-gold"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              {item.name}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <Link to="/gallery">
+                <Button variant="ghost" className={cn(
+                  "text-white hover:text-gold hover:bg-transparent",
+                  isActive('/gallery') && "text-gold font-medium"
+                )}>
+                  Gallery
+                </Button>
+              </Link>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className={cn(
+                "bg-transparent hover:bg-transparent text-white hover:text-gold",
+                isActive('/special-venues') && "text-gold font-medium"
+              )}>
+                Special Venues
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[400px] p-4 md:w-[500px] bg-black/90 backdrop-blur-md">
+                  <div className="grid gap-3">
+                    {venues.map((venue) => (
+                      <Link 
+                        key={venue.id} 
+                        to={`/special-venues#${venue.id}`}
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-zinc-800/50 hover:text-gold focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div className="text-base font-medium text-white">{venue.name}</div>
+                        <p className="line-clamp-2 text-sm text-white/70">
+                          {venue.shortDescription}
+                        </p>
+                      </Link>
+                    ))}
                   </div>
-                ) : (
-                  <Link
-                    to={link.path}
-                    className={cn(
-                      "block text-2xl font-cormorant tracking-wider py-2",
-                      isActive(link.path) ? 'text-gold' : 'text-white'
-                    )}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                )}
-                
-                {index < navLinks.length - 1 && (
-                  <div className="w-16 h-px bg-gold/20 mx-auto my-3" />
-                )}
-              </div>
-            ))}
-
-            {/* Mobile reservation button */}
-            <Link
-              to="/reservation"
-              className="mt-6 bg-gold hover:bg-gold/90 text-black px-10 py-3 text-lg font-medium rounded"
-              onClick={() => setIsOpen(false)}
-            >
-              Reserve Now
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <Link to="/reservation">
+                <Button variant="ghost" className={cn(
+                  "text-white hover:text-gold hover:bg-transparent",
+                  isActive('/reservation') && "text-gold font-medium"
+                )}>
+                  Reservation
+                </Button>
+              </Link>
+            </NavigationMenuItem>
+            
+            <NavigationMenuItem>
+              <Link to="/contact">
+                <Button variant="ghost" className={cn(
+                  "text-white hover:text-gold hover:bg-transparent",
+                  isActive('/contact') && "text-gold font-medium"
+                )}>
+                  Contact
+                </Button>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+        
+        <Link to="/reservation" className="hidden md:block">
+          <Button className="bg-gold hover:bg-gold/90 text-black font-semibold">
+            Book a Table
+          </Button>
+        </Link>
+      </div>
+    </header>
   );
 };
 
