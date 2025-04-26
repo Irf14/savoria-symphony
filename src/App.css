@@ -1,3 +1,4 @@
+
 /* Main CSS file that imports all modular CSS files */
 @import './styles/core.css';
 @import './styles/scrollbars.css';
@@ -39,8 +40,12 @@ html {
 }
 
 /* Remove chat button - no longer needed */
-.chat-button {
-  display: none;
+.chat-button,
+.chat-container,
+.chat-widget,
+.chat-assistant {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
-
-/* Chat button removed - styles no longer needed */

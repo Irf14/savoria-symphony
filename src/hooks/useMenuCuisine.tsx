@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CuisineMenu, MenuSection } from '@/types/menu';
 import { cuisines } from '@/data/cuisineData';
@@ -118,7 +118,11 @@ const useMenuCuisine = (cuisineParam?: string) => {
     handlePrevCuisine,
     handleNextCuisine,
     getCurrentSection,
-    setHoveredItemId
+    setHoveredItemId,
+    // Export these setState functions that were missing
+    setActiveCuisine,
+    setLoadingImages,
+    setIsTransitioning
   };
 };
 

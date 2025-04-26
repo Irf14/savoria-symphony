@@ -35,7 +35,7 @@ export type CuisineMenu = {
   id: string;
   name: string;
   description: string;
-  image: string;
+  image?: string; // Made this optional to fix the type error
   background: string;
   backgroundImage: string;
   sections: MenuSection[];

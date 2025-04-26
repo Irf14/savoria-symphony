@@ -1,4 +1,4 @@
 
-// Empty component - will be removed from codebase later
+// This component has been removed as requested
 const ChatToggleButton = () => null;
 export default ChatToggleButton;

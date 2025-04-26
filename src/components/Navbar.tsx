@@ -1,8 +1,22 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
+// Define better types for our navigation items
+interface NavLink {
+  name: string;
+  path: string;
+  dropdown?: NavDropdownItem[];
+}
+
+interface NavDropdownItem {
+  name: string;
+  path: string;
+  hash?: string; // Add the hash property that was missing
+}
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +46,7 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { name: 'Home', path: '/' },
     { 
       name: 'Menu',
@@ -52,9 +66,9 @@ const Navbar = () => {
       path: '/special-services',
       dropdown: [
         { name: 'Overview', path: '/special-services' },
-        { name: 'Ambrosia Hall', path: '/special-services#ambrosia' },
-        { name: 'Euphoria Hall', path: '/special-services#euphoria' },
-        { name: 'Majestic Room', path: '/special-services#majestic' },
+        { name: 'Ambrosia Hall', path: '/special-services', hash: '#ambrosia' },
+        { name: 'Euphoria Hall', path: '/special-services', hash: '#euphoria' },
+        { name: 'Majestic Room', path: '/special-services', hash: '#majestic' },
       ]
     },
     { name: 'Reservation', path: '/reservation' },

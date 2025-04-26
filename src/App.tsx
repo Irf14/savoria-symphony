@@ -11,7 +11,6 @@ import ContactPage from "./pages/ContactPage";
 import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
-import ChatAssistant from "@/components/ChatAssistant";
 import { useEffect } from "react";
 import { preloadCriticalImages } from "@/utils/imageUtils";
 import "./App.css";
@@ -87,9 +86,6 @@ const App = () => {
             <Route path="/special-services" element={<SpecialServicesPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          
-          {/* Render ChatAssistant outside Routes for consistent visibility */}
-          <ChatAssistant />
           
           <Toaster />
           <Sonner position="bottom-center" closeButton />

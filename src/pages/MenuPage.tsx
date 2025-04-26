@@ -31,7 +31,10 @@ const MenuPage = () => {
     handlePrevCuisine,
     handleNextCuisine,
     getCurrentSection,
-    setHoveredItemId
+    setHoveredItemId,
+    setIsTransitioning,
+    setLoadingImages,
+    setActiveCuisine,
   } = useMenuCuisine(cuisineParam);
   
   // Scroll to top when changing sections
@@ -101,7 +104,7 @@ const MenuPage = () => {
       }
       setIsTransitioning(false);
     }, 300);
-  }, [activeCuisine, navigate]);
+  }, [activeCuisine, navigate, setActiveCuisine, setActiveSection, setLoadingImages, setIsTransitioning]);
 
   return (
     <div className="min-h-screen bg-savoria-black text-white overflow-hidden">
