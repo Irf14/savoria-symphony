@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define better types for our navigation items
 interface NavLink {
@@ -14,7 +16,7 @@ interface NavLink {
 interface NavDropdownItem {
   name: string;
   path: string;
-  hash?: string; // Add the hash property that was missing
+  hash?: string;
 }
 
 const Navbar = () => {
@@ -23,6 +25,7 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   
@@ -116,9 +119,9 @@ const Navbar = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="flex items-center relative z-10">
           <motion.img 
-            src="/lovable-uploads/427f2b82-317d-4386-bc6f-dfbcaa56860b.png"
+            src="/lovable-uploads/c66deafa-ac0d-468b-ae58-5882755f77e8.png"
             alt="SAVORIA"
-            className="h-12 object-contain"
+            className="h-12 md:h-14 object-contain"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             whileHover={{ scale: 1.05 }}
@@ -174,7 +177,7 @@ const Navbar = () => {
                     {link.dropdown.map((item) => (
                       <button
                         key={item.name}
-                        onClick={() => handleDropdownItemClick(item.path, item.path.includes('special-services') ? item.hash : undefined)}
+                        onClick={() => handleDropdownItemClick(item.path, item.hash)}
                         className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gold/20 transition-colors duration-200"
                       >
                         {item.name}
@@ -197,7 +200,7 @@ const Navbar = () => {
         
         {/* Mobile Navigation Button */}
         <button 
-          className="md:hidden text-white p-2"
+          className="md:hidden text-white p-2 z-50"
           onClick={toggleMenu}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
@@ -246,14 +249,13 @@ const Navbar = () => {
                           className="pl-4 border-l border-gold/30 mt-2 overflow-hidden"
                         >
                           {link.dropdown.map((item) => (
-                            <Link
+                            <button
                               key={item.name}
-                              to={item.path}
-                              className="block text-lg font-cormorant py-2 text-gray-300 hover:text-gold"
-                              onClick={() => setIsOpen(false)}
+                              className="block w-full text-left text-lg font-cormorant py-2 text-gray-300 hover:text-gold"
+                              onClick={() => handleDropdownItemClick(item.path, item.hash)}
                             >
                               {item.name}
-                            </Link>
+                            </button>
                           ))}
                         </motion.div>
                       )}

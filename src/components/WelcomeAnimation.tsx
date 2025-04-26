@@ -1,5 +1,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WelcomeAnimationProps {
   visible: boolean;
@@ -7,6 +8,8 @@ interface WelcomeAnimationProps {
 }
 
 const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <AnimatePresence onExitComplete={onComplete}>
       {visible && (
@@ -71,52 +74,34 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
                 transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
               >
                 <span className="bg-black/40 backdrop-blur-md px-6 py-2 rounded-md shadow-lg">
-                  <span className="font-cormorant text-white text-2xl italic tracking-wide inline-block">
+                  <span className="font-cormorant text-white text-xl md:text-2xl italic tracking-wide inline-block">
                     welcome to
                   </span>
                 </span>
               </motion.div>
             </div>
             
-            {/* SAVORIA main logo text with enhanced animation */}
-            <motion.div
-              className="overflow-hidden mb-4"
-              initial={{ width: "0%" }}
-              animate={{ width: "100%" }}
-              transition={{ delay: 0.4, duration: 1, ease: "easeInOut" }}
+            {/* SAVORIA main logo with enhanced animation */}
+            <motion.div 
+              className="overflow-hidden mb-4 flex justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 1.2 }}
             >
-              <motion.h1
-                className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white drop-shadow-lg"
-                initial={{ opacity: 0, filter: "blur(10px)" }}
+              <motion.img
+                src="/lovable-uploads/c66deafa-ac0d-468b-ae58-5882755f77e8.png"
+                alt="SAVORIA"
+                className="h-16 md:h-24 object-contain"
                 animate={{ 
-                  opacity: 1, 
-                  filter: "blur(0px)",
-                  transition: { delay: 0.5, duration: 1.2 }
+                  scale: [1, 1.05, 1],
                 }}
-              >
-                <motion.span
-                  className="gold-gradient-text inline-block"
-                  animate={{ 
-                    scale: [1, 1.05, 1],
-                  }}
-                  transition={{ 
-                    delay: 1.2, 
-                    duration: 2,
-                    ease: "easeInOut",
-                    times: [0, 0.5, 1]
-                  }}
-                >
-                  SAVORIA
-                </motion.span>{" "}
-                <motion.span
-                  className="inline-block"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.5, duration: 0.8 }}
-                >
-                  Experience
-                </motion.span>
-              </motion.h1>
+                transition={{ 
+                  delay: 1.2, 
+                  duration: 2,
+                  ease: "easeInOut",
+                  times: [0, 0.5, 1]
+                }}
+              />
             </motion.div>
             
             {/* Animated tagline */}
@@ -130,7 +115,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 2, duration: 0.8 }}
-                className="font-cormorant text-xl text-gray-200 mb-8 max-w-2xl mx-auto"
+                className="font-cormorant text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto"
               >
                 Where culinary artistry meets exceptional hospitality
               </motion.p>
@@ -140,7 +125,7 @@ const WelcomeAnimation = ({ visible, onComplete }: WelcomeAnimationProps) => {
             <motion.div
               className="w-32 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-6"
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "8rem", opacity: 1 }}
+              animate={{ width: isMobile ? "6rem" : "8rem", opacity: 1 }}
               transition={{ delay: 2.2, duration: 1 }}
             />
             

@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 
@@ -8,7 +9,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
             <img 
-              src="/lovable-uploads/427f2b82-317d-4386-bc6f-dfbcaa56860b.png"
+              src="/lovable-uploads/c66deafa-ac0d-468b-ae58-5882755f77e8.png"
               alt="SAVORIA"
               className="h-16 object-contain"
             />
