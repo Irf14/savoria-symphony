@@ -18,6 +18,11 @@ export function useMenuToggle() {
   useEffect(() => {
     if (isMenuOpen) {
       document.body.classList.add('menu-open');
+      // Force the menu to be visible on mobile
+      const mobileMenu = document.querySelector('.fixed.inset-0.bg-savoria-black\\/95.z-40');
+      if (mobileMenu) {
+        (mobileMenu as HTMLElement).style.display = 'flex';
+      }
     } else {
       document.body.classList.remove('menu-open');
     }

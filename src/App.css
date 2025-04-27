@@ -46,6 +46,23 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Fix carousel indicators size */
+.carousel-indicators button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  margin: 0 5px;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicators button.active {
+  background-color: #D4AF37;
+  transform: scale(1.2);
+}
+
 /* Remove chat button - no longer needed */
 .chat-button,
 .chat-container,
@@ -55,6 +72,14 @@ html {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+}
+
+/* Gold divider styling fix */
+.section-gold-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.9), transparent);
+  margin: 0.75rem auto;
 }
 
 /* Mobile-specific optimizations */
@@ -80,5 +105,23 @@ html {
   /* Fix sticky footer on iOS */
   .min-h-screen {
     min-height: -webkit-fill-available;
+  }
+  
+  /* Ensure mobile menu appears properly */
+  .fixed.inset-0.bg-savoria-black\/95.z-40 {
+    display: flex !important;
+  }
+  
+  /* Fix mobile navigation menu */
+  .mobile-menu-container {
+    padding-top: 80px !important;
+    overflow-y: auto !important;
+  }
+  
+  /* Fix carousel indicators size on mobile */
+  .carousel-indicators button {
+    width: 8px !important;
+    height: 8px !important;
+    margin: 0 4px !important;
   }
 }
