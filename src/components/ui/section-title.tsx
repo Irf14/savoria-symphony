@@ -64,7 +64,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
         whileInView={{ width: alignment === 'center' ? '80px' : '60px' }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className={`h-0.5 bg-gold mt-4 ${alignment === 'center' ? 'mx-auto' : alignment === 'right' ? 'ml-auto' : ''}`}
+        className={`h-0.5 bg-gold mt-4 section-gold-divider ${alignment === 'center' ? 'mx-auto left-1/2 transform -translate-x-1/2' : alignment === 'right' ? 'ml-auto' : ''}`}
       />
     </div>
   );

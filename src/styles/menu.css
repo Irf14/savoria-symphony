@@ -106,15 +106,23 @@
   height: 2px !important; 
   background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.9), transparent) !important;
   margin: 0.75rem auto !important;
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: block !important;
 }
 
-/* Fix alignment for all section title dividers */
+/* Fix alignment for all section title dividers - more specific selectors */
+.mb-12.text-center .section-gold-divider,
 .mb-12.text-center .h-0\.5.bg-gold,
 .mb-12.text-center .h-0\.5.bg-gradient-to-r,
 .mb-12.text-center .w-40.h-0\.5 {
   width: 60px !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
 }
 
 /* Loading animation for menu page */
@@ -243,11 +251,14 @@
   
   /* Fix gold divider alignment under section titles */
   .mb-12.text-center .h-0\.5,
-  .mb-12.text-center .w-40.h-0\.5 {
+  .mb-12.text-center .w-40.h-0\.5,
+  .mb-12.text-center .section-gold-divider {
     width: 60px !important;
     margin: 0.5rem auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
+    position: relative !important;
+    display: block !important;
   }
   
   /* Ensure menu items are properly sized */
