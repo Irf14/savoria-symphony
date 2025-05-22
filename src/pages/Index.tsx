@@ -72,7 +72,7 @@ const Index = () => {
       setTimeout(() => {
         setLoading(false);
         setShowWelcome(true);
-      }, 1000); // Reduced to 1000ms for better performance
+      }, 1500); // Reduced from 2000ms to 1500ms for better performance
     } else {
       // Not first visit in this session, skip animations
       setLoading(false);
@@ -91,27 +91,34 @@ const Index = () => {
     console.log("Welcome complete, showing main content");
     setShowWelcome(false);
     setInitialized(true);
+    
+    // Force chat assistant button to appear
+    const chatButton = document.getElementById('chat-toggle-button');
+    if (chatButton) {
+      chatButton.classList.add('opacity-100');
+      chatButton.classList.remove('opacity-0', 'translate-y-10');
+    }
   };
 
   // Safeguard to ensure the page doesn't get stuck
   useEffect(() => {
-    // Force transition to main content after 3 seconds (reduced from 3.5)
+    // Force transition to main content after 3.5 seconds (reduced from 4)
     const welcomeTimeout = setTimeout(() => {
       if (showWelcome) {
         console.log("Force transitioning from welcome to main content");
         setShowWelcome(false);
         setInitialized(true);
       }
-    }, 3000);
+    }, 3500);
     
-    // Force transition to welcome after 1.5 seconds (reduced from 2)
+    // Force transition to main content after 2 seconds (reduced from 2.5)
     const loadingTimeout = setTimeout(() => {
       if (loading) {
         console.log("Force transitioning from loading to welcome");
         setLoading(false);
         setShowWelcome(true);
       }
-    }, 1500);
+    }, 2000);
     
     return () => {
       clearTimeout(welcomeTimeout);
@@ -123,7 +130,7 @@ const Index = () => {
     <>
       {loading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       
-      <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
+      {showWelcome && <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />}
       
       <motion.div 
         ref={mainContentRef}

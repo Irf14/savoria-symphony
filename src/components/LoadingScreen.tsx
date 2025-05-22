@@ -14,10 +14,10 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
     // Simulate loading progress - faster loading
     const interval = setInterval(() => {
       setProgress((prevProgress) => {
-        const nextProgress = prevProgress + Math.random() * 15; // Faster progress
+        const nextProgress = prevProgress + Math.random() * 20; // Increased speed
         return nextProgress >= 100 ? 100 : nextProgress;
       });
-    }, 120); // Reduced from 150ms to 120ms
+    }, 150); // Reduced from 200ms to 150ms
     
     // Complete loading after animation - reduced time
     const timer = setTimeout(() => {
@@ -26,8 +26,8 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
       setShowSpinner(false);
       
       // Small delay after reaching 100%
-      setTimeout(onLoadingComplete, 300); // Reduced from 400ms to 300ms
-    }, 1000); // Reduced from 1200ms to 1000ms
+      setTimeout(onLoadingComplete, 400); // Reduced from 500ms to 400ms
+    }, 1200); // Reduced from 1500ms to 1200ms
     
     return () => {
       clearInterval(interval);

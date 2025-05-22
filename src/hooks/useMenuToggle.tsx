@@ -19,24 +19,24 @@ export function useMenuToggle() {
     if (isMenuOpen) {
       document.body.classList.add('menu-open');
       
-      // Store the current scroll position
-      const scrollY = window.scrollY;
-      
-      // Prevent content jump without using position fixed which causes issues
+      // Ensure mobile menu is properly displayed without automatically closing
       document.body.style.overflow = 'hidden';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.dataset.scrollY = scrollY.toString();
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      document.body.style.top = `-${window.scrollY}px`; // Prevent content jump
     } else {
-      // Restore scroll position
-      const scrollY = document.body.dataset.scrollY || '0';
+      const scrollY = document.body.style.top;
       document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
       document.body.style.top = '';
       
-      // Only scroll if we have a stored position
-      if (document.body.dataset.scrollY) {
-        window.scrollTo(0, parseInt(scrollY, 10));
-        delete document.body.dataset.scrollY;
+      // Restore scroll position
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
       }
     }
 
@@ -44,8 +44,10 @@ export function useMenuToggle() {
     return () => {
       document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
       document.body.style.top = '';
-      delete document.body.dataset.scrollY;
     };
   }, [isMenuOpen]);
 
