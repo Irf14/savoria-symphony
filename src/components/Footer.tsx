@@ -8,11 +8,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            <img 
-              src="/lovable-uploads/c66deafa-ac0d-468b-ae58-5882755f77e8.png"
-              alt="SAVORIA"
-              className="h-16 object-contain"
-            />
+            <h3 className="font-playfair text-2xl text-gold">SAVORIA</h3>
             <p className="text-sm text-gray-400 max-w-xs">
               Experience the height of culinary excellence with our diverse range of authentic cuisines prepared by world-class chefs.
             </p>

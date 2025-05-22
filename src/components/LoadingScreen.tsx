@@ -1,123 +1,80 @@
 
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Progress } from '@/components/ui/progress';
 
-interface LoadingScreenProps {
-  onLoadingComplete: () => void;
-}
-
-const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
+const LoadingScreen = ({ onLoadingComplete }: { onLoadingComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
-  const [showSpinner, setShowSpinner] = useState(true);
   
   useEffect(() => {
-    // Simulate loading progress
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        const nextProgress = prevProgress + Math.random() * 15;
-        return nextProgress >= 100 ? 100 : nextProgress;
-      });
-    }, 200);
-    
-    // Complete loading after animation
     const timer = setTimeout(() => {
-      clearInterval(interval);
-      setProgress(100);
-      setShowSpinner(false);
-      
-      // Small delay after reaching 100%
-      setTimeout(onLoadingComplete, 500);
-    }, 1500);
+      if (progress < 100) {
+        setProgress(prev => Math.min(prev + 5, 100)); // Slower progress for better visibility
+      } else {
+        // Wait a moment at 100% before completing
+        setTimeout(() => onLoadingComplete(), 500);
+      }
+    }, 120); // Faster increments but smaller steps
     
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
-    };
-  }, [onLoadingComplete]);
+    return () => clearTimeout(timer);
+  }, [progress, onLoadingComplete]);
   
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+    <motion.div 
+      className="fixed inset-0 bg-savoria-black flex flex-col items-center justify-center z-50"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: progress === 100 ? 0 : 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black"
+      transition={{ duration: 0.8 }}
     >
-      <div className="relative w-full max-w-xs mb-12">
-        {/* SAVORIA Logo */}
-        <motion.h1
-          className="text-center text-4xl font-playfair font-bold mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1516211697506-8360dbcfe9a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(4px)'
+        }}
+      ></div>
+      
+      <div className="relative z-10 flex flex-col items-center">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", damping: 12, delay: 0.2 }}
+          className="mb-4"
         >
-          <span className="gold-gradient-text">SAVORIA</span>
-        </motion.h1>
-
-        {/* Progress bar container */}
-        <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-          <motion.div 
-            className="h-full bg-gradient-to-r from-gold/80 via-gold to-gold/80"
-            style={{ width: `${progress}%` }}
-            initial={{ width: "0%" }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
+          <span className="text-6xl md:text-8xl font-playfair font-bold">
+            <span className="gold-gradient-text">SAVORIA</span>
+          </span>
+        </motion.div>
         
-        {/* Loading percentage */}
-        <div className="mt-3 flex justify-between text-xs text-gray-500">
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Preparing experience...
-          </motion.span>
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            {Math.round(progress)}%
-          </motion.span>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="mb-12 text-center"
+        >
+          <span className="font-cormorant text-lg text-white/80 italic">
+            Culinary excellence awaits
+          </span>
+        </motion.div>
+        
+        <div className="w-64 sm:w-96 relative">
+          <Progress value={progress} className="h-1 bg-savoria-dark">
+            <motion.div 
+              className="h-full bg-gold rounded-full"
+              style={{ width: `${progress}%` }}
+              transition={{ duration: 0.2 }}
+            />
+          </Progress>
+          
+          <div className="flex justify-between mt-2">
+            <span className="text-xs text-gold/70 font-cormorant">PREPARING</span>
+            <span className="text-xs text-gold/70 font-cormorant">{progress}%</span>
+          </div>
         </div>
       </div>
-      
-      {/* Animated loading spinner */}
-      {showSpinner && (
-        <div className="relative">
-          <motion.div
-            animate={{ 
-              rotate: 360,
-              scale: [1, 1.1, 1]
-            }}
-            transition={{ 
-              rotate: { repeat: Infinity, duration: 1, ease: "linear" },
-              scale: { repeat: Infinity, duration: 2, ease: "easeInOut" }
-            }}
-            className="w-12 h-12"
-          >
-            <div className="w-12 h-12 rounded-full border-2 border-gray-800 border-t-gold border-r-gold" />
-          </motion.div>
-          
-          <motion.div
-            className="absolute inset-0"
-            animate={{ 
-              rotate: -360
-            }}
-            transition={{ 
-              repeat: Infinity, 
-              duration: 2, 
-              ease: "linear" 
-            }}
-          >
-            <div className="w-12 h-12 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-gold" />
-            </div>
-          </motion.div>
-        </div>
-      )}
     </motion.div>
   );
 };

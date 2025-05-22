@@ -1,171 +1,250 @@
 
-/* Main CSS file that imports all modular CSS files */
-@import './styles/core.css';
-@import './styles/scrollbars.css';
-@import './styles/menu.css';
-@import './styles/backgrounds.css';
-@import './styles/mobile.css';
+/* Custom styling for the SAVORIA Symphony app */
 
-/* Performance optimizations to reduce jitter */
-* {
-  box-sizing: border-box;
-  will-change: auto;
+/* Gold gradient text effect */
+.gold-gradient-text {
+  background: linear-gradient(90deg, #D4AF37, #F7DF8C, #996515);
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldenFlow 3s infinite linear;
 }
 
-html, body {
-  overscroll-behavior-y: none; /* Prevents bouncing on iOS */
+@keyframes goldenFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-img, video {
-  display: block;
-  max-width: 100%;
-  height: auto;
+/* Handle image loading */
+img {
+  transition: opacity 0.5s ease;
 }
 
-/* Force hardware acceleration for smooth animations */
-.hw-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+img[loading] {
+  opacity: 0.6;
 }
 
-/* Prevent FOUT (Flash of Unstyled Text) */
+/* Ensure smooth background transitions */
+.bg-image-transition {
+  transition: background-image 1.5s ease, opacity 1.5s ease;
+}
+
+/* Theme transitions - dark mode optimized */
+body {
+  transition: background-color 0.5s ease;
+  background-color: #0a0a0a !important; /* Force dark background */
+  color-scheme: dark; /* Ensures native UI elements are dark */
+}
+
+/* Smooth scrolling between sections */
 html {
-  font-display: swap;
+  scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
-/* Optimize render performance for fixed elements */
-.fixed, .sticky {
-  will-change: transform;
+/* Add opacity transition to all components for smoother page transitions */
+.min-h-screen {
+  transition: opacity 0.7s ease;
 }
 
-/* Mobile menu optimization */
-.mobile-menu {
-  max-height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+/* Better visibility for heading text */
+.section-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
 }
 
-/* Fix carousel indicators size */
-.carousel-indicators button {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  border: none;
-  margin: 0 5px;
-  padding: 0;
-  transition: all 0.3s ease;
+/* Make sure images load properly */
+img {
+  object-fit: cover;
+  opacity: 1;
 }
 
-.carousel-indicators button.active {
-  background-color: #D4AF37;
-  transform: scale(1.2);
-}
-
-/* Remove chat button - no longer needed */
-.chat-button,
-.chat-container,
-.chat-widget,
-.chat-assistant {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-/* Gold divider styling fix */
-.section-gold-divider {
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.9), transparent);
-  margin: 0.75rem auto;
+/* Enhanced section transitions - cleaner look */
+section {
   position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition: background-image 1.2s ease;
+}
+
+/* Fixed background */
+.fixed-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+}
+
+.gold-pulse {
+  animation: pulse-gold 2s infinite;
+}
+
+/* Common animation for background shimmer */
+@keyframes gold-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.animate-gold-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
+  background-size: 200% 100%;
+  animation: gold-shimmer 3s infinite linear;
+}
+
+/* Enhanced glass card styling for menu items */
+.glass-card {
+  background: rgba(30, 30, 30, 0.4);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.5s ease;
+}
+
+.glass-card:hover {
+  background: rgba(40, 40, 40, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+/* Menu item card frosted effect */
+.menu-item-card {
+  background: rgba(30, 30, 30, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.menu-item-card:hover {
+  background: rgba(50, 50, 50, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Section divider with glass effect */
+.section-divider {
+  position: relative;
+  height: 3rem;
+  background: rgba(10, 10, 10, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  overflow: hidden;
+}
+
+.section-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  display: block;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
 }
 
-/* Mobile-specific optimizations */
+/* Mobile touch enhancements */
 @media (max-width: 768px) {
-  .container {
-    width: 100% !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+  .cuisine-card:active .cuisine-card-info {
+    opacity: 1;
+    transform: translateY(0);
   }
   
-  /* Better tap targets on mobile */
-  a, button, .button, .clickable {
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-  }
-  
-  /* Fix iOS input zoom issues */
-  input, select, textarea {
-    font-size: 16px !important;
-  }
-  
-  /* Fix sticky footer on iOS */
-  .min-h-screen {
-    min-height: -webkit-fill-available;
-  }
-  
-  /* Ensure mobile menu appears properly */
-  .fixed.inset-0.bg-savoria-black\/95.z-40 {
-    display: flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    height: 100vh !important;
-    width: 100vw !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    z-index: 40 !important;
-  }
-  
-  /* Fix mobile navigation menu */
-  .mobile-menu-container {
-    padding-top: 80px !important;
-    overflow-y: auto !important;
-    height: 100% !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  
-  /* Fix carousel indicators size on mobile */
-  .carousel-indicators button {
-    width: 8px !important;
-    height: 8px !important;
-    margin: 0 4px !important;
-  }
-  
-  /* Fix dropdown menus in mobile view */
-  .dropdown-menu {
-    position: static !important;
-    width: 100% !important;
-    margin-top: 0 !important;
-  }
-  
-  /* Ensure navigation links are fully tappable */
-  .nav-link {
-    padding: 0.75rem 1rem !important;
-    width: 100% !important;
+  .cuisine-card-info {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Fix for mobile menu on very small screens */
-@media (max-width: 380px) {
-  .md\:hidden.text-white.p-2.z-50 {
-    position: absolute !important;
-    top: 1rem !important;
-    right: 1rem !important;
+/* Image preload utility - hide from view but load for caching */
+.image-preloader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0.01;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Force dark mode for the entire site */
+@media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
+  html, body {
+    background-color: #0a0a0a !important;
+    color: #ffffff;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion) {
+  .gold-gradient-text, 
+  .gold-pulse, 
+  .animate-gold-shimmer {
+    animation: none;
   }
   
-  .mobile-menu-container {
-    padding-top: 60px !important;
+  * {
+    transition-duration: 0.1s !important;
+    animation-duration: 0.1s !important;
   }
+}
+
+/* Loading animation for menu page */
+.loader {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.loader:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  box-sizing: border-box;
+  border: 32px solid #D4AF37;
+  border-color: #D4AF37 transparent #D4AF37 transparent;
+  animation: loader 1.2s infinite;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(180deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced transitions for background changes */
+.cuisine-background-transition {
+  transition: background-image 1.2s ease-in-out, opacity 1.2s ease-in-out;
 }

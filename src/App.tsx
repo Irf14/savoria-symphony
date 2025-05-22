@@ -11,46 +11,21 @@ import ContactPage from "./pages/ContactPage";
 import SpecialServicesPage from "./pages/SpecialServicesPage";
 import ReservationPage from "./pages/ReservationPage";
 import NotFound from "./pages/NotFound";
-import { useEffect } from "react";
+import ChatAssistant from "@/components/ChatAssistant";
+import { useState } from "react";
 import "./App.css";
-import "./styles/mobile.css";
 
-// Configure the queryClient with improved caching for better performance
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 10 * 60 * 1000, // 10 minutes
-      gcTime: 15 * 60 * 1000, // 15 minutes (previously cacheTime)
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const App = () => {
-  // Simple preloading for critical images
-  useEffect(() => {
-    // Load critical CSS first
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = './styles/mobile.css';
-    document.head.appendChild(link);
-    
-    // Add performance optimizations
-    document.addEventListener('DOMContentLoaded', () => {
-      requestAnimationFrame(() => {
-        document.body.style.visibility = 'visible';
-      });
-    });
-    
-    return () => {
-      document.removeEventListener('DOMContentLoaded', () => {});
-    };
-  }, []);
+  // Import the useState hook to fix the error in Index.tsx
+  const [state] = useState("");
   
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <Toaster />
+        <Sonner />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -60,11 +35,10 @@ const App = () => {
             <Route path="/reservation" element={<ReservationPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/special-services" element={<SpecialServicesPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          
-          <Toaster />
-          <Sonner position="bottom-center" closeButton />
+          <ChatAssistant />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
