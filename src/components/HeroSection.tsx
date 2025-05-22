@@ -239,17 +239,17 @@ const HeroSection = () => {
         </AnimatePresence>
       </div>
       
-      {/* Modern slide indicators with pulse animation */}
+      {/* Modern slide indicators with reduced size for mobile */}
       <div className="absolute bottom-28 left-0 right-0 z-10 flex justify-center gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={cn(
-              'w-3 h-3 rounded-full transition-all duration-300',
+              'transition-all duration-300 rounded-full',
               currentSlide === index 
-                ? 'bg-gold w-10 gold-pulse' 
-                : 'bg-white/30 hover:bg-white/50'
+                ? 'bg-gold gold-pulse sm:w-8 w-6 h-2 sm:h-2' 
+                : 'bg-white/30 hover:bg-white/50 w-2 h-2 sm:w-2 sm:h-2'
             )}
             aria-label={`Go to slide ${index + 1}`}
           />

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -139,14 +138,14 @@ const TrendingOffersSection = () => {
               </AnimatePresence>
             </div>
             
-            {/* Slide indicators */}
+            {/* Fixed size slide indicators */}
             <div className="relative flex justify-center space-x-2 mt-6">
               {offers.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all ${
-                    currentSlide === index ? 'bg-gold w-6' : 'bg-white/30'
+                  className={`rounded-full transition-all ${
+                    currentSlide === index ? 'bg-gold w-6 sm:w-6 h-2 sm:h-2' : 'bg-white/30 w-2 h-2'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
