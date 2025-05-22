@@ -49,14 +49,21 @@ const App = () => {
   useEffect(() => {
     // Preload critical images immediately - with error handling
     const startTime = performance.now();
-    preloadCriticalImages(criticalImages)
-      .then(() => {
-        const loadTime = performance.now() - startTime;
-        console.log(`Critical images preloaded in ${Math.round(loadTime)}ms`);
-      })
-      .catch(error => {
-        console.warn("Some images failed to preload, but we'll continue anyway:", error);
-      });
+    
+    // Fix: Make sure we call the function and use the returned Promise
+    const preloadPromise = preloadCriticalImages(criticalImages);
+    
+    // Only add .then if preloadPromise is a valid Promise
+    if (preloadPromise && typeof preloadPromise.then === 'function') {
+      preloadPromise
+        .then(() => {
+          const loadTime = performance.now() - startTime;
+          console.log(`Critical images preloaded in ${Math.round(loadTime)}ms`);
+        })
+        .catch(error => {
+          console.warn("Some images failed to preload, but we'll continue anyway:", error);
+        });
+    }
     
     // Add performance optimizations
     document.addEventListener('DOMContentLoaded', () => {
