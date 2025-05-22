@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import CuisineSection from './cuisine/CuisineSection';
 import CuisineCard from './cuisine/CuisineCard';
 
@@ -40,7 +39,7 @@ const CuisineShowcase = () => {
           <CuisineCard
             key={cuisine.title}
             title={cuisine.title}
-            image={cuisine.image}
+            image={cuisine.image || ''}
             description={cuisine.description}
             index={index}
           />

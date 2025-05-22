@@ -31,7 +31,7 @@ const CuisineCard: React.FC<CuisineCardProps> = ({ title, image, description, in
       {/* Card content */}
       <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
         <h3 className="font-playfair text-2xl font-bold mb-2">{title}</h3>
-        <div className="cuisine-card-info opacity-100 translate-y-0 transition-all duration-300 mb-4">
+        <div className="opacity-100 translate-y-0 transition-all duration-300 mb-4">
           <p className="text-sm text-gray-200 line-clamp-3">{description}</p>
         </div>
         <Link 
