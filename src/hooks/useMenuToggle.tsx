@@ -19,17 +19,25 @@ export function useMenuToggle() {
     if (isMenuOpen) {
       document.body.classList.add('menu-open');
       
-      // Ensure mobile menu is properly displayed
+      // Ensure mobile menu is properly displayed without automatically closing
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
       document.body.style.height = '100%';
+      document.body.style.top = `-${window.scrollY}px`; // Prevent content jump
     } else {
+      const scrollY = document.body.style.top;
       document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
       document.body.style.height = '';
+      document.body.style.top = '';
+      
+      // Restore scroll position
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+      }
     }
 
     // Clean up function
@@ -39,6 +47,7 @@ export function useMenuToggle() {
       document.body.style.position = '';
       document.body.style.width = '';
       document.body.style.height = '';
+      document.body.style.top = '';
     };
   }, [isMenuOpen]);
 

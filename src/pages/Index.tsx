@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import HeroSection from '@/components/HeroSection';
@@ -69,11 +68,11 @@ const Index = () => {
       setLoading(true);
       sessionStorage.setItem('visited', 'true');
       
-      // We'll show the loading screen for 2 seconds
+      // Show the loading screen for a shorter time to improve perceived performance
       setTimeout(() => {
         setLoading(false);
         setShowWelcome(true);
-      }, 2000);
+      }, 1500); // Reduced from 2000ms to 1500ms for better performance
     } else {
       // Not first visit in this session, skip animations
       setLoading(false);
@@ -103,23 +102,23 @@ const Index = () => {
 
   // Safeguard to ensure the page doesn't get stuck
   useEffect(() => {
-    // Force transition to main content after 4 seconds
+    // Force transition to main content after 3.5 seconds (reduced from 4)
     const welcomeTimeout = setTimeout(() => {
       if (showWelcome) {
         console.log("Force transitioning from welcome to main content");
         setShowWelcome(false);
         setInitialized(true);
       }
-    }, 4000);
+    }, 3500);
     
-    // Force transition to main content after 2.5 seconds
+    // Force transition to main content after 2 seconds (reduced from 2.5)
     const loadingTimeout = setTimeout(() => {
       if (loading) {
         console.log("Force transitioning from loading to welcome");
         setLoading(false);
         setShowWelcome(true);
       }
-    }, 2500);
+    }, 2000);
     
     return () => {
       clearTimeout(welcomeTimeout);
