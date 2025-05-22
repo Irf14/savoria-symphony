@@ -11,7 +11,10 @@ const LoadingOverlay = ({ isLoading }: LoadingOverlayProps) => {
   
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-      <div className="loader"></div>
+      <div className="flex flex-col items-center">
+        <div className="loader"></div>
+        <p className="text-gold text-sm mt-4 font-cormorant">Loading exquisite dishes...</p>
+      </div>
     </div>
   );
 };

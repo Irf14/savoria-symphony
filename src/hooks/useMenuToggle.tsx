@@ -19,22 +19,33 @@ export function useMenuToggle() {
     if (isMenuOpen) {
       document.body.classList.add('menu-open');
       
-      // Ensure mobile menu is properly displayed
-      setTimeout(() => {
-        const mobileMenu = document.querySelector('.fixed.inset-0.bg-savoria-black\\/95.z-40');
-        if (mobileMenu) {
-          (mobileMenu as HTMLElement).style.display = 'flex';
-          (mobileMenu as HTMLElement).style.opacity = '1';
-          (mobileMenu as HTMLElement).style.visibility = 'visible';
-        }
-      }, 10);
+      // Store the current scroll position
+      const scrollY = window.scrollY;
+      
+      // Prevent content jump without using position fixed which causes issues
+      document.body.style.overflow = 'hidden';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.dataset.scrollY = scrollY.toString();
     } else {
+      // Restore scroll position
+      const scrollY = document.body.dataset.scrollY || '0';
       document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
+      document.body.style.top = '';
+      
+      // Only scroll if we have a stored position
+      if (document.body.dataset.scrollY) {
+        window.scrollTo(0, parseInt(scrollY, 10));
+        delete document.body.dataset.scrollY;
+      }
     }
 
     // Clean up function
     return () => {
       document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
+      document.body.style.top = '';
+      delete document.body.dataset.scrollY;
     };
   }, [isMenuOpen]);
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import HeroSection from '@/components/HeroSection';
@@ -69,11 +68,11 @@ const Index = () => {
       setLoading(true);
       sessionStorage.setItem('visited', 'true');
       
-      // We'll show the loading screen for 2 seconds
+      // Show the loading screen for a shorter time to improve perceived performance
       setTimeout(() => {
         setLoading(false);
         setShowWelcome(true);
-      }, 2000);
+      }, 1000); // Reduced to 1000ms for better performance
     } else {
       // Not first visit in this session, skip animations
       setLoading(false);
@@ -92,34 +91,27 @@ const Index = () => {
     console.log("Welcome complete, showing main content");
     setShowWelcome(false);
     setInitialized(true);
-    
-    // Force chat assistant button to appear
-    const chatButton = document.getElementById('chat-toggle-button');
-    if (chatButton) {
-      chatButton.classList.add('opacity-100');
-      chatButton.classList.remove('opacity-0', 'translate-y-10');
-    }
   };
 
   // Safeguard to ensure the page doesn't get stuck
   useEffect(() => {
-    // Force transition to main content after 4 seconds
+    // Force transition to main content after 3 seconds (reduced from 3.5)
     const welcomeTimeout = setTimeout(() => {
       if (showWelcome) {
         console.log("Force transitioning from welcome to main content");
         setShowWelcome(false);
         setInitialized(true);
       }
-    }, 4000);
+    }, 3000);
     
-    // Force transition to main content after 2.5 seconds
+    // Force transition to welcome after 1.5 seconds (reduced from 2)
     const loadingTimeout = setTimeout(() => {
       if (loading) {
         console.log("Force transitioning from loading to welcome");
         setLoading(false);
         setShowWelcome(true);
       }
-    }, 2500);
+    }, 1500);
     
     return () => {
       clearTimeout(welcomeTimeout);
@@ -131,7 +123,7 @@ const Index = () => {
     <>
       {loading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       
-      {showWelcome && <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />}
+      <WelcomeAnimation visible={showWelcome} onComplete={handleWelcomeComplete} />
       
       <motion.div 
         ref={mainContentRef}

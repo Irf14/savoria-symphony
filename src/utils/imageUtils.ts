@@ -2,36 +2,53 @@
 /**
  * Preloads critical images for faster initial experience
  * @param imageUrls Array of image URLs to preload
+ * @returns Promise that resolves when all images are loaded (or failed)
  */
-export const preloadCriticalImages = (imageUrls: string[]) => {
+export const preloadCriticalImages = (imageUrls: string[]): Promise<void> => {
   console.log("Preloading critical images for faster experience...");
   
   // Concurrent image loading with better error handling
   let loadedCount = 0;
   const totalImages = imageUrls.length;
   
-  const preloadPromises = imageUrls.map((src) => {
-    return new Promise<void>((resolve) => {
-      const img = new Image();
-      img.src = src + "&_t=" + new Date().getTime(); // Add cache buster
-      
-      img.onload = () => {
-        loadedCount++;
-        console.log(`Image preloaded (${loadedCount}/${totalImages}): ${src.substring(0, 50)}...`);
-        resolve();
-      };
-      
-      img.onerror = () => {
-        console.error(`Failed to preload image: ${src.substring(0, 50)}...`);
-        resolve(); // Still resolve to not block others
-      };
+  // Return a Promise that resolves when all images are loaded
+  return new Promise<void>((resolveAll) => {
+    if (imageUrls.length === 0) {
+      console.log("No critical images to preload");
+      resolveAll();
+      return;
+    }
+    
+    const preloadPromises = imageUrls.map((src) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.src = src + "&_t=" + new Date().getTime(); // Add cache buster
+        
+        img.onload = () => {
+          loadedCount++;
+          console.log(`Image preloaded (${loadedCount}/${totalImages}): ${src.substring(0, 50)}...`);
+          resolve();
+        };
+        
+        img.onerror = () => {
+          loadedCount++;
+          console.error(`Failed to preload image: ${src.substring(0, 50)}...`);
+          resolve(); // Still resolve to not block others
+        };
+      });
     });
+    
+    // Track overall loading progress
+    Promise.all(preloadPromises)
+      .then(() => {
+        console.log(`Preloaded ${loadedCount}/${totalImages} critical images`);
+        resolveAll(); // Resolve the outer promise
+      })
+      .catch(err => {
+        console.error("Image preloading encountered an error:", err);
+        resolveAll(); // Resolve anyway to prevent app from breaking
+      });
   });
-  
-  // Track overall loading progress
-  Promise.all(preloadPromises)
-    .then(() => console.log(`Preloaded ${loadedCount}/${totalImages} critical images`))
-    .catch(err => console.error("Image preloading encountered an error:", err));
 };
 
 /**

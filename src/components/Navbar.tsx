@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useMenuToggle } from '@/hooks/useMenuToggle';
 
 // Define better types for our navigation items
 interface NavLink {
@@ -20,20 +21,18 @@ interface NavDropdownItem {
 }
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isMenuOpen: isOpen, toggleMenu, closeMenu } = useMenuToggle();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  
   // Close mobile menu when route changes
   useEffect(() => {
-    setIsOpen(false);
+    closeMenu();
     setActiveDropdown(null);
-  }, [location]);
+  }, [location, closeMenu]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,7 +92,7 @@ const Navbar = () => {
   };
 
   const handleDropdownItemClick = (path: string, hash?: string) => {
-    setIsOpen(false);
+    closeMenu();
     if (hash) {
       navigate(path + hash);
       setTimeout(() => {
@@ -218,76 +217,78 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 bg-savoria-black/95 z-40 flex flex-col items-center pt-20 pb-10 px-6 md:hidden overflow-auto"
           >
-            {navLinks.map((link, index) => (
-              <div key={link.name} className="w-full py-3">
-                {link.dropdown ? (
-                  <div className="w-full">
-                    <button 
-                      onClick={() => handleDropdownToggle(link.name)}
+            <div className="w-full flex flex-col items-center">
+              {navLinks.map((link, index) => (
+                <div key={link.name} className="w-full py-3 flex flex-col items-center">
+                  {link.dropdown ? (
+                    <div className="w-full flex flex-col items-center">
+                      <button 
+                        onClick={() => handleDropdownToggle(link.name)}
+                        className={cn(
+                          "w-full flex items-center justify-center text-2xl font-cormorant tracking-wider py-2",
+                          isActive(link.path) ? 'text-gold' : 'text-white'
+                        )}
+                      >
+                        <span>{link.name}</span>
+                        <ChevronDown 
+                          size={20}
+                          className={cn(
+                            "ml-2 transition-transform duration-300",
+                            activeDropdown === link.name && "transform rotate-180"
+                          )}
+                        />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {activeDropdown === link.name && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="w-full mt-2 flex flex-col items-center border-t border-b border-gold/20 py-2"
+                          >
+                            {link.dropdown.map((item) => (
+                              <button
+                                key={item.name}
+                                className="w-full text-center text-lg font-cormorant py-2 text-gray-300 hover:text-gold"
+                                onClick={() => handleDropdownItemClick(item.path, item.hash)}
+                              >
+                                {item.name}
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      to={link.path}
                       className={cn(
-                        "w-full flex items-center justify-between text-2xl font-cormorant tracking-wider py-2",
+                        "block text-2xl font-cormorant tracking-wider py-2 text-center w-full",
                         isActive(link.path) ? 'text-gold' : 'text-white'
                       )}
+                      onClick={closeMenu}
                     >
                       {link.name}
-                      <ChevronDown 
-                        size={20}
-                        className={cn(
-                          "transition-transform duration-300",
-                          activeDropdown === link.name && "transform rotate-180"
-                        )}
-                      />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {activeDropdown === link.name && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="pl-4 border-l border-gold/30 mt-2 overflow-hidden"
-                        >
-                          {link.dropdown.map((item) => (
-                            <button
-                              key={item.name}
-                              className="block w-full text-left text-lg font-cormorant py-2 text-gray-300 hover:text-gold"
-                              onClick={() => handleDropdownItemClick(item.path, item.hash)}
-                            >
-                              {item.name}
-                            </button>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <Link
-                    to={link.path}
-                    className={cn(
-                      "block text-2xl font-cormorant tracking-wider py-2",
-                      isActive(link.path) ? 'text-gold' : 'text-white'
-                    )}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                )}
-                
-                {index < navLinks.length - 1 && (
-                  <div className="w-16 h-px bg-gold/20 mx-auto my-3" />
-                )}
-              </div>
-            ))}
+                    </Link>
+                  )}
+                  
+                  {index < navLinks.length - 1 && (
+                    <div className="w-16 h-px bg-gold/20 mx-auto my-3" />
+                  )}
+                </div>
+              ))}
 
-            {/* Mobile reservation button */}
-            <Link
-              to="/reservation"
-              className="mt-6 bg-gold hover:bg-gold/90 text-black px-10 py-3 text-lg font-medium rounded"
-              onClick={() => setIsOpen(false)}
-            >
-              Reserve Now
-            </Link>
+              {/* Mobile reservation button */}
+              <Link
+                to="/reservation"
+                className="mt-6 bg-gold hover:bg-gold/90 text-black px-10 py-3 text-lg font-medium rounded"
+                onClick={closeMenu}
+              >
+                Reserve Now
+              </Link>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

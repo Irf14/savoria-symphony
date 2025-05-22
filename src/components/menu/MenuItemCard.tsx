@@ -21,13 +21,16 @@ const MenuItemCard = ({ item, onHover }: MenuItemCardProps) => {
       onMouseLeave={() => onHover(null)}
       tabIndex={0}
     >
+      {/* Enhanced luxury frosted glass effect */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-black/30 via-black/20 to-black/10 backdrop-blur-lg group-hover:backdrop-blur-xl transition-all duration-500 -z-10"></div>
+      
       <div className="p-6 relative z-10">
         {/* Top section with name and price */}
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-xl font-playfair font-bold text-white group-hover:text-gold transition-colors">
             {item.name}
           </h3>
-          <span className="price-tag text-gold text-lg">
+          <span className="price-tag text-gold text-lg font-cormorant">
             ${item.price}
           </span>
         </div>
@@ -59,11 +62,26 @@ const MenuItemCard = ({ item, onHover }: MenuItemCardProps) => {
         </div>
       </div>
       
-      {/* Golden gradient hover effect */}
-      <div className="absolute inset-0 bg-gradient-to-t from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+      {/* Enhanced golden gradient hover effect */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gold/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
       
-      {/* Glow effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-gold/0 via-gold/15 to-gold/0 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+      {/* Enhanced glow effect */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-gold/0 via-gold/20 to-gold/0 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+      
+      {/* Golden shimmer effect on focus */}
+      <div className="absolute inset-0 overflow-hidden rounded-xl">
+        <div 
+          className="absolute -inset-full h-[300%] w-[300%] opacity-0 group-hover:opacity-100 group-focus:opacity-100 bg-gradient-conic from-transparent via-gold/20 to-transparent -z-10 animate-[spin_4s_linear_infinite]"
+          style={{
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '50% 50%',
+          }}
+        />
+      </div>
+      
+      {/* Border glow on hover */}
+      <div className="absolute inset-0 rounded-xl border border-gold/0 group-hover:border-gold/30 transition-all duration-300"></div>
     </motion.div>
   );
 };
