@@ -46,14 +46,14 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Fix carousel indicators size - SMALLER SIZE */
+/* Fix carousel indicators size */
 .carousel-indicators button {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.5);
   border: none;
-  margin: 0 4px;
+  margin: 0 5px;
   padding: 0;
   transition: all 0.3s ease;
 }
@@ -111,7 +111,7 @@ html {
     min-height: -webkit-fill-available;
   }
   
-  /* Ensure mobile menu appears properly and doesn't auto-close */
+  /* Ensure mobile menu appears properly */
   .fixed.inset-0.bg-savoria-black\/95.z-40 {
     display: flex !important;
     opacity: 1 !important;
@@ -124,7 +124,6 @@ html {
     right: 0 !important;
     bottom: 0 !important;
     z-index: 40 !important;
-    transition: opacity 0.3s ease !important;
   }
   
   /* Fix mobile navigation menu */
@@ -137,11 +136,11 @@ html {
     flex-direction: column !important;
   }
   
-  /* Fix carousel indicators size on mobile - REDUCED SIZE FURTHER */
+  /* Fix carousel indicators size on mobile */
   .carousel-indicators button {
-    width: 5px !important;
-    height: 5px !important;
-    margin: 0 3px !important;
+    width: 8px !important;
+    height: 8px !important;
+    margin: 0 4px !important;
   }
   
   /* Fix dropdown menus in mobile view */
@@ -156,17 +155,6 @@ html {
     padding: 0.75rem 1rem !important;
     width: 100% !important;
   }
-  
-  /* Fix alignment for all section titles and their dividers */
-  .mb-12.text-center .section-gold-divider,
-  .mb-12.text-center .h-0\.5.bg-gradient-to-r {
-    width: 60px !important;
-    margin: 0.75rem auto !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    position: relative !important;
-    display: block !important;
-  }
 }
 
 /* Fix for mobile menu on very small screens */
@@ -175,17 +163,9 @@ html {
     position: absolute !important;
     top: 1rem !important;
     right: 1rem !important;
-    z-index: 60 !important; /* Increased z-index */
   }
   
   .mobile-menu-container {
     padding-top: 60px !important;
-  }
-  
-  /* Even smaller carousel indicators */
-  .carousel-indicators button {
-    width: 4px !important;
-    height: 4px !important;
-    margin: 0 2px !important;
   }
 }

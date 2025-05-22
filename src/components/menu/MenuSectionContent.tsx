@@ -52,15 +52,10 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
         <motion.h2 variants={itemVariants} className="text-3xl font-playfair font-bold text-gold mb-4">
           {section.name}
         </motion.h2>
-        
-        {/* Properly aligned gold divider - consistent across all cuisines */}
-        <div className="flex justify-center">
-          <motion.div 
-            variants={itemVariants} 
-            className="section-gold-divider"
-          />
-        </div>
-        
+        <motion.div 
+          variants={itemVariants} 
+          className="section-gold-divider mx-auto"
+        />
         <motion.p variants={itemVariants} className="text-gray-300 max-w-2xl mx-auto font-cormorant text-lg italic">
           {section.description}
         </motion.p>
