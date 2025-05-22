@@ -53,11 +53,11 @@ const MenuSectionContent: React.FC<MenuSectionContentProps> = ({ section, onItem
           {section.name}
         </motion.h2>
         
-        {/* Fixed gold divider with proper mobile centering */}
+        {/* Fixed gold divider with proper mobile centering - important fix */}
         <div className="flex justify-center">
           <motion.div 
             variants={itemVariants} 
-            className="section-gold-divider mx-auto"
+            className="section-gold-divider"
             style={{
               width: '60px',
               height: '2px',

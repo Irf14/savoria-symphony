@@ -33,8 +33,11 @@ export function useMenuToggle() {
       document.body.style.overflow = '';
       document.body.style.top = '';
       
-      window.scrollTo(0, parseInt(scrollY, 10));
-      delete document.body.dataset.scrollY;
+      // Only scroll if we have a stored position
+      if (document.body.dataset.scrollY) {
+        window.scrollTo(0, parseInt(scrollY, 10));
+        delete document.body.dataset.scrollY;
+      }
     }
 
     // Clean up function

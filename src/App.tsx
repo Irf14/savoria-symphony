@@ -27,42 +27,41 @@ const queryClient = new QueryClient({
   },
 });
 
-// Important images for preloading - preload more images to reduce jitter
+// Important images for preloading - reduced number for faster startup
 const criticalImages = [
-  // Home page hero images
+  // Home page hero images - most important
   'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
   'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
   'https://images.unsplash.com/photo-1515669097368-22e68427d265?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-  'https://images.unsplash.com/photo-1528605248644-14dd04022da1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
   
-  // Menu page images
-  'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?auto=format&fit=crop&q=80',
+  // Menu page images - reduced for faster load
+  'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&q=80&w=800',
   
-  // Gallery images
-  'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1585937421612-70a008356c36?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&q=80',
+  // Gallery images - reduced for faster load
+  'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80&w=800',
   
-  // Food images
-  'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?auto=format&fit=crop&q=80',
+  // Food image - reduced for faster load
+  'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&q=80&w=800',
 ];
 
 const App = () => {
   // Enhanced preloading for key images with improved reliability
   useEffect(() => {
-    // Preload critical images immediately
-    preloadCriticalImages(criticalImages);
+    // Preload critical images immediately - with error handling
+    const startTime = performance.now();
+    preloadCriticalImages(criticalImages)
+      .then(() => {
+        const loadTime = performance.now() - startTime;
+        console.log(`Critical images preloaded in ${Math.round(loadTime)}ms`);
+      })
+      .catch(error => {
+        console.warn("Some images failed to preload, but we'll continue anyway:", error);
+      });
     
     // Add performance optimizations
     document.addEventListener('DOMContentLoaded', () => {
-      // Optimize paint and layout operations
+      // Force browser to calculate layout once images are loaded
       requestAnimationFrame(() => {
-        // Force browser to calculate layout once images are loaded
         document.body.style.visibility = 'visible';
       });
     });
