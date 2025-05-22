@@ -31,12 +31,14 @@ const MenuSectionNav = ({ sections, activeSection, setActiveSection }: MenuSecti
                 {section.name}
                 {activeSection === section.id && (
                   <motion.div 
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent section-gold-divider"
+                    className="absolute bottom-0 left-0 w-full flex justify-center"
                     layoutId="activeSectionIndicator"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
-                  />
+                  >
+                    <div className="w-2/3 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent" />
+                  </motion.div>
                 )}
               </motion.button>
             ))}

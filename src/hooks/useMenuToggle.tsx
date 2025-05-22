@@ -20,21 +20,25 @@ export function useMenuToggle() {
       document.body.classList.add('menu-open');
       
       // Ensure mobile menu is properly displayed
-      setTimeout(() => {
-        const mobileMenu = document.querySelector('.fixed.inset-0.bg-savoria-black\\/95.z-40');
-        if (mobileMenu) {
-          (mobileMenu as HTMLElement).style.display = 'flex';
-          (mobileMenu as HTMLElement).style.opacity = '1';
-          (mobileMenu as HTMLElement).style.visibility = 'visible';
-        }
-      }, 10);
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
     } else {
       document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
     }
 
     // Clean up function
     return () => {
       document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
     };
   }, [isMenuOpen]);
 
